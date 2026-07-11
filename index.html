@@ -1,873 +1,640 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bitcoin for Newbies – Interactive Edition</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: #faf8f5;
-            color: #1a1a2e;
-            line-height: 1.7;
-        }
-
-        /* ── HERO ── */
-        .hero {
-            background: linear-gradient(135deg, #f7931a 0%, #ffb347 50%, #f7931a 100%);
-            color: #fff;
-            padding: 4rem 2rem 3rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero::after {
-            content: '₿';
-            position: absolute;
-            font-size: 28rem;
-            opacity: 0.06;
-            right: -3rem;
-            top: -5rem;
-            pointer-events: none;
-        }
-        .hero h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            position: relative;
-        }
-        .hero .sub {
-            font-size: 1.15rem;
-            max-width: 600px;
-            margin: 0.5rem auto 0;
-            opacity: 0.9;
-            position: relative;
-        }
-
-        /* ── LIVE TICKER ── */
-        .ticker {
-            background: #1a1a2e;
-            color: #fff;
-            padding: 1rem 0;
-        }
-        .ticker-inner {
-            max-width: 860px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-        .ticker-item {
-            text-align: center;
-        }
-        .ticker-item .label {
-            font-size: 0.75rem;
-            opacity: 0.5;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .ticker-item .value {
-            font-size: 1.4rem;
-            font-weight: 700;
-        }
-        .ticker-item .value.up { color: #4ade80; }
-        .ticker-item .value.down { color: #f87171; }
-        .ticker-item .value .change {
-            font-size: 0.85rem;
-            font-weight: 400;
-            margin-left: 0.3rem;
-        }
-        .ticker .spark {
-            font-size: 0.8rem;
-            opacity: 0.6;
-        }
-
-        /* ── LAYOUT ── */
-        .container {
-            max-width: 860px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-
-        section {
-            padding: 3rem 0;
-        }
-        section:nth-child(even) {
-            background: #fff;
-        }
-
-        h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-        h3 {
-            font-size: 1.15rem;
-            margin-bottom: 0.5rem;
-            color: #f7931a;
-        }
-
-        /* ── CARDS ── */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        .card {
-            background: #fdfcfa;
-            border: 1px solid #eee;
-            border-radius: 0.9rem;
-            padding: 1.25rem;
-            transition: transform 0.15s, box-shadow 0.15s;
-        }
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-        }
-        .card .icon {
-            font-size: 1.8rem;
-            display: block;
-            margin-bottom: 0.4rem;
-        }
-
-        /* ── ACCORDION ── */
-        .accordion details {
-            background: #fdfcfa;
-            border: 1px solid #eee;
-            border-radius: 0.75rem;
-            margin-bottom: 0.6rem;
-            padding: 0.7rem 1.2rem;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-        .accordion details:hover {
-            background: #fff8f0;
-        }
-        .accordion summary {
-            font-weight: 600;
-            font-size: 1rem;
-            list-style: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .accordion summary::-webkit-details-marker { display: none; }
-        .accordion summary::before {
-            content: '▶';
-            font-size: 0.75rem;
-            transition: transform 0.2s;
-            color: #f7931a;
-        }
-        .accordion details[open] summary::before { transform: rotate(90deg); }
-        .accordion .answer {
-            margin-top: 0.6rem;
-            padding-left: 1.3rem;
-            color: #444;
-        }
-
-        /* ── TABLE ── */
-        .compare-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-            border-radius: 0.75rem;
-            overflow: hidden;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-        }
-        .compare-table th {
-            background: #f7931a;
-            color: #fff;
-            padding: 0.75rem 1rem;
-            text-align: left;
-            font-weight: 600;
-        }
-        .compare-table td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid #eee;
-            background: #fff;
-        }
-        .compare-table tr:last-child td { border-bottom: none; }
-        .compare-table td:first-child { font-weight: 600; }
-
-        /* ── STEP LIST ── */
-        .step-list {
-            list-style: none;
-            counter-reset: step;
-        }
-        .step-list li {
-            counter-increment: step;
-            padding: 0.9rem 1rem 0.9rem 3.5rem;
-            position: relative;
-            border-left: 3px solid #f7931a;
-        }
-        .step-list li::before {
-            content: counter(step);
-            position: absolute;
-            left: -1.1rem;
-            top: 0.8rem;
-            width: 2.2rem;
-            height: 2.2rem;
-            background: #f7931a;
-            color: #fff;
-            font-weight: 700;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-        }
-        .step-list li strong { display: block; font-size: 1rem; }
-
-        /* ── INTERACTIVE TOOLS ── */
-        .tool-box {
-            background: #fdfcfa;
-            border: 1px solid #eee;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .tool-box:last-child { margin-bottom: 0; }
-        .tool-box h3 {
-            font-size: 1.15rem;
-            margin-bottom: 0.25rem;
-        }
-        .tool-box .desc {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 1rem;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .input-group label {
-            font-weight: 600;
-            font-size: 0.9rem;
-            min-width: 70px;
-        }
-        .input-group input, .input-group select {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 0.5rem;
-            font-size: 0.95rem;
-            background: #fff;
-            flex: 1;
-            min-width: 100px;
-        }
-        .input-group input:focus, .input-group select:focus {
-            outline: 2px solid #f7931a;
-            outline-offset: -1px;
-            border-color: transparent;
-        }
-
-        .btn {
-            background: #f7931a;
-            color: #fff;
-            border: none;
-            padding: 0.5rem 1.25rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-        .btn:hover { background: #e07e0e; }
-        .btn:active { transform: scale(0.97); }
-
-        .result-box {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 0.6rem;
-            font-size: 1.05rem;
-            display: none;
-        }
-        .result-box.show { display: block; }
-        .result-box .big { font-size: 1.6rem; font-weight: 700; color: #16a34a; }
-        .result-box .note { font-size: 0.85rem; color: #666; margin-top: 0.3rem; }
-
-        .result-box.info {
-            background: #eff6ff;
-            border-color: #bfdbfe;
-        }
-        .result-box.info .big { color: #2563eb; }
-
-        /* ── QUIZ ── */
-        .quiz-question {
-            margin-bottom: 1.5rem;
-            padding: 1.25rem;
-            background: #fdfcfa;
-            border: 1px solid #eee;
-            border-radius: 0.75rem;
-        }
-        .quiz-question .q-text {
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-        }
-        .quiz-options label {
-            display: block;
-            padding: 0.5rem 0.75rem;
-            margin-bottom: 0.4rem;
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: background 0.1s, border-color 0.1s;
-        }
-        .quiz-options label:hover {
-            background: #fff8f0;
-            border-color: #f7931a;
-        }
-        .quiz-options input { margin-right: 0.6rem; }
-        .quiz-options label.correct {
-            background: #f0fdf4;
-            border-color: #4ade80;
-        }
-        .quiz-options label.wrong {
-            background: #fef2f2;
-            border-color: #f87171;
-        }
-        .quiz-feedback {
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            display: none;
-        }
-        .quiz-feedback.show { display: block; }
-        .quiz-score {
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: 700;
-            padding: 1rem;
-        }
-
-        /* ── FAQ ── */
-        .faq-item { margin-bottom: 1.25rem; }
-        .faq-item h3 { font-size: 1.05rem; margin-bottom: 0.2rem; }
-
-        /* ── FOOTER ── */
-        footer {
-            text-align: center;
-            padding: 2rem 1.5rem;
-            color: #888;
-            font-size: 0.85rem;
-            border-top: 1px solid #eee;
-        }
-        footer a { color: #f7931a; text-decoration: none; }
-
-        @media (max-width: 640px) {
-            .hero h1 { font-size: 2rem; }
-            .hero .sub { font-size: 1rem; }
-            h2 { font-size: 1.4rem; }
-            .compare-table { font-size: 0.8rem; }
-            .ticker-inner { gap: 1rem; }
-            .ticker-item .value { font-size: 1.1rem; }
-            .input-group { flex-direction: column; align-items: stretch; }
-            .input-group label { min-width: auto; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bitcoiner Travelling</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', 'Roboto', sans-serif; }
+    body { background: #030712; }
+    .glow-emerald { box-shadow: 0 0 15px rgba(52,211,153,0.5), 0 0 30px rgba(52,211,153,0.2); }
+    .glow-blue { box-shadow: 0 0 15px rgba(59,130,246,0.5), 0 0 30px rgba(59,130,246,0.2); }
+    .glow-amber { box-shadow: 0 0 15px rgba(251,191,36,0.5), 0 0 30px rgba(251,191,36,0.2); }
+    .country-btn { transition: all 0.25s ease; font-size: 0.7rem; line-height: 1.1; position: relative; }
+    .country-btn:hover { transform: scale(1.06); z-index: 2; border-color: #3b82f6 !important; }
+    .country-btn.unlocked { background: #064e3b !important; border-color: #10b981 !important; color: #6ee7b7 !important; }
+    .country-btn.unlocked::after { content: ' ✓'; }
+    .country-btn.unlocked { animation: pulseGlow 3s ease-in-out infinite; }
+    @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 8px rgba(16,185,129,0.3); } 50% { box-shadow: 0 0 20px rgba(16,185,129,0.6); } }
+    .modal-overlay { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+    .toast { animation: fadeInOut 2.5s ease forwards; }
+    @keyframes fadeInOut { 0% { opacity:0; transform:translateY(10px); } 12% { opacity:1; transform:translateY(0); } 88% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(-10px); } }
+    .pixel-border { border: 2px solid #1f2937; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05); }
+    .level-card { background: linear-gradient(135deg, rgba(17,24,39,0.95), rgba(3,7,18,0.98)); }
+    .continent-label { font-size: 0.6rem; letter-spacing: 0.1em; }
+    .map-ocean { background: radial-gradient(ellipse at center, #0c1929, #030712); }
+    .continent-section { position: relative; }
+    .lat-line { position: absolute; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.03); pointer-events: none; }
+    #worldMapContainer { position: relative; overflow: hidden; }
+    #worldMapContainer::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 40% 30% at 25% 40%, rgba(52,211,153,0.03) 0%, transparent 70%), radial-gradient(ellipse 30% 25% at 70% 30%, rgba(59,130,246,0.03) 0%, transparent 70%), radial-gradient(ellipse 35% 30% at 50% 55%, rgba(251,191,36,0.02) 0%, transparent 70%), radial-gradient(ellipse 20% 15% at 85% 70%, rgba(52,211,153,0.02) 0%, transparent 70%); pointer-events: none; }
+    .badge-icon { transition: all 0.3s ease; }
+    .badge-icon.unlocked { filter: drop-shadow(0 0 8px rgba(59,130,246,0.7)); }
+    .badge-icon.locked { filter: grayscale(0.8) opacity(0.4); }
+    .unlock-particle { position: fixed; pointer-events: none; font-size: 1.5rem; z-index: 40; animation: particleUp 1.2s ease-out forwards; }
+    @keyframes particleUp { 0% { opacity:1; transform:translateY(0) scale(1); } 100% { opacity:0; transform:translateY(-80px) scale(0.3); } }
+    .quest-panel { background: linear-gradient(90deg, rgba(16,185,129,0.08), transparent); border-left: 3px solid #10b981; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #111827; }
+    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+    .activity-option { transition: all 0.2s ease; }
+    .activity-option:hover { border-color: #10b981; background: rgba(16,185,129,0.08); }
+  </style>
 </head>
-<body>
-
-<!-- ═══════════════ HERO ═══════════════ -->
-<header class="hero">
-    <h1>🚀 Bitcoin for Newbies</h1>
-    <p class="sub">No jargon. No FOMO. Just what you need — with tools you can play with.</p>
-</header>
-
-<!-- ═══════════════ LIVE TICKER ═══════════════ -->
-<div class="ticker">
-    <div class="ticker-inner" id="ticker">
-        <div class="ticker-item"><div class="label">Bitcoin (BTC)</div><div class="value" id="btc-price">—</div></div>
-        <div class="ticker-item"><div class="label">24h Change</div><div class="value" id="btc-change">—</div></div>
-        <div class="ticker-item"><div class="label">Market Cap</div><div class="value" id="btc-mcap">—</div></div>
-        <div class="ticker-item"><div class="label">24h Volume</div><div class="value" id="btc-vol">—</div></div>
-        <div class="spark">⚡ Live from CoinGecko</div>
+<body class="min-h-screen text-gray-100">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <!-- Level Header -->
+    <div class="level-card rounded-2xl p-6 mb-4 pixel-border text-center">
+      <div class="text-xs uppercase tracking-widest text-emerald-400 mb-1">Travel Rank</div>
+      <div id="levelDisplay" class="text-3xl md:text-5xl font-black text-white"></div>
+      <div class="mt-2 flex items-center justify-center gap-3 text-sm text-gray-400">
+        <span>🌍 <span id="countryCount">0</span> countries</span>
+        <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+        <span id="nextLevelHint" class="text-gray-500"></span>
+      </div>
+      <div class="mt-3 max-w-md mx-auto bg-gray-800 rounded-full h-2 overflow-hidden">
+        <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500" style="width:0%"></div>
+      </div>
     </div>
-</div>
 
-<!-- ═══════════════ WHAT IS BITCOIN ═══════════════ -->
-<section>
-    <div class="container">
-        <h2>🧐 What <em>Is</em> Bitcoin?</h2>
-        <p style="font-size:1.1rem; margin-bottom:1.5rem;">
-            Imagine <strong>digital cash</strong> that works anywhere, doesn't need a bank,
-            and nobody can take from you. <em>That's Bitcoin.</em>
-        </p>
-        <div class="card-grid">
-            <div class="card"><span class="icon">🌍</span><h3>Borderless</h3><p>Send money anywhere — no banks, no 3–5 business days.</p></div>
-            <div class="card"><span class="icon">🔒</span><h3>You Control It</h3><p>Nobody can freeze your account. Your coins, your rules.</p></div>
-            <div class="card"><span class="icon">📦</span><h3>Scarce</h3><p>Only <strong>21 million</strong> will ever exist. No infinite printing.</p></div>
-            <div class="card"><span class="icon">📜</span><h3>Transparent</h3><p>Every transaction is public on the blockchain.</p></div>
+    <!-- Dynamic Quest Objective -->
+    <div id="questPanel" class="quest-panel rounded-lg px-4 py-2.5 mb-4 text-sm flex items-center gap-2">
+      <span class="text-emerald-400 font-bold text-xs">🎯 OBJECTIVE:</span>
+      <span id="questText" class="text-gray-300"></span>
+    </div>
+
+    <!-- World Map -->
+    <div id="worldMapContainer" class="rounded-2xl pixel-border mb-6 bg-gray-900/50 map-ocean">
+      <div class="p-4 border-b border-gray-800 flex items-center justify-between relative z-10">
+        <h2 class="text-lg font-bold text-white">🗺️ World Map</h2>
+        <button id="resetBtn" class="text-xs text-gray-400 hover:text-red-400 transition px-3 py-1 rounded-lg border border-gray-700 hover:border-red-500">Reset Progress</button>
+      </div>
+      <div class="lat-line" style="top:33%"></div>
+      <div class="lat-line" style="top:66%"></div>
+      <div id="mapGrid" class="relative z-10 p-3 md:p-4">
+        <div class="flex flex-wrap gap-2 md:gap-3">
+          <div id="continent-na" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
+            <div class="continent-label text-blue-300 font-bold uppercase tracking-widest mb-1.5 border-b border-blue-900/40 pb-1">🌎 North America</div>
+            <div class="flex flex-wrap gap-1.5" data-continent="na"></div>
+          </div>
+          <div id="continent-eu" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
+            <div class="continent-label text-indigo-300 font-bold uppercase tracking-widest mb-1.5 border-b border-indigo-900/40 pb-1">🌍 Europe</div>
+            <div class="flex flex-wrap gap-1.5" data-continent="eu"></div>
+          </div>
+          <div id="continent-as" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
+            <div class="continent-label text-amber-300 font-bold uppercase tracking-widest mb-1.5 border-b border-amber-900/40 pb-1">🌏 Asia</div>
+            <div class="flex flex-wrap gap-1.5" data-continent="as"></div>
+          </div>
+          <div id="continent-sa" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
+            <div class="continent-label text-emerald-300 font-bold uppercase tracking-widest mb-1.5 border-b border-emerald-900/40 pb-1">🌎 South America</div>
+            <div class="flex flex-wrap gap-1.5" data-continent="sa"></div>
+          </div>
+          <div id="continent-af" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
+            <div class="continent-label text-amber-300 font-bold uppercase tracking-widest mb-1.5 border-b border-amber-900/40 pb-1">🌍 Africa</div>
+            <div class="flex flex-wrap gap-1.5" data-continent="af"></div>
+          </div>
+          <div id="continent-oc" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
+            <div class="continent-label text-sky-300 font-bold uppercase tracking-widest mb-1.5 border-b border-sky-900/40 pb-1">🌏 Oceania</div>
+            <div class="flex flex-wrap gap-1.5" data-continent="oc"></div>
+          </div>
+          <div id="continent-me" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
+            <div class="continent-label text-rose-300 font-bold uppercase tracking-widest mb-1.5 border-b border-rose-900/40 pb-1">🕌 Middle East</div>
+            <div class="flex flex-wrap gap-1.5" data-continent="me"></div>
+          </div>
         </div>
+      </div>
     </div>
-</section>
 
-<!-- ═══════════════ INTERACTIVE TOOLS ═══════════════ -->
-<section>
-    <div class="container">
-        <h2>🛠️ Play With It</h2>
-
-        <!-- ─── TOOL 1: SATOSHI CONVERTER ─── -->
-        <div class="tool-box">
-            <h3>💰 Satoshi Converter</h3>
-            <p class="desc">1 Bitcoin = 100,000,000 satoshis. See how much your money buys.</p>
-            <div class="input-group">
-                <label>Amount</label>
-                <input type="number" id="conv-amount" value="100" step="any">
-                <select id="conv-from">
-                    <option value="usd">USD</option>
-                    <option value="btc">BTC</option>
-                    <option value="sats">sats</option>
-                </select>
-                <button class="btn" onclick="convert()">Convert →</button>
-            </div>
-            <div class="result-box" id="conv-result"></div>
+    <!-- Bottom Utility Bar -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Column 1: Achievement Badges -->
+      <div class="rounded-xl pixel-border bg-gray-900/40 p-5">
+        <h3 class="text-emerald-400 font-bold text-sm uppercase tracking-wider mb-3">🏅 Achievement Badges</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <div id="badge-culinary" class="badge-icon locked flex flex-col items-center gap-1 p-2 rounded-lg bg-gray-800/50 border border-gray-700">
+            <span class="text-2xl">🍜</span>
+            <span class="text-[10px] text-gray-400 font-semibold text-center leading-tight">Culinary Connoisseur</span>
+            <span class="text-[9px] text-gray-500"><span class="badge-progress" data-badge="culinary">0</span>/5</span>
+          </div>
+          <div id="badge-culture" class="badge-icon locked flex flex-col items-center gap-1 p-2 rounded-lg bg-gray-800/50 border border-gray-700">
+            <span class="text-2xl">🏛️</span>
+            <span class="text-[10px] text-gray-400 font-semibold text-center leading-tight">Cultural Guardian</span>
+            <span class="text-[9px] text-gray-500"><span class="badge-progress" data-badge="culture">0</span>/5</span>
+          </div>
+          <div id="badge-transit" class="badge-icon locked flex flex-col items-center gap-1 p-2 rounded-lg bg-gray-800/50 border border-gray-700">
+            <span class="text-2xl">🚆</span>
+            <span class="text-[10px] text-gray-400 font-semibold text-center leading-tight">Urban Legend</span>
+            <span class="text-[9px] text-gray-500"><span class="badge-progress" data-badge="transit">0</span>/5</span>
+          </div>
+          <div id="badge-bitcoin" class="badge-icon locked flex flex-col items-center gap-1 p-2 rounded-lg bg-gray-800/50 border border-gray-700">
+            <span class="text-2xl">₿</span>
+            <span class="text-[10px] text-gray-400 font-semibold text-center leading-tight">Orange Pilled</span>
+            <span class="text-[9px] text-gray-500"><span class="badge-progress" data-badge="bitcoin">0</span>/5</span>
+          </div>
         </div>
+      </div>
 
-        <!-- ─── TOOL 2: TIME MACHINE ─── -->
-        <div class="tool-box">
-            <h3>⏰ Time Machine</h3>
-            <p class="desc">What if you bought Bitcoin years ago? Pick a date and find out.</p>
-            <div class="input-group">
-                <label>Invested</label>
-                <input type="number" id="tm-amount" value="100" step="any" style="max-width:120px">
-                <label style="min-width:auto">USD on</label>
-                <select id="tm-date"></select>
-                <button class="btn" onclick="timeMachine()">Travel →</button>
-            </div>
-            <div class="result-box" id="tm-result"></div>
-        </div>
+      <!-- Column 2: Bitcoin Travel Tips -->
+      <div class="rounded-xl pixel-border bg-gray-900/40 p-5">
+        <h3 class="text-blue-400 font-bold text-sm uppercase tracking-wider mb-3">₿ Bitcoin Travel Tips</h3>
+        <ul class="space-y-3 text-sm text-gray-300">
+          <li class="flex gap-2"><span class="text-blue-400 shrink-0">⚡</span> Use peer-to-peer Lightning apps (Phoenix, Breez) to spend sats globally — avoid bank forex fees entirely.</li>
+          <li class="flex gap-2"><span class="text-blue-400 shrink-0">💾</span> Keep a hardware wallet (Trezor/Coldcard) in your carry-on, never checked luggage.</li>
+          <li class="flex gap-2"><span class="text-blue-400 shrink-0">🛡️</span> Encrypt a paper backup of your seed phrase and store it separately from your wallet.</li>
+          <li class="flex gap-2"><span class="text-blue-400 shrink-0">📱</span> Save digital copies of your passport & visa to a secure cloud drive before departure.</li>
+          <li class="flex gap-2"><span class="text-blue-400 shrink-0">📶</span> Buy an international e-SIM (Airalo, Holafly) before landing — instant connectivity, no roaming fees.</li>
+        </ul>
+      </div>
 
-        <!-- ─── TOOL 3: DCA SIMULATOR ─── -->
-        <div class="tool-box">
-            <h3>📆 Dollar-Cost Average (DCA) Simulator</h3>
-            <p class="desc">What if you bought $50 every week for the last year?</p>
-            <div class="input-group">
-                <label>Weekly</label>
-                <input type="number" id="dca-amount" value="50" step="any" style="max-width:120px">
-                <button class="btn" onclick="dcaSim()">Simulate →</button>
-            </div>
-            <div class="result-box" id="dca-result"></div>
-        </div>
+      <!-- Column 3: Donate -->
+      <div class="rounded-xl pixel-border bg-gray-900/40 p-5 flex flex-col items-center text-center">
+        <h3 class="text-amber-400 font-bold text-sm uppercase tracking-wider mb-3">⚡ Support with Bitcoin</h3>
+        <p class="text-xs text-gray-400 mb-3 break-all select-all font-mono bg-gray-800 px-3 py-2 rounded-lg w-full">bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7</p>
+        <button id="copyBtn" class="bg-amber-600 hover:bg-amber-500 text-white text-sm font-semibold px-6 py-2 rounded-lg transition glow-blue w-full">📋 Copy Address</button>
+        <p class="text-[10px] text-gray-500 mt-2">Donations power open-source travel tools</p>
+      </div>
     </div>
-</section>
+  </div>
 
-<!-- ═══════════════ HOW IT WORKS ═══════════════ -->
-<section>
-    <div class="container">
-        <h2>⚡ How It Works</h2>
-        <div class="card-grid">
-            <div class="card"><span class="icon">👛</span><h3>1. Get a Wallet</h3><p>A digital wallet is your Bitcoin bank account — an app on your phone.</p></div>
-            <div class="card"><span class="icon">🪙</span><h3>2. Buy Some</h3><p>Use an exchange to swap your money for Bitcoin.</p></div>
-            <div class="card"><span class="icon">📤</span><h3>3. Send & Receive</h3><p>Share your wallet address. Hit send to pay anyone.</p></div>
-            <div class="card"><span class="icon">🔐</span><h3>4. Keep It Safe</h3><p>Your private key is like a password — back it up!</p></div>
-        </div>
+  <!-- Activity Modal -->
+  <div id="activityModal" class="fixed inset-0 modal-overlay flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-gray-900 rounded-2xl pixel-border max-w-md w-full p-6 border border-gray-700">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-white">🏆 <span id="modalCountryName">Country</span></h3>
+        <button id="closeModal" class="text-gray-400 hover:text-white text-xl leading-none">&times;</button>
+      </div>
+      <p class="text-sm text-gray-400 mb-4">What did you accomplish here?</p>
+      <div id="activityChoices" class="space-y-3 mb-6">
+        <!-- populated by JS -->
+      </div>
+      <button id="saveActivities" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg transition glow-emerald">Save & Continue</button>
     </div>
-</section>
+  </div>
 
-<!-- ═══════════════ BITCOIN vs BANK ═══════════════ -->
-<section>
-    <div class="container">
-        <h2>⚖️ Bitcoin vs Traditional Money</h2>
-        <table class="compare-table">
-            <thead><tr><th></th><th>🏦 Traditional Money</th><th>₿ Bitcoin</th></tr></thead>
-            <tbody>
-                <tr><td>Who controls it?</td><td>Governments & central banks</td><td>Nobody — decentralized</td></tr>
-                <tr><td>Can they print more?</td><td>Yes, infinitely</td><td>No — capped at 21M</td></tr>
-                <tr><td>Transaction speed</td><td>Days (international)</td><td>Minutes</td></tr>
-                <tr><td>Need a bank account?</td><td>Yes</td><td>No — just internet</td></tr>
-                <tr><td>Can it be frozen?</td><td>Yes</td><td>No</td></tr>
-                <tr><td>Private?</td><td>Bank sees everything</td><td>Pseudonymous</td></tr>
-            </tbody>
-        </table>
-    </div>
-</section>
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-emerald-400 px-5 py-2.5 rounded-lg text-sm font-semibold pixel-border toast hidden z-50 whitespace-nowrap"></div>
 
-<!-- ═══════════════ MYTHS ═══════════════ -->
-<section>
-    <div class="container">
-        <h2>🤦 Myths That Need to Die</h2>
-        <div class="accordion">
-            <details><summary>❌ "Only used by criminals."</summary><div class="answer">Cash is used by criminals too. Blockchains are actually <em>more</em> traceable. Legitimate users, companies, and countries use Bitcoin every day.</div></details>
-            <details><summary>❌ "It's a bubble that will go to zero."</summary><div class="answer">People have called it a bubble every year since 2011. It's still here. Volatility is real, but it's become a trillion-dollar asset used by institutions worldwide.</div></details>
-            <details><summary>❌ "Bad for the environment."</summary><div class="answer">Over 50% of mining uses renewable energy. Bitcoin incentivizes green energy development (stranded energy, methane capture).</div></details>
-            <details><summary>❌ "I need to buy a whole Bitcoin."</summary><div class="answer">Bitcoin is divisible to 8 decimals. You can buy <strong>$10 worth</strong>. The smallest unit is a <em>satoshi</em>: 0.00000001 BTC.</div></details>
-            <details><summary>❌ "It's too late."</summary><div class="answer">Less than 5% of the world owns Bitcoin. Adoption is still early. The best time to learn was years ago. The second best is now.</div></details>
-        </div>
-    </div>
-</section>
+  <script>
+    // =====================================================================
+    // ACTIVITY DATABASE — Regional pools with tags for badge tracking
+    // =====================================================================
+    const ACTIVITY_DB = {
+      specific: {
+        'Japan': [
+          { text: 'Navigated Tokyo\'s Shibuya Scramble without breaking stride', tags: ['transit', 'culture'] },
+          { text: 'Stayed overnight in a traditional ryokan with onsen', tags: ['culture'] },
+          { text: 'Ate fresh sushi at Tsukiji Outer Market at 5am', tags: ['culinary'] },
+          { text: 'Hiked the Kumano Kodo pilgrimage trail', tags: ['culture'] },
+          { text: 'Paid for ramen with Lightning at a Bitcoin-friendly café', tags: ['bitcoin', 'culinary'] }
+        ],
+        'China': [
+          { text: 'Hiked a remote unrestored section of the Great Wall', tags: ['culture'] },
+          { text: 'Ordered street food using only WeChat gestures', tags: ['culinary', 'transit'] },
+          { text: 'Navigated the Shanghai Metro during rush hour', tags: ['transit'] },
+          { text: 'Visited the Terracotta Warriors before the crowds', tags: ['culture'] },
+          { text: 'Found a Bitcoin OTC desk in Shenzhen\'s electronics market', tags: ['bitcoin'] }
+        ],
+        'United States': [
+          { text: 'Road-tripped Route 66 in a convertible', tags: ['transit', 'culture'] },
+          { text: 'Ate at a 50-year-old family-run diner in the Midwest', tags: ['culinary'] },
+          { text: 'Hiked a national park at sunrise', tags: ['culture'] },
+          { text: 'Paid for gas with Lightning via a BTCPay terminal', tags: ['bitcoin', 'transit'] },
+          { text: 'Navigated the NYC subway like a local', tags: ['transit'] }
+        ],
+        'India': [
+          { text: 'Rode a tuk-tuk through Old Delhi\'s chaos', tags: ['transit', 'culture'] },
+          { text: 'Ate street-side masala dosa in Bangalore at midnight', tags: ['culinary'] },
+          { text: 'Watched sunrise at the Taj Mahal', tags: ['culture'] },
+          { text: 'Survived a Mumbai local train at peak hour', tags: ['transit'] },
+          { text: 'Bought chai from a vendor who accepted Lightning', tags: ['bitcoin', 'culinary'] }
+        ]
+      },
+      regional: {
+        eastAsia: [
+          { text: 'Mastered a bowl of noodles from a street-side stall', tags: ['culinary'] },
+          { text: 'Visited a centuries-old temple at dawn', tags: ['culture'] },
+          { text: 'Rode a high-speed rail across the countryside', tags: ['transit'] },
+          { text: 'Tried a bizarre local vending machine snack', tags: ['culinary'] },
+          { text: 'Navigated a mega-city subway without speaking the language', tags: ['transit'] },
+          { text: 'Attended a traditional tea ceremony', tags: ['culture'] },
+          { text: 'Found a Bitcoin meetup in a coworking space', tags: ['bitcoin'] }
+        ],
+        southeastAsia: [
+          { text: 'Ate insect skewers from a night market', tags: ['culinary'] },
+          { text: 'Hopped between islands on a local ferry', tags: ['transit'] },
+          { text: 'Explored an ancient temple complex', tags: ['culture'] },
+          { text: 'Got a custom-tailored outfit for $20', tags: ['culture'] },
+          { text: 'Rode a scooter through rice terraces', tags: ['transit', 'culture'] },
+          { text: 'Bartered at a floating market', tags: ['culinary'] },
+          { text: 'Paid for a massage with Lightning', tags: ['bitcoin'] }
+        ],
+        westernEurope: [
+          { text: 'Explored a 1000-year-old castle vault', tags: ['culture'] },
+          { text: 'Attended a performance in a historic opera house', tags: ['culture'] },
+          { text: 'Successfully ordered coffee in the native dialect', tags: ['culinary'] },
+          { text: 'Mastered the metro system without a map', tags: ['transit'] },
+          { text: 'Ate at a Michelin-starred restaurant for lunch', tags: ['culinary'] },
+          { text: 'Biked through a city like a local', tags: ['transit'] },
+          { text: 'Used Lightning to buy a baguette at a bakery', tags: ['bitcoin', 'culinary'] }
+        ],
+        easternEurope: [
+          { text: 'Explored Soviet-era brutalist architecture', tags: ['culture'] },
+          { text: 'Ate hearty pierogi from a grandmother\'s stall', tags: ['culinary'] },
+          { text: 'Navigated the tram system without Google Maps', tags: ['transit'] },
+          { text: 'Visited a Cold War bunker museum', tags: ['culture'] },
+          { text: 'Tried local street-fermented beverages', tags: ['culinary'] },
+          { text: 'Found a hidden Bitcoin ATM in a basement club', tags: ['bitcoin'] }
+        ],
+        latinAmerica: [
+          { text: 'Learned basic salsa steps from a local instructor', tags: ['culture'] },
+          { text: 'Successfully used a local Collectivo mini-bus route', tags: ['transit'] },
+          { text: 'Visited the ruins of an ancient civilization', tags: ['culture'] },
+          { text: 'Ate street tacos from a cart at 2am', tags: ['culinary'] },
+          { text: 'Haggled at a bustling local mercado', tags: ['culinary', 'culture'] },
+          { text: 'Used Lightning to pay a street musician', tags: ['bitcoin', 'culture'] },
+          { text: 'Rode a chicken bus across the countryside', tags: ['transit'] }
+        ],
+        africa: [
+          { text: 'Watched wildlife on a sunrise safari', tags: ['culture'] },
+          { text: 'Ate injera with your hands at a local home', tags: ['culinary'] },
+          { text: 'Negotiated a fare with a shared taxi driver', tags: ['transit'] },
+          { text: 'Visited a vibrant open-air market', tags: ['culinary', 'culture'] },
+          { text: 'Learned a few phrases in a local tribal language', tags: ['culture'] },
+          { text: 'Rode a moto-taxi through busy streets', tags: ['transit'] },
+          { text: 'Sent sats to a vendor via mobile Lightning', tags: ['bitcoin'] }
+        ],
+        oceania: [
+          { text: 'Snorkelled a coral reef at sunrise', tags: ['culture'] },
+          { text: 'Ate a meat pie from a roadside bakery', tags: ['culinary'] },
+          { text: 'Hitched a ride on a sailing boat', tags: ['transit'] },
+          { text: 'Hiked a coastal trail with incredible views', tags: ['culture'] },
+          { text: 'Tried a local craft IPA at a beach bar', tags: ['culinary'] },
+          { text: 'Found a Bitcoin-accepting surf shop', tags: ['bitcoin'] }
+        ],
+        middleEast: [
+          { text: 'Explored a centuries-old souk maze', tags: ['culture'] },
+          { text: 'Ate street-side shawarma from a busy cart', tags: ['culinary'] },
+          { text: 'Negotiated a desert safari without getting scammed', tags: ['transit', 'culture'] },
+          { text: 'Visited a mosque with stunning tilework', tags: ['culture'] },
+          { text: 'Drank tea with locals in a cafe', tags: ['culinary', 'culture'] },
+          { text: 'Used Lightning to buy spices in the market', tags: ['bitcoin', 'culinary'] }
+        ],
+        northAmerica: [
+          { text: 'Ate at a legendary hole-in-the-wall diner', tags: ['culinary'] },
+          { text: 'Navigated a major city\'s subway completely lost', tags: ['transit'] },
+          { text: 'Visited a world-class museum for free', tags: ['culture'] },
+          { text: 'Tried a regional food you can\'t get anywhere else', tags: ['culinary'] },
+          { text: 'Took a Greyhound bus cross-state', tags: ['transit'] },
+          { text: 'Found a Bitcoin-friendly cafe downtown', tags: ['bitcoin'] }
+        ]
+      }
+    };
 
-<!-- ═══════════════ GET STARTED ═══════════════ -->
-<section>
-    <div class="container">
-        <h2>🎯 How to Start</h2>
-        <ol class="step-list">
-            <li><strong>Download a wallet app</strong> — Try <a href="https://phoenix.acinq.co" target="_blank">Phoenix</a>, <a href="https://bluewallet.io" target="_blank">Blue Wallet</a>, or <a href="https://muun.com" target="_blank">Muun</a>.</li>
-            <li><strong>Buy a small amount</strong> — Use <a href="https://strike.me" target="_blank">Strike</a>, <a href="https://relai.app" target="_blank">Relai</a>, or <a href="https://coinbase.com" target="_blank">Coinbase</a>. Start with $20–$50.</li>
-            <li><strong>Send a test transaction</strong> — Send 0.0001 BTC to a friend. Once you do it, it clicks.</li>
-            <li><strong>Learn self-custody</strong> — Phone wallet for small amounts. Hardware wallet (Ledger, Trezor) for larger.</li>
-            <li><strong>Ignore the noise</strong> — Don't check price daily. Don't join "pump" groups. Hold what you can afford to lose.</li>
-        </ol>
-    </div>
-</section>
+    // Map countries to regions
+    const COUNTRY_REGIONS = {
+      'United States': 'northAmerica', 'Canada': 'northAmerica', 'Mexico': 'northAmerica',
+      'Brazil': 'latinAmerica', 'Argentina': 'latinAmerica', 'Colombia': 'latinAmerica', 'Chile': 'latinAmerica', 'Peru': 'latinAmerica',
+      'United Kingdom': 'westernEurope', 'France': 'westernEurope', 'Germany': 'westernEurope', 'Spain': 'westernEurope',
+      'Italy': 'westernEurope', 'Netherlands': 'westernEurope', 'Switzerland': 'westernEurope', 'Sweden': 'westernEurope',
+      'Norway': 'westernEurope', 'Portugal': 'westernEurope', 'Greece': 'westernEurope', 'Ireland': 'westernEurope',
+      'Austria': 'westernEurope', 'Poland': 'easternEurope', 'Ukraine': 'easternEurope', 'Belgium': 'westernEurope',
+      'Denmark': 'westernEurope', 'Finland': 'westernEurope', 'Romania': 'easternEurope', 'Czech Republic': 'easternEurope',
+      'Hungary': 'easternEurope', 'Croatia': 'easternEurope',
+      'Japan': 'eastAsia', 'China': 'eastAsia', 'South Korea': 'eastAsia', 'Taiwan': 'eastAsia', 'Mongolia': 'eastAsia',
+      'India': 'eastAsia', 'Thailand': 'southeastAsia', 'Vietnam': 'southeastAsia', 'Indonesia': 'southeastAsia',
+      'Philippines': 'southeastAsia', 'Malaysia': 'southeastAsia', 'Singapore': 'southeastAsia',
+      'Sri Lanka': 'southeastAsia', 'Nepal': 'eastAsia', 'Cambodia': 'southeastAsia', 'Myanmar': 'southeastAsia',
+      'Bangladesh': 'eastAsia', 'Uzbekistan': 'eastAsia', 'Kazakhstan': 'eastAsia',
+      'Australia': 'oceania', 'New Zealand': 'oceania', 'Fiji': 'oceania',
+      'South Africa': 'africa', 'Nigeria': 'africa', 'Kenya': 'africa', 'Morocco': 'africa',
+      'Egypt': 'africa', 'Ghana': 'africa', 'Ethiopia': 'africa', 'Tanzania': 'africa',
+      'Algeria': 'africa', 'Senegal': 'africa', 'Mozambique': 'africa', 'Angola': 'africa',
+      'United Arab Emirates': 'middleEast', 'Saudi Arabia': 'middleEast', 'Israel': 'middleEast',
+      'Qatar': 'middleEast', 'Jordan': 'middleEast', 'Oman': 'middleEast', 'Bahrain': 'middleEast',
+      'Lebanon': 'middleEast', 'Kuwait': 'middleEast',
+      'Turkey': 'middleEast'
+    };
 
-<!-- ═══════════════ QUIZ ═══════════════ -->
-<section>
-    <div class="container">
-        <h2>🧠 Quick Quiz</h2>
-        <p style="margin-bottom:1rem;">Test what you just learned! (Be honest — no peeking at the answers above 😉)</p>
-        <div id="quiz"></div>
-        <div class="quiz-score" id="quiz-score"></div>
-    </div>
-</section>
+    const CONTINENTS = {
+      na: { label: 'North America', countries: ['United States', 'Canada', 'Mexico'] },
+      sa: { label: 'South America', countries: ['Brazil', 'Argentina', 'Colombia', 'Chile', 'Peru'] },
+      eu: { label: 'Europe', countries: ['United Kingdom', 'France', 'Germany', 'Spain', 'Italy', 'Netherlands', 'Switzerland', 'Sweden', 'Norway', 'Portugal', 'Greece', 'Ireland', 'Austria', 'Poland', 'Ukraine', 'Belgium', 'Denmark', 'Finland', 'Romania', 'Czech Republic', 'Hungary', 'Croatia'] },
+      as: { label: 'Asia', countries: ['Japan', 'China', 'South Korea', 'India', 'Thailand', 'Vietnam', 'Indonesia', 'Philippines', 'Malaysia', 'Singapore', 'Taiwan', 'Turkey', 'Sri Lanka', 'Nepal', 'Cambodia', 'Myanmar', 'Bangladesh', 'Uzbekistan', 'Kazakhstan', 'Mongolia'] },
+      oc: { label: 'Oceania', countries: ['Australia', 'New Zealand', 'Fiji'] },
+      af: { label: 'Africa', countries: ['South Africa', 'Nigeria', 'Kenya', 'Morocco', 'Egypt', 'Ghana', 'Ethiopia', 'Tanzania', 'Algeria', 'Senegal', 'Mozambique', 'Angola'] },
+      me: { label: 'Middle East', countries: ['United Arab Emirates', 'Saudi Arabia', 'Israel', 'Qatar', 'Jordan', 'Oman', 'Bahrain', 'Lebanon', 'Kuwait'] }
+    };
 
-<!-- ═══════════════ FAQ ═══════════════ -->
-<section>
-    <div class="container">
-        <h2>❓ Quick Answers</h2>
-        <div class="faq-item"><h3>Is Bitcoin legal?</h3><p>Yes in most countries. US, EU, UK, Japan, Australia, and most of the world allow it.</p></div>
-        <div class="faq-item"><h3>Do I need to be a computer genius?</h3><p>Nope. If you can use a banking app, you can use Bitcoin.</p></div>
-        <div class="faq-item"><h3>Can I lose my Bitcoin?</h3><p>Yes — if you lose your private keys. Start small and learn safety first.</p></div>
-        <div class="faq-item"><h3>What makes it worth anything?</h3><p>Same as gold: trust + scarcity + utility. Bitcoin is digital gold you can send instantly.</p></div>
-        <div class="faq-item"><h3>Should I invest?</h3><p>⚠️ Not financial advice. Only invest what you can afford to lose. Do your own research.</p></div>
-    </div>
-</section>
+    const ALL_COUNTRIES = Object.values(CONTINENTS).flatMap(c => c.countries);
 
-<footer>
-    <div class="container">
-        <p>Made with ☕ and ₿ for curious humans.</p>
-        <p style="margin-top:0.3rem;">Not financial advice. Do your own research.</p>
-        <p style="margin-top:0.75rem;">
-            <a href="https://bitcoin.org" target="_blank">bitcoin.org</a> ·
-            <a href="https://bitcoiner.guide" target="_blank">bitcoiner.guide</a> ·
-            <a href="https://lopp.net/bitcoin.html" target="_blank">lopp.net</a>
-        </p>
-    </div>
-</footer>
+    const LEVELS = [
+      { min: 0, label: 'Level 0: Couch Potato', icon: '🥔' },
+      { min: 1, label: 'Level 1: Beginner Traveller', icon: '🎒' },
+      { min: 6, label: 'Level 2: Intermediate Adventurer', icon: '✈️' },
+      { min: 11, label: 'Level 3: Advanced Explorer', icon: '🧭' }
+    ];
 
-<script>
-// ═══════════════════════════════════════════════════════════════
-//  1. LIVE PRICE TICKER
-// ═══════════════════════════════════════════════════════════════
+    const QUEST_TEXTS = [
+      { min: 0, text: 'Venture beyond your border. Unlock Country #1.' },
+      { min: 1, text: 'Regional Explorer. Log accomplishments in 5 countries.' },
+      { min: 6, text: 'Sovereign Wanderer. Hunt for unique context-specific milestones across the globe.' }
+    ];
 
-let currentPrice = 0;
+    const BADGE_CONFIG = {
+      culinary: { label: 'Culinary Connoisseur', icon: '🍜', threshold: 5 },
+      culture: { label: 'Cultural Guardian', icon: '🏛️', threshold: 5 },
+      transit: { label: 'Urban Legend', icon: '🚆', threshold: 5 },
+      bitcoin: { label: 'Orange Pilled', icon: '₿', threshold: 5 }
+    };
 
-async function fetchPrice() {
-    try {
-        const res = await fetch(
-            'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_market_cap=true&include_24hr_vol=true'
+    let state = JSON.parse(localStorage.getItem('bitcoinerTraveller')) || {};
+
+    // =====================================================================
+    // ACTIVITY GENERATION — generateActivitySet(countryName)
+    // =====================================================================
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function generateActivitySet(country) {
+      const region = COUNTRY_REGIONS[country];
+      const pool = [];
+
+      // Check for country-specific entries
+      if (ACTIVITY_DB.specific[country]) {
+        pool.push(...ACTIVITY_DB.specific[country]);
+      }
+
+      // Add regional entries
+      if (region && ACTIVITY_DB.regional[region]) {
+        pool.push(...ACTIVITY_DB.regional[region]);
+      }
+
+      // Fallback generic
+      if (pool.length === 0) {
+        pool.push(
+          { text: 'Explored the city center on foot', tags: ['culture'] },
+          { text: 'Tried a local dish at a busy restaurant', tags: ['culinary'] },
+          { text: 'Used public transport to get around', tags: ['transit'] },
+          { text: 'Visited a famous landmark', tags: ['culture'] },
+          { text: 'Found a place that accepts Bitcoin', tags: ['bitcoin'] }
         );
-        const data = await res.json();
-        const btc = data.bitcoin;
-        currentPrice = btc.usd;
+      }
 
-        document.getElementById('btc-price').textContent = '$' + abbr(btc.usd);
-        document.getElementById('btc-price').className = 'value';
-
-        const change = btc.usd_24h_change;
-        const el = document.getElementById('btc-change');
-        el.textContent = (change >= 0 ? '+' : '') + change.toFixed(2) + '%';
-        el.className = 'value ' + (change >= 0 ? 'up' : 'down');
-
-        document.getElementById('btc-mcap').textContent = '$' + abbr(btc.usd_market_cap);
-        document.getElementById('btc-vol').textContent = '$' + abbr(btc.usd_24h_vol);
-    } catch (e) {
-        // fallback if rate-limited
-        document.getElementById('btc-price').textContent = '—';
-    }
-}
-
-function abbr(n) {
-    if (n >= 1e12) return (n / 1e12).toFixed(2) + 'T';
-    if (n >= 1e9)  return (n / 1e9).toFixed(2) + 'B';
-    if (n >= 1e6)  return (n / 1e6).toFixed(2) + 'M';
-    if (n >= 1e3)  return (n / 1e3).toFixed(2) + 'K';
-    return n.toFixed(2);
-}
-
-fetchPrice();
-setInterval(fetchPrice, 60000); // refresh every 60s
-
-// ═══════════════════════════════════════════════════════════════
-//  2. SATOSHI CONVERTER
-// ═══════════════════════════════════════════════════════════════
-
-function convert() {
-    const amount = parseFloat(document.getElementById('conv-amount').value);
-    const from   = document.getElementById('conv-from').value;
-    const box    = document.getElementById('conv-result');
-
-    if (!amount || amount <= 0) { box.className = 'result-box'; box.style.display = 'none'; return; }
-
-    let btc, usd, sats;
-    if (from === 'usd') {
-        usd = amount;
-        btc = amount / currentPrice;
-        sats = btc * 1e8;
-    } else if (from === 'btc') {
-        btc = amount;
-        usd = amount * currentPrice;
-        sats = amount * 1e8;
-    } else { // sats
-        sats = amount;
-        btc = amount / 1e8;
-        usd = btc * currentPrice;
+      const shuffled = shuffle(pool);
+      return shuffled.slice(0, 3);
     }
 
-    box.innerHTML = `
-        <div><strong>${from === 'usd' ? '$' : ''}${fmt(amount)}${from === 'btc' ? ' BTC' : from === 'sats' ? ' sats' : ''}</strong> =</div>
-        <div class="big">$${fmt(usd)}</div>
-        <div>or <strong>${fmt(btc)} BTC</strong> · <strong>${fmt(sats)} sats</strong></div>
-        <div class="note">1 BTC = $${fmt(currentPrice)} · 1 BTC = 100,000,000 sats</div>
-    `;
-    box.className = 'result-box show';
-}
+    // =====================================================================
+    // CORE FUNCTIONS
+    // =====================================================================
+    function getCountryData(name) {
+      if (!state[name]) state[name] = { unlocked: false, activities: [], savedChoices: [] };
+      return state[name];
+    }
 
-function fmt(n) {
-    if (Math.abs(n) >= 1) return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    return n.toFixed(2);
-}
+    function countUnlocked() {
+      return ALL_COUNTRIES.filter(c => state[c] && state[c].unlocked).length;
+    }
 
-// ═══════════════════════════════════════════════════════════════
-//  3. TIME MACHINE — historical data
-// ═══════════════════════════════════════════════════════════════
-
-// approximate BTC price at key dates (source: CoinGecko)
-const HISTORY = [
-    { label: 'Jul 2026 (now)',  date: '2026-07-08' },
-    { label: 'Jan 2026',       price: 65000 },
-    { label: 'Jul 2025',       price: 38000 },
-    { label: 'Jan 2025',       price: 42000 },
-    { label: 'Jul 2024',       price: 58000 },
-    { label: 'Jan 2024',       price: 44000 },
-    { label: 'Jul 2023',       price: 30000 },
-    { label: 'Jan 2023',       price: 16500 },
-    { label: 'Jul 2022',       price: 20000 },
-    { label: 'Jan 2022',       price: 47000 },
-    { label: 'Jul 2021',       price: 35000 },
-    { label: 'Jan 2021',       price: 29000 },
-    { label: 'Jul 2020',       price: 9200 },
-    { label: 'Jan 2020',       price: 7200 },
-    { label: 'Jul 2019',       price: 11000 },
-    { label: 'Jan 2019',       price: 3700 },
-    { label: 'Jul 2018',       price: 6400 },
-    { label: 'Jan 2018',       price: 14000 },
-    { label: 'Jul 2017',       price: 2500 },
-    { label: 'Jan 2017',       price: 1000 },
-    { label: 'Jan 2016',       price: 430 },
-    { label: 'Jan 2015',       price: 320 },
-    { label: 'Jan 2014',       price: 800 },
-    { label: 'Jan 2013',       price: 13 },
-    { label: 'Jan 2012',       price: 5 },
-    { label: 'Jan 2011',       price: 0.30 },
-];
-
-function populateDates() {
-    const sel = document.getElementById('tm-date');
-    HISTORY.forEach(h => {
-        const opt = document.createElement('option');
-        opt.value = h.price || currentPrice;
-        opt.textContent = h.label;
-        sel.appendChild(opt);
-    });
-}
-populateDates();
-
-function timeMachine() {
-    const amount = parseFloat(document.getElementById('tm-amount').value);
-    const sel    = document.getElementById('tm-date');
-    const price  = parseFloat(sel.value);
-    const label  = sel.options[sel.selectedIndex].text;
-    const box    = document.getElementById('tm-result');
-
-    if (!amount || amount <= 0) { box.className = 'result-box'; box.style.display = 'none'; return; }
-
-    const btcBought = amount / price;
-    const nowWorth  = btcBought * currentPrice;
-    const multiple  = nowWorth / amount;
-
-    box.innerHTML = `
-        <div>If you invested <strong>$${fmt(amount)}</strong> in ${label} at ~$${fmt(price)}/BTC…</div>
-        <div class="big">$${fmt(nowWorth)} today</div>
-        <div>That's <strong>${btcBought.toFixed(8)} BTC</strong> — a <strong>${multiple.toFixed(1)}×</strong> return!</div>
-        <div class="note">Past performance does not predict future results.</div>
-    `;
-    box.className = 'result-box show';
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  4. DCA SIMULATOR (weekly, last 52 weeks)
-// ═══════════════════════════════════════════════════════════════
-
-// approximate weekly BTC prices for last year (simulated from actual trend)
-// In production you'd fetch historical OHLC. This gives a reasonable feel.
-async function dcaSim() {
-    const weeklyAmount = parseFloat(document.getElementById('dca-amount').value);
-    const box = document.getElementById('dca-result');
-
-    if (!weeklyAmount || weeklyAmount <= 0) { box.className = 'result-box'; box.style.display = 'none'; return; }
-
-    let totalInvested = 0;
-    let totalBtc = 0;
-
-    // generate approximate weekly prices for last 52 weeks by scaling from current price
-    // this simulates the price action roughly — good enough for illustration
-    try {
-        // Try to get actual historical data
-        const now = Math.floor(Date.now() / 1000);
-        const yearAgo = now - 52 * 7 * 24 * 3600;
-        const res = await fetch(
-            `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&from=${yearAgo}&to=${now}`
-        );
-        const data = await res.json();
-        const prices = data.prices; // [[timestamp, price], ...]
-
-        // sample 52 weeks
-        const step = Math.floor(prices.length / 52);
-        for (let i = 0; i < 52 && i * step < prices.length; i++) {
-            const price = prices[i * step][1];
-            totalInvested += weeklyAmount;
-            totalBtc += weeklyAmount / price;
+    function countTagged(tag) {
+      let total = 0;
+      for (const name of ALL_COUNTRIES) {
+        const data = state[name];
+        if (data && data.savedChoices) {
+          for (const choice of data.savedChoices) {
+            if (choice.tags && choice.tags.includes(tag)) total++;
+          }
         }
-    } catch (e) {
-        // fallback: approximate with random-ish walk from current price
-        let price = currentPrice * 0.7;
-        for (let w = 0; w < 52; w++) {
-            price *= 1 + (Math.random() - 0.48) * 0.06;
-            if (price < 1000) price = 1000;
-            totalInvested += weeklyAmount;
-            totalBtc += weeklyAmount / price;
-        }
+      }
+      return total;
     }
 
-    const nowWorth = totalBtc * currentPrice;
-    const profit   = nowWorth - totalInvested;
-    const returnPct = (profit / totalInvested) * 100;
+    function getLevelInfo(count) {
+      let lvl = LEVELS[0];
+      for (const l of LEVELS) {
+        if (count >= l.min) lvl = l;
+      }
+      return lvl;
+    }
 
-    box.innerHTML = `
-        <div>Invested <strong>$${fmt(weeklyAmount)}/week</strong> for 52 weeks</div>
-        <div class="big">$${fmt(nowWorth)} today</div>
-        <div>Total invested: <strong>$${fmt(totalInvested)}</strong>
-             · ${profit >= 0 ? 'Profit' : 'Loss'}: <strong style="color:${profit >= 0 ? '#16a34a' : '#dc2626'}">${profit >= 0 ? '+' : ''}$${fmt(profit)} (${returnPct >= 0 ? '+' : ''}${returnPct.toFixed(1)}%)</strong></div>
-        <div>You'd own <strong>${totalBtc.toFixed(6)} BTC</strong></div>
-        <div class="note">Based on approximate weekly prices. Not exact — just for illustration.</div>
-    `;
-    box.className = 'result-box show';
-}
+    function getNextThreshold(count) {
+      for (const l of LEVELS) {
+        if (l.min > count) return l;
+      }
+      return null;
+    }
 
-// ═══════════════════════════════════════════════════════════════
-//  5. QUIZ
-// ═══════════════════════════════════════════════════════════════
+    function getQuestText(count) {
+      let qt = QUEST_TEXTS[0];
+      for (const q of QUEST_TEXTS) {
+        if (count >= q.min) qt = q;
+      }
+      return qt.text;
+    }
 
-const quizData = [
-    {
-        q: 'What is the maximum number of Bitcoin that will ever exist?',
-        options: ['1 million', '21 million', 'Unlimited', '100 million'],
-        correct: 1,
-        explain: 'Only 21 million BTC will ever be mined. This scarcity is why people call it "digital gold."'
-    },
-    {
-        q: 'What is the smallest unit of Bitcoin called?',
-        options: ['A microcoin', 'A satoshi', 'A bit', 'A wei'],
-        correct: 1,
-        explain: '1 satoshi = 0.00000001 BTC. Named after the creator, Satoshi Nakamoto.'
-    },
-    {
-        q: 'Can someone freeze your Bitcoin?',
-        options: ['Yes, the bank can', 'Yes, the government can', 'No, only you control it', 'Only if you have more than $10K'],
-        correct: 2,
-        explain: 'With Bitcoin, you hold your own private keys. Nobody can freeze or seize your coins without them.'
-    },
-    {
-        q: 'What powers the Bitcoin network?',
-        options: ['A central server', 'Google', 'Thousands of computers worldwide (miners)', 'Your bank'],
-        correct: 2,
-        explain: 'Bitcoin is decentralized — thousands of miners around the world secure the network together.'
-    },
-    {
-        q: 'How much Bitcoin do you need to buy to get started?',
-        options: ['At least 1 BTC', 'At least 0.1 BTC', 'As little as $10 worth', 'You can only mine it'],
-        correct: 2,
-        explain: 'You can buy any fraction of a Bitcoin. Many exchanges let you start with $10 or less.'
-    },
-];
+    // =====================================================================
+    // RENDER FUNCTIONS
+    // =====================================================================
+    function renderLevel() {
+      const count = countUnlocked();
+      const lvl = getLevelInfo(count);
+      const next = getNextThreshold(count);
 
-function renderQuiz() {
-    const container = document.getElementById('quiz');
-    let html = '';
-    quizData.forEach((item, i) => {
-        html += `<div class="quiz-question" id="q${i}">
-            <div class="q-text">${i + 1}. ${item.q}</div>
-            <div class="quiz-options">`;
-        item.options.forEach((opt, j) => {
-            html += `<label id="q${i}o${j}">
-                <input type="radio" name="q${i}" value="${j}" onchange="checkQuiz()">
-                ${opt}
-            </label>`;
+      document.getElementById('levelDisplay').textContent = `${lvl.icon} ${lvl.label}`;
+      document.getElementById('countryCount').textContent = count;
+      document.getElementById('questText').textContent = getQuestText(count);
+
+      if (next) {
+        const needed = next.min - count;
+        const range = next.min - lvl.min;
+        const pct = range > 0 ? ((count - lvl.min) / range) * 100 : 0;
+        document.getElementById('progressBar').style.width = Math.min(pct, 100) + '%';
+        document.getElementById('nextLevelHint').textContent = `${needed} more to ${next.label.replace(/Level \d+: /,'')}`;
+      } else {
+        document.getElementById('progressBar').style.width = '100%';
+        document.getElementById('nextLevelHint').textContent = '🏆 Max level reached!';
+      }
+
+      renderBadges();
+    }
+
+    function renderBadges() {
+      for (const [key, cfg] of Object.entries(BADGE_CONFIG)) {
+        const count = countTagged(key);
+        const el = document.getElementById(`badge-${key}`);
+        const progressEl = el.querySelector('.badge-progress');
+        if (progressEl) progressEl.textContent = count;
+        if (count >= cfg.threshold) {
+          el.classList.remove('locked');
+          el.classList.add('unlocked');
+          el.classList.add('border-blue-500', 'bg-blue-900/20');
+          el.classList.remove('border-gray-700');
+        } else {
+          el.classList.remove('unlocked', 'border-blue-500', 'bg-blue-900/20');
+          el.classList.add('locked', 'border-gray-700');
+        }
+      }
+    }
+
+    function renderMap() {
+      Object.keys(CONTINENTS).forEach(key => {
+        const container = document.querySelector(`[data-continent="${key}"]`);
+        if (!container) return;
+        container.innerHTML = '';
+        CONTINENTS[key].countries.forEach(name => {
+          const data = getCountryData(name);
+          const btn = document.createElement('button');
+          btn.className = `country-btn rounded-lg border px-2 py-1 font-medium transition cursor-pointer ${
+            data.unlocked
+              ? 'unlocked border-emerald-500 bg-emerald-900/30 text-emerald-300'
+              : 'border-gray-700 bg-gray-800/60 text-gray-300 hover:border-blue-500 hover:bg-gray-800'
+          }`;
+          btn.textContent = name;
+          btn.dataset.country = name;
+          btn.addEventListener('click', () => openModal(name));
+          container.appendChild(btn);
         });
-        html += `</div>
-            <div class="quiz-feedback" id="q${i}fb"></div>
-        </div>`;
-    });
-    container.innerHTML = html +
-        `<button class="btn" onclick="submitQuiz()">Submit Answers</button>`;
-}
+      });
+    }
 
-function checkQuiz() {
-    // live highlight (optional — we do it on submit for simplicity)
-}
+    function openModal(name) {
+      const data = getCountryData(name);
+      document.getElementById('modalCountryName').textContent = name;
 
-function submitQuiz() {
-    let score = 0;
-    quizData.forEach((item, i) => {
-        const selected = document.querySelector(`input[name="q${i}"]:checked`);
-        const fb = document.getElementById(`q${i}fb`);
-        if (!selected) {
-            fb.textContent = '❌ No answer selected. ' + item.explain;
-            fb.className = 'quiz-feedback show';
-            return;
-        }
-        const val = parseInt(selected.value);
-        const isCorrect = val === item.correct;
-        if (isCorrect) score++;
+      const choicesContainer = document.getElementById('activityChoices');
+      choicesContainer.innerHTML = '';
 
-        // highlight labels
-        item.options.forEach((_, j) => {
-            const label = document.getElementById(`q${i}o${j}`);
-            label.className = '';
-            if (j === item.correct) label.className = 'correct';
-            else if (j === val && !isCorrect) label.className = 'wrong';
+      // If already has saved choices, show them; otherwise generate fresh
+      const choices = data.savedChoices && data.savedChoices.length === 3
+        ? data.savedChoices
+        : generateActivitySet(name);
+
+      choices.forEach((choice, idx) => {
+        const selected = data.savedChoices && data.savedChoices.some(c => c.text === choice.text);
+        const label = document.createElement('label');
+        label.className = `activity-option flex items-center gap-3 p-3 rounded-lg bg-gray-800 cursor-pointer transition border ${selected ? 'border-emerald-500 bg-emerald-900/20' : 'border-gray-700'} hover:border-emerald-500`;
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.className = 'activity-checkbox w-5 h-5 rounded accent-emerald-500 cursor-pointer shrink-0';
+        cb.dataset.activityText = choice.text;
+        cb.dataset.activityTags = JSON.stringify(choice.tags);
+        cb.checked = selected;
+        const span = document.createElement('span');
+        span.className = 'text-sm text-gray-200';
+        span.textContent = choice.text;
+        label.appendChild(cb);
+        label.appendChild(span);
+        choicesContainer.appendChild(label);
+      });
+
+      document.getElementById('activityModal').dataset.country = name;
+      document.getElementById('activityModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('activityModal').classList.add('hidden');
+    }
+
+    function spawnParticles(country) {
+      const btn = document.querySelector(`[data-country="${country}"]`);
+      if (!btn) return;
+      const rect = btn.getBoundingClientRect();
+      const emojis = ['✨', '🌟', '⚡', '🌍', '🗺️'];
+      for (let i = 0; i < 5; i++) {
+        const p = document.createElement('div');
+        p.className = 'unlock-particle';
+        p.textContent = emojis[i % emojis.length];
+        p.style.left = (rect.left + rect.width * (0.2 + 0.6 * Math.random())) + 'px';
+        p.style.top = (rect.top + rect.height * (0.2 + 0.6 * Math.random())) + 'px';
+        p.style.animationDelay = (i * 0.08) + 's';
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1500);
+      }
+    }
+
+    function saveActivities() {
+      const name = document.getElementById('activityModal').dataset.country;
+      const data = getCountryData(name);
+
+      const savedChoices = [];
+      document.querySelectorAll('.activity-checkbox:checked').forEach(cb => {
+        savedChoices.push({
+          text: cb.dataset.activityText,
+          tags: JSON.parse(cb.dataset.activityTags)
         });
+      });
 
-        fb.innerHTML = (isCorrect ? '✅ Correct! ' : '❌ Nope. ') + item.explain;
-        fb.className = 'quiz-feedback show';
+      data.savedChoices = savedChoices;
+      data.activities = savedChoices.map(c => c.text);
+      const wasUnlocked = data.unlocked;
+      data.unlocked = savedChoices.length > 0;
+
+      state[name] = data;
+      persist();
+
+      if (data.unlocked && !wasUnlocked) {
+        spawnParticles(name);
+      }
+
+      renderLevel();
+      renderMap();
+      closeModal();
+    }
+
+    function persist() {
+      localStorage.setItem('bitcoinerTraveller', JSON.stringify(state));
+    }
+
+    function resetProgress() {
+      if (confirm('Reset all travel progress? This cannot be undone.')) {
+        state = {};
+        persist();
+        renderLevel();
+        renderMap();
+      }
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      el.classList.remove('toast');
+      void el.offsetWidth;
+      el.classList.add('toast');
+      setTimeout(() => el.classList.add('hidden'), 2700);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderLevel();
+      renderMap();
+
+      document.getElementById('closeModal').addEventListener('click', closeModal);
+      document.getElementById('saveActivities').addEventListener('click', saveActivities);
+      document.getElementById('resetBtn').addEventListener('click', resetProgress);
+      document.getElementById('copyBtn').addEventListener('click', () => {
+        navigator.clipboard.writeText('bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7').then(() => {
+          showToast('📋 Address copied to clipboard!');
+        }).catch(() => {
+          showToast('Failed to copy. Select manually.');
+        });
+      });
+
+      document.getElementById('activityModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeModal();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+      });
     });
-
-    document.getElementById('quiz-score').textContent =
-        `You got ${score}/${quizData.length} correct! ${score === quizData.length ? '🎉 Perfect!' : score >= 3 ? '👏 Good job!' : 'Keep learning!'}`;
-}
-
-renderQuiz();
-
-// ═══════════════════════════════════════════════════════════════
-//  INIT — convert with default value on load
-// ═══════════════════════════════════════════════════════════════
-
-setTimeout(() => {
-    convert();
-}, 500);
-</script>
+  </script>
 </body>
 </html>
