@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bitcoiner Travelling</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', 'Roboto', sans-serif; }
+    body { background: #030712; }
+    .glow-emerald { box-shadow: 0 0 15px rgba(52,211,153,0.5), 0 0 30px rgba(52,211,153,0.2); }
+    .glow-blue { box-shadow: 0 0 15px rgba(59,130,246,0.5), 0 0 30px rgba(59,130,246,0.2); }
+    .country-btn { transition: all 0.2s ease; font-size: 0.7rem; line-height: 1.1; }
+    .country-btn:hover { transform: scale(1.05); z-index: 2; }
+    .country-btn.unlocked { background: #064e3b !important; border-color: #10b981 !important; color: #6ee7b7 !important; }
+    .country-btn.unlocked::after { content: ' ✓'; }
+    .modal-overlay { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+    .toast { animation: fadeInOut 2s ease forwards; }
+    @keyframes fadeInOut { 0% { opacity:0; transform:translateY(10px); } 15% { opacity:1; transform:translateY(0); } 85% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(-10px); } }
+    .pixel-border { border: 2px solid #1f2937; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05); }
+    .level-card { background: linear-gradient(135deg, rgba(17,24,39,0.95), rgba(3,7,18,0.98)); }
+    .continent-label { font-size: 0.6rem; letter-spacing: 0.1em; }
+    .map-ocean { background: radial-gradient(ellipse at center, #0c1929, #030712); }
+    .continent-section { position: relative; }
+    .continent-section::before { content: ''; position: absolute; inset: 0; border-radius: 12px; opacity: 0.08; pointer-events: none; }
+    #worldMapContainer { position: relative; overflow: hidden; }
+    #worldMapContainer::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 40% 30% at 25% 40%, rgba(52,211,153,0.03) 0%, transparent 70%), radial-gradient(ellipse 30% 25% at 70% 30%, rgba(59,130,246,0.03) 0%, transparent 70%), radial-gradient(ellipse 35% 30% at 50% 55%, rgba(251,191,36,0.02) 0%, transparent 70%), radial-gradient(ellipse 20% 15% at 85% 70%, rgba(52,211,153,0.02) 0%, transparent 70%); pointer-events: none; }
+    .lat-line { position: absolute; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.03); pointer-events: none; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #111827; }
+    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+  </style>
+</head>
+<body class="min-h-screen text-gray-100">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <!-- Level Header -->
+    <div class="level-card rounded-2xl p-6 mb-6 pixel-border text-center">
+      <div class="text-xs uppercase tracking-widest text-emerald-400 mb-1">Travel Rank</div>
+      <div id="levelDisplay" class="text-4xl md:text-5xl font-black text-white"></div>
+      <div class="mt-2 flex items-center justify-center gap-3 text-sm text-gray-400">
+        <span>🌍 <span id="countryCount">0</span> countries</span>
+        <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+        <span id="nextLevelHint" class="text-gray-500"></span>
+      </div>
+      <div class="mt-3 max-w-md mx-auto bg-gray-800 rounded-full h-2 overflow-hidden">
+        <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- World Map -->
+    <div id="worldMapContainer" class="rounded-2xl pixel-border mb-6 bg-gray-900/50 map-ocean">
+      <div class="p-4 border-b border-gray-800 flex items-center justify-between relative z-10">
+        <h2 class="text-lg font-bold text-white">🗺️ World Map</h2>
+        <button id="resetBtn" class="text-xs text-gray-400 hover:text-red-400 transition px-3 py-1 rounded-lg border border-gray-700 hover:border-red-500">Reset Progress</button>
+      </div>
+      <div class="lat-line" style="top:33%"></div>
+      <div class="lat-line" style="top:66%"></div>
+      <div id="mapGrid" class="relative z-10 p-3 md:p-4">
+        <!-- Continents laid out geographically: NA top-left, SA bottom-left, Europe top-center, Asia top-right, Africa center, Oceania bottom-right -->
+        <div class="flex flex-wrap gap-2 md:gap-3">
+
+          <!-- NORTH AMERICA -->
+          <div id="continent-na" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
+            <div class="continent-label text-blue-300 font-bold uppercase tracking-widest mb-1.5 border-b border-blue-900/40 pb-1">🌎 North America</div>
+            <div class="flex flex-wrap gap-1.5" data-continent="na"></div>
+          </div>
+
+          <!-- EUROPE -->
+          <div id="continent-eu" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
+            <div class="continent-label text-indigo-300 font-bold uppercase tracking-widest mb-1.5 border-b border-indigo-900/40 pb-1">🌍 Europe</div>
+            <div class="flex flex-wrap gap-1.5" data-continent="eu"></div>
+          </div>
+
+          <!-- ASIA -->
+          <div id="continent-as" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
+            <div class="continent-label text-amber-300 font-bold uppercase tracking-widest mb-1.5 border-b border-amber-900/40 pb-1">🌏 Asia</div>
+            <div class="flex flex-wrap gap-1.5" data-continent="as"></div>
+          </div>
+
+          <!-- SOUTH AMERICA -->
+          <div id="continent-sa" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
+            <div class="continent-label text-emerald-300 font-bold uppercase tracking-widest mb-1.5 border-b border-emerald-900/40 pb-1">🌎 South America</div>
+            <div class="flex flex-wrap gap-1.5" data-continent="sa"></div>
+          </div>
+
+          <!-- AFRICA -->
+          <div id="continent-af" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
+            <div class="continent-label text-amber-300 font-bold uppercase tracking-widest mb-1.5 border-b border-amber-900/40 pb-1">🌍 Africa</div>
+            <div class="flex flex-wrap gap-1.5" data-continent="af"></div>
+          </div>
+
+          <!-- OCEANIA -->
+          <div id="continent-oc" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
+            <div class="continent-label text-sky-300 font-bold uppercase tracking-widest mb-1.5 border-b border-sky-900/40 pb-1">🌏 Oceania</div>
+            <div class="flex flex-wrap gap-1.5" data-continent="oc"></div>
+          </div>
+
+          <!-- MIDDLE EAST (sub-region of Asia, visually between Europe/Africa/Asia) -->
+          <div id="continent-me" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
+            <div class="continent-label text-rose-300 font-bold uppercase tracking-widest mb-1.5 border-b border-rose-900/40 pb-1">🕌 Middle East</div>
+            <div class="flex flex-wrap gap-1.5" data-continent="me"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Utility Bar -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Column 1: Travel Tips -->
+      <div class="rounded-xl pixel-border bg-gray-900/40 p-5">
+        <h3 class="text-emerald-400 font-bold text-sm uppercase tracking-wider mb-3">✈️ General Travel Tips</h3>
+        <ul class="space-y-3 text-sm text-gray-300">
+          <li class="flex gap-2"><span class="text-emerald-400 shrink-0">📱</span> Save digital copies of your passport & visa to a secure cloud drive before departure.</li>
+          <li class="flex gap-2"><span class="text-emerald-400 shrink-0">📶</span> Buy an international e-SIM (e.g. Airalo, Holafly) before landing — instant connectivity, no roaming fees.</li>
+          <li class="flex gap-2"><span class="text-emerald-400 shrink-0">🔌</span> Carry a universal adapter with multiple USB-C ports — one charger for all devices.</li>
+        </ul>
+      </div>
+
+      <!-- Column 2: Bitcoin Tips -->
+      <div class="rounded-xl pixel-border bg-gray-900/40 p-5">
+        <h3 class="text-blue-400 font-bold text-sm uppercase tracking-wider mb-3">₿ Bitcoin Travel Tips</h3>
+        <ul class="space-y-3 text-sm text-gray-300">
+          <li class="flex gap-2"><span class="text-blue-400 shrink-0">⚡</span> Use peer-to-peer Lightning apps (Phoenix, Breez) to spend sats globally — avoid bank forex fees entirely.</li>
+          <li class="flex gap-2"><span class="text-blue-400 shrink-0">💾</span> Keep a hardware wallet (Trezor/Coldcard) in your carry-on, never checked luggage.</li>
+          <li class="flex gap-2"><span class="text-blue-400 shrink-0">🛡️</span> Encrypt a paper backup of your seed phrase and store it separately from your wallet.</li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Donate -->
+      <div class="rounded-xl pixel-border bg-gray-900/40 p-5 flex flex-col items-center text-center">
+        <h3 class="text-amber-400 font-bold text-sm uppercase tracking-wider mb-3">⚡ Support with Bitcoin</h3>
+        <p class="text-xs text-gray-400 mb-3 break-all select-all font-mono bg-gray-800 px-3 py-2 rounded-lg w-full">bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7</p>
+        <button id="copyBtn" class="bg-amber-600 hover:bg-amber-500 text-white text-sm font-semibold px-6 py-2 rounded-lg transition glow-blue w-full">📋 Copy Address</button>
+        <p class="text-[10px] text-gray-500 mt-2">Donations power open-source travel tools</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity Modal -->
+  <div id="activityModal" class="fixed inset-0 modal-overlay flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-gray-900 rounded-2xl pixel-border max-w-md w-full p-6 border border-gray-700">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-white">🏆 <span id="modalCountryName">Country</span></h3>
+        <button id="closeModal" class="text-gray-400 hover:text-white text-xl leading-none">&times;</button>
+      </div>
+      <p class="text-sm text-gray-400 mb-4">What did you accomplish here?</p>
+      <div class="space-y-3 mb-6">
+        <label class="flex items-center gap-3 p-3 rounded-lg bg-gray-800 cursor-pointer hover:bg-gray-750 transition border border-gray-700 hover:border-emerald-500">
+          <input type="checkbox" class="activity-checkbox w-5 h-5 rounded accent-emerald-500 cursor-pointer shrink-0" data-activity="landmarks">
+          <span class="text-sm text-gray-200">🏛️ Explored iconic cultural & historic landmarks</span>
+        </label>
+        <label class="flex items-center gap-3 p-3 rounded-lg bg-gray-800 cursor-pointer hover:bg-gray-750 transition border border-gray-700 hover:border-emerald-500">
+          <input type="checkbox" class="activity-checkbox w-5 h-5 rounded accent-emerald-500 cursor-pointer shrink-0" data-activity="food">
+          <span class="text-sm text-gray-200">🍜 Tasted native traditional street food & delicacies</span>
+        </label>
+        <label class="flex items-center gap-3 p-3 rounded-lg bg-gray-800 cursor-pointer hover:bg-gray-750 transition border border-gray-700 hover:border-emerald-500">
+          <input type="checkbox" class="activity-checkbox w-5 h-5 rounded accent-emerald-500 cursor-pointer shrink-0" data-activity="transit">
+          <span class="text-sm text-gray-200">🚌 Successfully navigated local public transit systems</span>
+        </label>
+      </div>
+      <button id="saveActivities" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg transition glow-emerald">Save & Continue</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-emerald-400 px-5 py-2.5 rounded-lg text-sm font-semibold pixel-border toast hidden z-50 whitespace-nowrap"></div>
+
+  <script>
+    const CONTINENTS = {
+      na: { label: 'North America', countries: ['United States', 'Canada', 'Mexico'] },
+      sa: { label: 'South America', countries: ['Brazil', 'Argentina', 'Colombia', 'Chile', 'Peru'] },
+      eu: { label: 'Europe', countries: ['United Kingdom', 'France', 'Germany', 'Spain', 'Italy', 'Netherlands', 'Switzerland', 'Sweden', 'Norway', 'Portugal', 'Greece', 'Ireland', 'Austria', 'Poland', 'Ukraine', 'Belgium', 'Denmark', 'Finland', 'Romania', 'Czech Republic', 'Hungary', 'Croatia'] },
+      as: { label: 'Asia', countries: ['Japan', 'China', 'South Korea', 'India', 'Thailand', 'Vietnam', 'Indonesia', 'Philippines', 'Malaysia', 'Singapore', 'Taiwan', 'Turkey', 'Sri Lanka', 'Nepal', 'Cambodia', 'Myanmar', 'Bangladesh', 'Uzbekistan', 'Kazakhstan', 'Mongolia'] },
+      oc: { label: 'Oceania', countries: ['Australia', 'New Zealand', 'Fiji'] },
+      af: { label: 'Africa', countries: ['South Africa', 'Nigeria', 'Kenya', 'Morocco', 'Egypt', 'Ghana', 'Ethiopia', 'Tanzania', 'Algeria', 'Senegal', 'Mozambique', 'Angola'] },
+      me: { label: 'Middle East', countries: ['United Arab Emirates', 'Saudi Arabia', 'Israel', 'Qatar', 'Jordan', 'Oman', 'Bahrain', 'Lebanon', 'Kuwait'] }
+    };
+
+    const ALL_COUNTRIES = Object.values(CONTINENTS).flatMap(c => c.countries);
+
+    const LEVELS = [
+      { min: 0, label: 'Level 0: Couch Potato', icon: '🥔' },
+      { min: 1, label: 'Level 1: Beginner Traveller', icon: '🎒' },
+      { min: 6, label: 'Level 2: Intermediate Adventurer', icon: '✈️' },
+      { min: 11, label: 'Level 3: Advanced Explorer', icon: '🧭' }
+    ];
+
+    let state = JSON.parse(localStorage.getItem('bitcoinerTraveller')) || {};
+
+    function getCountryData(name) {
+      if (!state[name]) state[name] = { unlocked: false, activities: [] };
+      return state[name];
+    }
+
+    function countUnlocked() {
+      return ALL_COUNTRIES.filter(c => state[c] && state[c].unlocked).length;
+    }
+
+    function getLevelInfo(count) {
+      let lvl = LEVELS[0];
+      for (const l of LEVELS) {
+        if (count >= l.min) lvl = l;
+      }
+      return lvl;
+    }
+
+    function getNextThreshold(count) {
+      for (const l of LEVELS) {
+        if (l.min > count) return l;
+      }
+      return null;
+    }
+
+    function renderLevel() {
+      const count = countUnlocked();
+      const lvl = getLevelInfo(count);
+      const next = getNextThreshold(count);
+
+      document.getElementById('levelDisplay').textContent = `${lvl.icon} ${lvl.label}`;
+      document.getElementById('countryCount').textContent = count;
+
+      if (next) {
+        const needed = next.min - count;
+        const range = next.min - lvl.min;
+        const pct = range > 0 ? ((count - lvl.min) / range) * 100 : 0;
+        document.getElementById('progressBar').style.width = Math.min(pct, 100) + '%';
+        document.getElementById('nextLevelHint').textContent = `${needed} more to ${next.label.replace(/Level \d+: /,'')}`;
+      } else {
+        document.getElementById('progressBar').style.width = '100%';
+        document.getElementById('nextLevelHint').textContent = '🏆 Max level reached!';
+      }
+    }
+
+    function renderMap() {
+      Object.keys(CONTINENTS).forEach(key => {
+        const container = document.querySelector(`[data-continent="${key}"]`);
+        if (!container) return;
+        container.innerHTML = '';
+        CONTINENTS[key].countries.forEach(name => {
+          const data = getCountryData(name);
+          const btn = document.createElement('button');
+          btn.className = `country-btn rounded-lg border px-2 py-1 font-medium transition cursor-pointer ${
+            data.unlocked
+              ? 'unlocked border-emerald-500 bg-emerald-900/30 text-emerald-300'
+              : 'border-gray-700 bg-gray-800/60 text-gray-300 hover:border-blue-500 hover:bg-gray-800'
+          }`;
+          btn.textContent = name;
+          btn.dataset.country = name;
+          btn.addEventListener('click', () => openModal(name));
+          container.appendChild(btn);
+        });
+      });
+    }
+
+    function openModal(name) {
+      const data = getCountryData(name);
+      document.getElementById('modalCountryName').textContent = name;
+      document.querySelectorAll('.activity-checkbox').forEach(cb => {
+        cb.checked = data.activities.includes(cb.dataset.activity);
+      });
+      document.getElementById('activityModal').dataset.country = name;
+      document.getElementById('activityModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('activityModal').classList.add('hidden');
+    }
+
+    function saveActivities() {
+      const name = document.getElementById('activityModal').dataset.country;
+      const data = getCountryData(name);
+      const checked = [];
+      document.querySelectorAll('.activity-checkbox:checked').forEach(cb => {
+        checked.push(cb.dataset.activity);
+      });
+      data.activities = checked;
+      data.unlocked = checked.length > 0;
+
+      state[name] = data;
+      persist();
+      renderLevel();
+      renderMap();
+      closeModal();
+    }
+
+    function persist() {
+      localStorage.setItem('bitcoinerTraveller', JSON.stringify(state));
+    }
+
+    function resetProgress() {
+      if (confirm('Reset all travel progress? This cannot be undone.')) {
+        state = {};
+        persist();
+        renderLevel();
+        renderMap();
+      }
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      el.classList.remove('toast');
+      void el.offsetWidth;
+      el.classList.add('toast');
+      setTimeout(() => el.classList.add('hidden'), 2200);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderLevel();
+      renderMap();
+
+      document.getElementById('closeModal').addEventListener('click', closeModal);
+      document.getElementById('saveActivities').addEventListener('click', saveActivities);
+      document.getElementById('resetBtn').addEventListener('click', resetProgress);
+      document.getElementById('copyBtn').addEventListener('click', () => {
+        navigator.clipboard.writeText('bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7').then(() => {
+          showToast('📋 Address copied to clipboard!');
+        }).catch(() => {
+          showToast('Failed to copy. Select manually.');
+        });
+      });
+
+      document.getElementById('activityModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeModal();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+      });
+    });
+  </script>
+</body>
+</html>
