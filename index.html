@@ -346,7 +346,7 @@ function rA(){
   if(catF!="all")filtered=filtered.filter(function(a){return a.tags&&a.tags.indexOf(catF)>=0;});
   if(statusF=="locked")filtered=[];
   if(!filtered.length||statusF=="unlocked"&&!filtered.length){
-    g.innerHTML="<div class="col-span-full text-center text-gray-500 text-[11px] py-8">No achievements match your filters.</div>";return;
+    g.innerHTML="<div class=\"col-span-full text-center text-gray-500 text-[11px] py-8\">No achievements match your filters.</div>";return;
   }
   var seen={};
   for(var i=0;i<filtered.length;i++){
@@ -356,7 +356,7 @@ function rA(){
     div.className="achv rounded-lg border p-2 unlocked";
     div.style.borderColor=RC[a.rar]||"#374151";
     var st="";for(var s=0;s<5;s++){st+=s<(a.diff||1)?"★":"☆";}
-    div.innerHTML="<div class="text-[9px] font-bold" style="color:"+RC[a.rar]+"">["+RL[a.rar]+"]</div><div class="text-[10px] text-gray-200 leading-tight my-0.5">"+a.text+"</div><div class="text-[8px] text-gray-500">"+st+" <span class="text-gray-600">|</span> "+a.country+"</div><div class="text-[8px] text-gray-600 mt-0.5">"+(a.tags||[]).map(function(t){return TI[t]||"";}).join(" ")+"</div>";
+    div.innerHTML="<div class=\"text-[9px] font-bold\" style=\"color:"+RC[a.rar]+"\">["+RL[a.rar]+"]</div><div class=\"text-[10px] text-gray-200 leading-tight my-0.5\">"+a.text+"</div><div class=\"text-[8px] text-gray-500\">"+st+" <span class=\"text-gray-600\">|</span> "+a.country+"</div><div class=\"text-[8px] text-gray-600 mt-0.5\">"+(a.tags||[]).map(function(t){return TI[t]||"";}).join(" ")+"</div>";
     g.appendChild(div);
   }
 }
@@ -373,7 +373,7 @@ function oM(iso){
     var cb=document.createElement("input");cb.type="checkbox";cb.className="ac w-4 h-4 rounded accent-emerald-500 cursor-pointer shrink-0";
     cb.dataset.at=c.t||c.text;cb.dataset.ar=c.r||"C";cb.dataset.ac=JSON.stringify(c.c||c.tags||[]);cb.dataset.ad=c.d||1;cb.checked=sel;
     var sp=document.createElement("span");sp.className="text-[12px] text-gray-200 flex-1";
-    sp.innerHTML="<span style="color:"+RC[c.r||"C"]+";font-weight:600">["+(RL[c.r||"C"])+"]</span> "+(c.t||c.text)+" <span class="text-gray-500 text-[10px]">"+(c.d||1)+"★</span>";
+    sp.innerHTML="<span style=\"color:"+RC[c.r||"C"]+";font-weight:600\">["+(RL[c.r||"C"])+"]</span> "+(c.t||c.text)+" <span class=\"text-gray-500 text-[10px]\">"+(c.d||1)+"★</span>";
     l.appendChild(cb);l.appendChild(sp);ch.appendChild(l);
   }
   document.getElementById("activityModal").dataset.iso=iso;
@@ -383,7 +383,7 @@ function oM(iso){
 function cM(){document.getElementById("activityModal").classList.add("hidden");}
 
 function sP(iso){
-  var el=document.querySelector("path[data-iso=""+iso+""]");if(!el)return;
+  var el=document.querySelector("path[data-iso=\""+iso+"\"]");if(!el)return;
   var rect=el.getBoundingClientRect();var emojis=["✨","🌟","⚡","🌍"];
   for(var i=0;i<5;i++){var p=document.createElement("div");p.className="particle";p.textContent=emojis[i%4];
     p.style.left=(rect.left+rect.width*(0.2+0.6*Math.random()))+"px";p.style.top=(rect.top+rect.height*(0.2+0.6*Math.random()))+"px";
