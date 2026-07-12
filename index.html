@@ -13,12 +13,12 @@ body{background:#030712;overflow-x:hidden}
 .toast{animation:ft 2.5s ease forwards}
 @keyframes ft{0%{opacity:0;transform:translateY(10px)}12%{opacity:1;transform:translateY(0)}88%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
 .modal-overlay{background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);transition:opacity 0.3s ease}
-.country-btn{cursor:pointer;transition:all 0.2s ease;position:relative;border-radius:4px;font-size:9px;line-height:1.1;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:600;overflow:hidden;min-height:20px}
+.country-btn{cursor:pointer;transition:all 0.2s ease;position:relative;border-radius:4px;font-size:9px;line-height:1.1;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:600;overflow:hidden;min-height:20px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .country-btn:hover{z-index:5;transform:scale(1.12);box-shadow:0 0 20px rgba(255,255,255,0.2)}
 .country-btn.unlocked{background:rgba(16,185,129,0.5)!important;border-color:#10b981!important}
 .country-btn.unlocked::after{content:'¹3';position:absolute;top:1px;right:2px;font-size:7px;color:#6ee7b7}
-.map-grid{display:grid;grid-template-columns:repeat(36,1fr);gap:2px;padding:4px;background:radial-gradient(ellipse at 50% 50%,#0c1929,#030712);border-radius:12px}
-.map-container{width:100%;height:auto;max-height:70vh;overflow-y:auto;-webkit-overflow-scrolling:touch}@media(min-width:1024px){.map-container{max-height:550px;overflow-y:visible}}
+.map-grid{display:grid;grid-template-columns:repeat(36,1fr);gap:2px;padding:4px;background:radial-gradient(ellipse at 50% 50%,#0c1929,#030712);border-radius:12px;touch-action:manipulation}
+.map-container{width:100%;min-height:120px;touch-action:manipulation}@media(min-width:1024px){.map-container{min-height:0}}
 .continent-na{background:radial-gradient(ellipse at 50% 50%,rgba(59,130,246,0.15),transparent)}
 .continent-eu{background:radial-gradient(ellipse at 50% 50%,rgba(139,92,246,0.15),transparent)}
 .continent-as{background:radial-gradient(ellipse at 50% 50%,rgba(245,158,11,0.15),transparent)}
@@ -37,12 +37,13 @@ body{background:#030712;overflow-x:hidden}
 .country-fallback::-webkit-scrollbar{height:4px}
 .country-fallback::-webkit-scrollbar-thumb{background:#374151;border-radius:2px}
 @media(max-width:767px){
-  .country-btn{font-size:7px;border-radius:2px;min-height:24px}
-  .map-grid{gap:1px}
+  .country-btn{font-size:7px;border-radius:2px;min-height:30px}
+  .country-btn:hover{transform:scale(1.06)}
+  .map-grid{gap:1px;padding:2px}
   .modal-overlay{align-items:flex-end!important;padding:0!important}
   .modal-overlay>div{border-radius:16px 16px 0 0!important;max-height:85vh!important;margin-top:auto;transform:translateY(0);transition:transform 0.3s ease}
   .sheet-handle{width:36px;height:4px;background:#4b5563;border-radius:2px;margin:8px auto 4px;display:block}
-  .touch-btn{min-height:44px!important}
+  .touch-btn{min-height:44px!important;touch-action:manipulation}
   .avatar-btn{min-width:44px!important;min-height:44px!important;width:44px!important;height:44px!important;font-size:18px!important}
   .badge-touch{min-height:44px!important}
   .min-mobile-text{font-size:11px!important}
@@ -332,12 +333,13 @@ function cM(){document.getElementById("countryModal").classList.add("hidden");}
 function rCF(){
   var el=document.getElementById("countryFallback");
   if(!el)return;
-  el.innerHTML='<div class="flex gap-1 overflow-x-auto pb-1 country-fallback">'+
+  el.innerHTML='<div class="text-[8px] text-gray-500 mb-1">🌍 Tap a country below:</div>'+
+    '<div class="flex gap-1.5 overflow-x-auto pb-1 country-fallback" style="-webkit-overflow-scrolling:touch">'+
     CD.map(function(c){
       var cc=CC[c.c];
       var d=st[c.i]||{};
-      return '<button class="touch-btn text-[9px] px-2 py-1 rounded whitespace-nowrap border shrink-0 '+(d.u?'':'')+'" '+
-        'style="background:'+(d.u?'rgba(16,185,129,0.4)':cc.bg)+';color:'+(d.u?'#6ee7b7':cc.text)+';border-color:'+(d.u?'#10b981':cc.border)+'" '+
+      return '<button class="touch-btn text-[10px] px-3 py-1.5 rounded-lg whitespace-nowrap border shrink-0 font-semibold" '+
+        'style="background:'+(d.u?'rgba(16,185,129,0.5)':cc.bg)+';color:'+(d.u?'#6ee7b7':cc.text)+';border-color:'+(d.u?'#10b981':cc.border)+'" '+
         'data-iso="'+c.i+'">'+(d.u?'\u2713 ':'')+c.n+'</button>';
     }).join('')+'</div>';
   el.querySelectorAll('button').forEach(function(b){
