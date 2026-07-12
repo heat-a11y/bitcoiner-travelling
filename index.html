@@ -1,640 +1,488 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bitcoiner Travelling</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    * { font-family: 'Inter', 'Roboto', sans-serif; }
-    body { background: #030712; }
-    .glow-emerald { box-shadow: 0 0 15px rgba(52,211,153,0.5), 0 0 30px rgba(52,211,153,0.2); }
-    .glow-blue { box-shadow: 0 0 15px rgba(59,130,246,0.5), 0 0 30px rgba(59,130,246,0.2); }
-    .glow-amber { box-shadow: 0 0 15px rgba(251,191,36,0.5), 0 0 30px rgba(251,191,36,0.2); }
-    .country-btn { transition: all 0.25s ease; font-size: 0.7rem; line-height: 1.1; position: relative; }
-    .country-btn:hover { transform: scale(1.06); z-index: 2; border-color: #3b82f6 !important; }
-    .country-btn.unlocked { background: #064e3b !important; border-color: #10b981 !important; color: #6ee7b7 !important; }
-    .country-btn.unlocked::after { content: ' ✓'; }
-    .country-btn.unlocked { animation: pulseGlow 3s ease-in-out infinite; }
-    @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 8px rgba(16,185,129,0.3); } 50% { box-shadow: 0 0 20px rgba(16,185,129,0.6); } }
-    .modal-overlay { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
-    .toast { animation: fadeInOut 2.5s ease forwards; }
-    @keyframes fadeInOut { 0% { opacity:0; transform:translateY(10px); } 12% { opacity:1; transform:translateY(0); } 88% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(-10px); } }
-    .pixel-border { border: 2px solid #1f2937; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05); }
-    .level-card { background: linear-gradient(135deg, rgba(17,24,39,0.95), rgba(3,7,18,0.98)); }
-    .continent-label { font-size: 0.6rem; letter-spacing: 0.1em; }
-    .map-ocean { background: radial-gradient(ellipse at center, #0c1929, #030712); }
-    .continent-section { position: relative; }
-    .lat-line { position: absolute; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.03); pointer-events: none; }
-    #worldMapContainer { position: relative; overflow: hidden; }
-    #worldMapContainer::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 40% 30% at 25% 40%, rgba(52,211,153,0.03) 0%, transparent 70%), radial-gradient(ellipse 30% 25% at 70% 30%, rgba(59,130,246,0.03) 0%, transparent 70%), radial-gradient(ellipse 35% 30% at 50% 55%, rgba(251,191,36,0.02) 0%, transparent 70%), radial-gradient(ellipse 20% 15% at 85% 70%, rgba(52,211,153,0.02) 0%, transparent 70%); pointer-events: none; }
-    .badge-icon { transition: all 0.3s ease; }
-    .badge-icon.unlocked { filter: drop-shadow(0 0 8px rgba(59,130,246,0.7)); }
-    .badge-icon.locked { filter: grayscale(0.8) opacity(0.4); }
-    .unlock-particle { position: fixed; pointer-events: none; font-size: 1.5rem; z-index: 40; animation: particleUp 1.2s ease-out forwards; }
-    @keyframes particleUp { 0% { opacity:1; transform:translateY(0) scale(1); } 100% { opacity:0; transform:translateY(-80px) scale(0.3); } }
-    .quest-panel { background: linear-gradient(90deg, rgba(16,185,129,0.08), transparent); border-left: 3px solid #10b981; }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #111827; }
-    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
-    .activity-option { transition: all 0.2s ease; }
-    .activity-option:hover { border-color: #10b981; background: rgba(16,185,129,0.08); }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bitcoiner Travelling</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{font-family:'Inter','Roboto',sans-serif}
+body{background:#030712;overflow-x:hidden}
+.glow-emerald{box-shadow:0 0 15px rgba(52,211,153,0.5),0 0 30px rgba(52,211,153,0.2)}
+.glow-blue{box-shadow:0 0 15px rgba(59,130,246,0.5),0 0 30px rgba(59,130,246,0.2)}
+.modal-overlay{background:rgba(0,0,0,0.7);backdrop-filter:blur(4px)}
+.toast{animation:fadeInOut 2.5s ease forwards}
+@keyframes fadeInOut{0%{opacity:0;transform:translateY(10px)}12%{opacity:1;transform:translateY(0)}88%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
+.pixel-border{border:2px solid #1f2937;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.05)}
+.level-card{background:linear-gradient(135deg,rgba(17,24,39,0.95),rgba(3,7,18,0.98))}
+.quest-panel{background:linear-gradient(90deg,rgba(16,185,129,0.08),transparent);border-left:3px solid #10b981}
+.country-path{cursor:pointer;transition:all 0.2s ease;fill:#1f2937;stroke:#374151;stroke-width:0.5}
+.country-path:hover{fill:#1e3a5f;stroke:#3b82f6;stroke-width:1}
+.country-path.unlocked{fill:#064e3b!important;stroke:#10b981!important;stroke-width:1}
+.country-path.unlocked:hover{fill:#065f46!important}
+.travel-line{stroke:#10b981;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:url(#glow);stroke-dasharray:8 4}
+@keyframes dashMove{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-12}}
+@keyframes pulseGlow{0%,100%{opacity:0.3}50%{opacity:0.8}}
+.travel-line-pulse{stroke:#34d399;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0.4;animation:pulseGlow 2s ease-in-out infinite}
+.avatar-btn{transition:all 0.2s ease;border:2px solid transparent;cursor:pointer}
+.avatar-btn.active{border-color:#10b981;background:rgba(16,185,129,0.15);box-shadow:0 0 12px rgba(52,211,153,0.3)}
+.avatar-btn:hover{border-color:#3b82f6}
+.avatar-sprite-on-map{position:absolute;pointer-events:none;z-index:10;transition:all 0.6s cubic-bezier(0.34,1.56,0.64,1);font-size:1.5rem;transform:translate(-50%,-50%)}
+.unlock-particle{position:fixed;pointer-events:none;font-size:1.5rem;z-index:40;animation:particleUp 1.2s ease-out forwards}
+@keyframes particleUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(0.3)}}
+.activity-option{transition:all 0.2s ease}
+.activity-option:hover{border-color:#10b981;background:rgba(16,185,129,0.08)}
+svg .country-label{font-size:3px;fill:#9ca3af;pointer-events:none;font-weight:600}
+.badge-icon{transition:all 0.3s ease}
+.badge-icon.unlocked{filter:drop-shadow(0 0 8px rgba(59,130,246,0.7))}
+.badge-icon.locked{filter:grayscale(0.8) opacity(0.4)}
+#worldMapContainer{position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 50%,#0c1929,#030712)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#111827}
+::-webkit-scrollbar-thumb{background:#374151;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#4b5563}
+</style>
 </head>
 <body class="min-h-screen text-gray-100">
-  <div class="max-w-6xl mx-auto px-4 py-6">
-    <!-- Level Header -->
-    <div class="level-card rounded-2xl p-6 mb-4 pixel-border text-center">
-      <div class="text-xs uppercase tracking-widest text-emerald-400 mb-1">Travel Rank</div>
-      <div id="levelDisplay" class="text-3xl md:text-5xl font-black text-white"></div>
-      <div class="mt-2 flex items-center justify-center gap-3 text-sm text-gray-400">
-        <span>🌍 <span id="countryCount">0</span> countries</span>
-        <span class="w-1 h-1 rounded-full bg-gray-600"></span>
-        <span id="nextLevelHint" class="text-gray-500"></span>
+<div class="max-w-6xl mx-auto px-4 py-4">
+  <div class="level-card rounded-2xl p-4 md:p-5 mb-3 pixel-border">
+    <div class="flex flex-col md:flex-row items-center gap-3">
+      <div class="flex-1 text-center md:text-left">
+        <div class="text-xs uppercase tracking-widest text-emerald-400 mb-0.5">Travel Rank</div>
+        <div id="levelDisplay" class="text-2xl md:text-4xl font-black text-white"></div>
+        <div class="mt-1 flex items-center justify-center md:justify-start gap-3 text-xs text-gray-400">
+          <span>🌍 <span id="countryCount">0</span> countries</span>
+          <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+          <span id="nextLevelHint" class="text-gray-500"></span>
+        </div>
+        <div class="mt-2 max-w-xs mx-auto md:mx-0 bg-gray-800 rounded-full h-1.5 overflow-hidden">
+          <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500" style="width:0%"></div>
+        </div>
       </div>
-      <div class="mt-3 max-w-md mx-auto bg-gray-800 rounded-full h-2 overflow-hidden">
-        <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500" style="width:0%"></div>
-      </div>
-    </div>
-
-    <!-- Dynamic Quest Objective -->
-    <div id="questPanel" class="quest-panel rounded-lg px-4 py-2.5 mb-4 text-sm flex items-center gap-2">
-      <span class="text-emerald-400 font-bold text-xs">🎯 OBJECTIVE:</span>
-      <span id="questText" class="text-gray-300"></span>
-    </div>
-
-    <!-- World Map -->
-    <div id="worldMapContainer" class="rounded-2xl pixel-border mb-6 bg-gray-900/50 map-ocean">
-      <div class="p-4 border-b border-gray-800 flex items-center justify-between relative z-10">
-        <h2 class="text-lg font-bold text-white">🗺️ World Map</h2>
-        <button id="resetBtn" class="text-xs text-gray-400 hover:text-red-400 transition px-3 py-1 rounded-lg border border-gray-700 hover:border-red-500">Reset Progress</button>
-      </div>
-      <div class="lat-line" style="top:33%"></div>
-      <div class="lat-line" style="top:66%"></div>
-      <div id="mapGrid" class="relative z-10 p-3 md:p-4">
-        <div class="flex flex-wrap gap-2 md:gap-3">
-          <div id="continent-na" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
-            <div class="continent-label text-blue-300 font-bold uppercase tracking-widest mb-1.5 border-b border-blue-900/40 pb-1">🌎 North America</div>
-            <div class="flex flex-wrap gap-1.5" data-continent="na"></div>
-          </div>
-          <div id="continent-eu" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
-            <div class="continent-label text-indigo-300 font-bold uppercase tracking-widest mb-1.5 border-b border-indigo-900/40 pb-1">🌍 Europe</div>
-            <div class="flex flex-wrap gap-1.5" data-continent="eu"></div>
-          </div>
-          <div id="continent-as" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
-            <div class="continent-label text-amber-300 font-bold uppercase tracking-widest mb-1.5 border-b border-amber-900/40 pb-1">🌏 Asia</div>
-            <div class="flex flex-wrap gap-1.5" data-continent="as"></div>
-          </div>
-          <div id="continent-sa" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
-            <div class="continent-label text-emerald-300 font-bold uppercase tracking-widest mb-1.5 border-b border-emerald-900/40 pb-1">🌎 South America</div>
-            <div class="flex flex-wrap gap-1.5" data-continent="sa"></div>
-          </div>
-          <div id="continent-af" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
-            <div class="continent-label text-amber-300 font-bold uppercase tracking-widest mb-1.5 border-b border-amber-900/40 pb-1">🌍 Africa</div>
-            <div class="flex flex-wrap gap-1.5" data-continent="af"></div>
-          </div>
-          <div id="continent-oc" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
-            <div class="continent-label text-sky-300 font-bold uppercase tracking-widest mb-1.5 border-b border-sky-900/40 pb-1">🌏 Oceania</div>
-            <div class="flex flex-wrap gap-1.5" data-continent="oc"></div>
-          </div>
-          <div id="continent-me" class="continent-section flex-1 min-w-[140px] basis-[calc(33%-6px)] rounded-xl bg-gray-800/30 border border-gray-700/40 p-2.5">
-            <div class="continent-label text-rose-300 font-bold uppercase tracking-widest mb-1.5 border-b border-rose-900/40 pb-1">🕌 Middle East</div>
-            <div class="flex flex-wrap gap-1.5" data-continent="me"></div>
-          </div>
+      <div class="flex-shrink-0 bg-gray-800/60 rounded-xl px-3 py-2 border border-gray-700">
+        <div class="text-[10px] uppercase tracking-wider text-gray-400 mb-1.5 text-center">Select Avatar</div>
+        <div class="flex gap-2">
+          <button class="avatar-btn w-9 h-9 rounded-lg bg-gray-700 flex items-center justify-center text-lg" data-avatar="boy" title="Boy">🧑</button>
+          <button class="avatar-btn w-9 h-9 rounded-lg bg-gray-700 flex items-center justify-center text-lg" data-avatar="girl" title="Girl">👩</button>
+          <button class="avatar-btn w-9 h-9 rounded-lg bg-gray-700 flex items-center justify-center text-lg" data-avatar="cat" title="Cat">🐱</button>
+          <button class="avatar-btn w-9 h-9 rounded-lg bg-gray-700 flex items-center justify-center text-lg" data-avatar="dog" title="Dog">🐶</button>
         </div>
       </div>
     </div>
-
-    <!-- Bottom Utility Bar -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <!-- Column 1: Achievement Badges -->
-      <div class="rounded-xl pixel-border bg-gray-900/40 p-5">
-        <h3 class="text-emerald-400 font-bold text-sm uppercase tracking-wider mb-3">🏅 Achievement Badges</h3>
-        <div class="grid grid-cols-2 gap-3">
-          <div id="badge-culinary" class="badge-icon locked flex flex-col items-center gap-1 p-2 rounded-lg bg-gray-800/50 border border-gray-700">
-            <span class="text-2xl">🍜</span>
-            <span class="text-[10px] text-gray-400 font-semibold text-center leading-tight">Culinary Connoisseur</span>
-            <span class="text-[9px] text-gray-500"><span class="badge-progress" data-badge="culinary">0</span>/5</span>
-          </div>
-          <div id="badge-culture" class="badge-icon locked flex flex-col items-center gap-1 p-2 rounded-lg bg-gray-800/50 border border-gray-700">
-            <span class="text-2xl">🏛️</span>
-            <span class="text-[10px] text-gray-400 font-semibold text-center leading-tight">Cultural Guardian</span>
-            <span class="text-[9px] text-gray-500"><span class="badge-progress" data-badge="culture">0</span>/5</span>
-          </div>
-          <div id="badge-transit" class="badge-icon locked flex flex-col items-center gap-1 p-2 rounded-lg bg-gray-800/50 border border-gray-700">
-            <span class="text-2xl">🚆</span>
-            <span class="text-[10px] text-gray-400 font-semibold text-center leading-tight">Urban Legend</span>
-            <span class="text-[9px] text-gray-500"><span class="badge-progress" data-badge="transit">0</span>/5</span>
-          </div>
-          <div id="badge-bitcoin" class="badge-icon locked flex flex-col items-center gap-1 p-2 rounded-lg bg-gray-800/50 border border-gray-700">
-            <span class="text-2xl">₿</span>
-            <span class="text-[10px] text-gray-400 font-semibold text-center leading-tight">Orange Pilled</span>
-            <span class="text-[9px] text-gray-500"><span class="badge-progress" data-badge="bitcoin">0</span>/5</span>
-          </div>
+  </div>
+  <div id="questPanel" class="quest-panel rounded-lg px-4 py-2 mb-3 text-xs flex items-center gap-2">
+    <span class="text-emerald-400 font-bold">OBJECTIVE:</span>
+    <span id="questText" class="text-gray-300"></span>
+  </div>
+  <div id="worldMapContainer" class="rounded-2xl pixel-border mb-4 bg-gray-900/50">
+    <div class="p-3 border-b border-gray-800 flex items-center justify-between">
+      <h2 class="text-base font-bold text-white">🗺 World Map</h2>
+      <button id="resetBtn" class="text-[10px] text-gray-400 hover:text-red-400 transition px-2 py-1 rounded-lg border border-gray-700 hover:border-red-500">Reset</button>
+    </div>
+    <div class="relative" id="mapWrapper">
+      <svg id="worldSvg" viewBox="0 0 1000 500" class="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glowStrong"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <rect width="1000" height="500" fill="#030712"/>
+        <g id="countriesGroup"></g>
+        <g id="travelLineGroup"></g>
+        <g id="labelsGroup"></g>
+      </svg>
+      <div id="avatarOnMap" class="avatar-sprite-on-map hidden"></div>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+    <div class="rounded-xl pixel-border bg-gray-900/40 p-4">
+      <h3 class="text-emerald-400 font-bold text-xs uppercase tracking-wider mb-2">🏅 Achievement Badges</h3>
+      <div class="grid grid-cols-2 gap-2">
+        <div id="badge-culinary" class="badge-icon locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
+          <span class="text-xl">🍜</span>
+          <span class="text-[9px] text-gray-400 font-semibold text-center leading-tight">Culinary</span>
+          <span class="text-[8px] text-gray-500"><span class="badge-progress" data-badge="culinary">0</span>/5</span>
+        </div>
+        <div id="badge-culture" class="badge-icon locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
+          <span class="text-xl">🏛</span>
+          <span class="text-[9px] text-gray-400 font-semibold text-center leading-tight">Culture</span>
+          <span class="text-[8px] text-gray-500"><span class="badge-progress" data-badge="culture">0</span>/5</span>
+        </div>
+        <div id="badge-transit" class="badge-icon locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
+          <span class="text-xl">🚆</span>
+          <span class="text-[9px] text-gray-400 font-semibold text-center leading-tight">Transit</span>
+          <span class="text-[8px] text-gray-500"><span class="badge-progress" data-badge="transit">0</span>/5</span>
+        </div>
+        <div id="badge-bitcoin" class="badge-icon locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
+          <span class="text-xl">₿</span>
+          <span class="text-[9px] text-gray-400 font-semibold text-center leading-tight">Orange</span>
+          <span class="text-[8px] text-gray-500"><span class="badge-progress" data-badge="bitcoin">0</span>/5</span>
         </div>
       </div>
-
-      <!-- Column 2: Bitcoin Travel Tips -->
-      <div class="rounded-xl pixel-border bg-gray-900/40 p-5">
-        <h3 class="text-blue-400 font-bold text-sm uppercase tracking-wider mb-3">₿ Bitcoin Travel Tips</h3>
-        <ul class="space-y-3 text-sm text-gray-300">
-          <li class="flex gap-2"><span class="text-blue-400 shrink-0">⚡</span> Use peer-to-peer Lightning apps (Phoenix, Breez) to spend sats globally — avoid bank forex fees entirely.</li>
-          <li class="flex gap-2"><span class="text-blue-400 shrink-0">💾</span> Keep a hardware wallet (Trezor/Coldcard) in your carry-on, never checked luggage.</li>
-          <li class="flex gap-2"><span class="text-blue-400 shrink-0">🛡️</span> Encrypt a paper backup of your seed phrase and store it separately from your wallet.</li>
-          <li class="flex gap-2"><span class="text-blue-400 shrink-0">📱</span> Save digital copies of your passport & visa to a secure cloud drive before departure.</li>
-          <li class="flex gap-2"><span class="text-blue-400 shrink-0">📶</span> Buy an international e-SIM (Airalo, Holafly) before landing — instant connectivity, no roaming fees.</li>
-        </ul>
-      </div>
-
-      <!-- Column 3: Donate -->
-      <div class="rounded-xl pixel-border bg-gray-900/40 p-5 flex flex-col items-center text-center">
-        <h3 class="text-amber-400 font-bold text-sm uppercase tracking-wider mb-3">⚡ Support with Bitcoin</h3>
-        <p class="text-xs text-gray-400 mb-3 break-all select-all font-mono bg-gray-800 px-3 py-2 rounded-lg w-full">bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7</p>
-        <button id="copyBtn" class="bg-amber-600 hover:bg-amber-500 text-white text-sm font-semibold px-6 py-2 rounded-lg transition glow-blue w-full">📋 Copy Address</button>
-        <p class="text-[10px] text-gray-500 mt-2">Donations power open-source travel tools</p>
-      </div>
+    </div>
+    <div class="rounded-xl pixel-border bg-gray-900/40 p-4">
+      <h3 class="text-blue-400 font-bold text-xs uppercase tracking-wider mb-2">Bitcoin Travel Tips</h3>
+      <ul class="space-y-1.5 text-xs text-gray-300">
+        <li class="flex gap-2"><span class="text-blue-400 shrink-0">Use Lightning apps (Phoenix, Breez) to avoid bank forex fees.</li>
+        <li class="flex gap-2"><span class="text-blue-400 shrink-0">Keep hardware wallet in carry-on, never checked luggage.</li>
+        <li class="flex gap-2"><span class="text-blue-400 shrink-0">Encrypt paper backup of seed phrase stored separately.</li>
+        <li class="flex gap-2"><span class="text-blue-400 shrink-0">Save digital passport copies to secure cloud before departure.</li>
+      </ul>
+    </div>
+    <div class="rounded-xl pixel-border bg-gray-900/40 p-4 flex flex-col items-center text-center">
+      <h3 class="text-amber-400 font-bold text-xs uppercase tracking-wider mb-2">Support with Bitcoin</h3>
+      <p class="text-[10px] text-gray-400 mb-2 break-all select-all font-mono bg-gray-800 px-2 py-1.5 rounded-lg w-full">bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7</p>
+      <button id="copyBtn" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition glow-blue w-full">Copy Address</button>
     </div>
   </div>
-
-  <!-- Activity Modal -->
-  <div id="activityModal" class="fixed inset-0 modal-overlay flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-gray-900 rounded-2xl pixel-border max-w-md w-full p-6 border border-gray-700">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-bold text-white">🏆 <span id="modalCountryName">Country</span></h3>
-        <button id="closeModal" class="text-gray-400 hover:text-white text-xl leading-none">&times;</button>
-      </div>
-      <p class="text-sm text-gray-400 mb-4">What did you accomplish here?</p>
-      <div id="activityChoices" class="space-y-3 mb-6">
-        <!-- populated by JS -->
-      </div>
-      <button id="saveActivities" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg transition glow-emerald">Save & Continue</button>
+</div>
+<div id="activityModal" class="fixed inset-0 modal-overlay flex items-center justify-center p-4 hidden z-50">
+  <div class="bg-gray-900 rounded-2xl pixel-border max-w-md w-full p-5 border border-gray-700">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-lg font-bold text-white"><span id="modalCountryName">Country</span></h3>
+      <button id="closeModal" class="text-gray-400 hover:text-white text-xl leading-none">&times;</button>
     </div>
+    <p class="text-xs text-gray-400 mb-3">What did you accomplish here?</p>
+    <div id="activityChoices" class="space-y-2 mb-4"></div>
+    <button id="saveActivities" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg transition glow-emerald text-sm">Save &amp; Continue</button>
   </div>
+</div>
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-emerald-400 px-4 py-2 rounded-lg text-xs font-semibold pixel-border toast hidden z-50 whitespace-nowrap"></div>
+<script>
 
-  <!-- Toast -->
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-emerald-400 px-5 py-2.5 rounded-lg text-sm font-semibold pixel-border toast hidden z-50 whitespace-nowrap"></div>
+const CS = {
+  US:{n:'United States',c:[120,95,145,82,175,88,210,100,215,110,200,118,175,122,145,118,130,115]},
+  CA:{n:'Canada',c:[100,55,150,35,210,28,260,35,270,42,255,55,220,60,180,65,140,70,105,62]},
+  MX:{n:'Mexico',c:[175,128,195,128,200,135,198,145,185,155,173,145,172,135]},
+  BR:{n:'Brazil',c:[240,220,280,215,300,240,295,255,270,275,245,260,235,235]},
+  AR:{n:'Argentina',c:[255,280,275,282,278,295,275,310,260,328,248,310,248,295]},
+  CO:{n:'Colombia',c:[242,205,262,205,265,215,248,225,240,218]},
+  CL:{n:'Chile',c:[268,285,280,290,282,305,278,335,270,348,265,330,266,295]},
+  PE:{n:'Peru',c:[242,230,262,230,268,242,265,255,248,268,237,248]},
+  GB:{n:'United Kingdom',c:[340,85,352,82,355,88,345,98,340,94]},
+  FR:{n:'France',c:[345,98,365,98,368,108,355,118,343,108]},
+  DE:{n:'Germany',c:[360,85,380,82,385,90,375,102,358,95]},
+  ES:{n:'Spain',c:[335,105,355,105,358,115,345,125,333,112]},
+  IT:{n:'Italy',c:[365,108,378,110,380,120,368,138,360,120]},
+  NL:{n:'Netherlands',c:[355,80,368,82,365,88,358,88]},
+  CH:{n:'Switzerland',c:[368,98,382,98,380,105,372,107]},
+  SE:{n:'Sweden',c:[380,55,398,45,408,60,395,78,378,65]},
+  NO:{n:'Norway',c:[372,40,400,30,405,38,395,55,378,50]},
+  PT:{n:'Portugal',c:[330,112,340,112,338,122,332,125]},
+  GR:{n:'Greece',c:[395,125,410,122,412,130,400,140,393,135]},
+  IE:{n:'Ireland',c:[330,78,342,78,340,85,335,88]},
+  AT:{n:'Austria',c:[378,95,392,95,390,102,382,105]},
+  PL:{n:'Poland',c:[385,75,402,75,405,82,390,86,383,82]},
+  UA:{n:'Ukraine',c:[410,65,432,62,438,70,425,85,408,75]},
+  BE:{n:'Belgium',c:[350,88,365,88,362,95,355,96]},
+  DK:{n:'Denmark',c:[368,68,382,68,380,75,372,77]},
+  FI:{n:'Finland',c:[405,38,428,30,438,45,420,58,405,45]},
+  RO:{n:'Romania',c:[410,95,430,92,435,100,420,110,412,105]},
+  CZ:{n:'Czech Republic',c:[378,85,394,85,392,92,384,94]},
+  HU:{n:'Hungary',c:[398,92,415,92,412,100,396,100]},
+  HR:{n:'Croatia',c:[385,100,400,102,398,110,383,108]},
+  JP:{n:'Japan',c:[620,75,635,65,642,80,630,98,618,85]},
+  CN:{n:'China',c:[530,65,580,50,620,58,625,68,600,85,560,85,525,75]},
+  KR:{n:'South Korea',c:[615,88,628,88,630,95,618,105,612,100]},
+  IN:{n:'India',c:[550,105,585,102,598,125,575,145,548,132,542,118]},
+  TH:{n:'Thailand',c:[578,148,598,148,602,158,585,172,575,155]},
+  VN:{n:'Vietnam',c:[600,148,615,148,618,158,608,178,596,162]},
+  ID:{n:'Indonesia',c:[580,195,620,188,650,198,630,208,590,208,575,202]},
+  PH:{n:'Philippines',c:[630,150,645,148,648,158,635,172,625,158]},
+  MY:{n:'Malaysia',c:[578,170,598,172,600,180,582,182,575,178]},
+  SG:{n:'Singapore',c:[600,190,610,190,608,194,602,195]},
+  TW:{n:'Taiwan',c:[650,108,662,108,665,118,652,122,648,115]},
+  TR:{n:'Turkey',c:[440,100,468,98,478,105,465,120,442,112]},
+  LK:{n:'Sri Lanka',c:[570,145,582,145,580,152,574,154]},
+  NP:{n:'Nepal',c:[555,92,575,92,572,100,562,102]},
+  KH:{n:'Cambodia',c:[590,155,606,155,604,162,588,162]},
+  MM:{n:'Myanmar',c:[565,130,585,128,590,138,575,150,562,138]},
+  BD:{n:'Bangladesh',c:[570,108,586,108,584,118,568,118]},
+  UZ:{n:'Uzbekistan',c:[510,78,535,75,538,84,515,86]},
+  KZ:{n:'Kazakhstan',c:[465,48,525,35,550,50,520,62,480,68,460,62]},
+  MN:{n:'Mongolia',c:[550,45,600,35,625,50,585,58,560,55]},
+  AU:{n:'Australia',c:[610,290,670,270,710,290,715,305,670,328,625,318,612,305]},
+  NZ:{n:'New Zealand',c:[710,335,725,332,728,342,715,355,708,348]},
+  FJ:{n:'Fiji',c:[730,280,745,278,748,285,735,288]},
+  ZA:{n:'South Africa',c:[395,310,428,305,440,312,428,335,400,332,390,322]},
+  NG:{n:'Nigeria',c:[345,165,372,162,378,170,358,180,345,175]},
+  KE:{n:'Kenya',c:[395,175,418,175,420,185,400,195,392,188]},
+  MA:{n:'Morocco',c:[330,130,355,128,358,138,338,142,328,138]},
+  EG:{n:'Egypt',c:[378,140,402,138,408,148,390,160,375,148]},
+  GH:{n:'Ghana',c:[348,172,368,170,365,180,345,178]},
+  ET:{n:'Ethiopia',c:[400,162,428,158,435,168,415,182,395,170]},
+  TZ:{n:'Tanzania',c:[400,198,425,195,432,205,412,218,400,212]},
+  DZ:{n:'Algeria',c:[340,118,380,105,400,118,380,132,342,130]},
+  SN:{n:'Senegal',c:[325,150,345,148,342,158,332,160]},
+  MZ:{n:'Mozambique',c:[415,222,438,222,442,235,425,252,410,235]},
+  AO:{n:'Angola',c:[368,228,390,225,395,238,378,252,365,235]},
+  AE:{n:'UAE',c:[490,112,505,108,512,112,505,120,490,118]},
+  SA:{n:'Saudi Arabia',c:[455,108,480,100,500,105,505,118,490,128,465,130,452,120]},
+  IL:{n:'Israel',c:[465,128,472,125,478,128,475,135,468,136]},
+  QA:{n:'Qatar',c:[510,120,518,118,522,122,515,126]},
+  JO:{n:'Jordan',c:[470,130,478,128,482,135,475,140,468,138]},
+  OM:{n:'Oman',c:[525,118,538,112,545,118,540,130,528,132]},
+  BH:{n:'Bahrain',c:[505,115,510,113,512,117,507,119]},
+  LB:{n:'Lebanon',c:[468,122,475,120,478,125,472,127]},
+  KW:{n:'Kuwait',c:[498,108,505,105,508,110,500,112]}
+};
 
-  <script>
-    // =====================================================================
-    // ACTIVITY DATABASE — Regional pools with tags for badge tracking
-    // =====================================================================
-    const ACTIVITY_DB = {
-      specific: {
-        'Japan': [
-          { text: 'Navigated Tokyo\'s Shibuya Scramble without breaking stride', tags: ['transit', 'culture'] },
-          { text: 'Stayed overnight in a traditional ryokan with onsen', tags: ['culture'] },
-          { text: 'Ate fresh sushi at Tsukiji Outer Market at 5am', tags: ['culinary'] },
-          { text: 'Hiked the Kumano Kodo pilgrimage trail', tags: ['culture'] },
-          { text: 'Paid for ramen with Lightning at a Bitcoin-friendly café', tags: ['bitcoin', 'culinary'] }
-        ],
-        'China': [
-          { text: 'Hiked a remote unrestored section of the Great Wall', tags: ['culture'] },
-          { text: 'Ordered street food using only WeChat gestures', tags: ['culinary', 'transit'] },
-          { text: 'Navigated the Shanghai Metro during rush hour', tags: ['transit'] },
-          { text: 'Visited the Terracotta Warriors before the crowds', tags: ['culture'] },
-          { text: 'Found a Bitcoin OTC desk in Shenzhen\'s electronics market', tags: ['bitcoin'] }
-        ],
-        'United States': [
-          { text: 'Road-tripped Route 66 in a convertible', tags: ['transit', 'culture'] },
-          { text: 'Ate at a 50-year-old family-run diner in the Midwest', tags: ['culinary'] },
-          { text: 'Hiked a national park at sunrise', tags: ['culture'] },
-          { text: 'Paid for gas with Lightning via a BTCPay terminal', tags: ['bitcoin', 'transit'] },
-          { text: 'Navigated the NYC subway like a local', tags: ['transit'] }
-        ],
-        'India': [
-          { text: 'Rode a tuk-tuk through Old Delhi\'s chaos', tags: ['transit', 'culture'] },
-          { text: 'Ate street-side masala dosa in Bangalore at midnight', tags: ['culinary'] },
-          { text: 'Watched sunrise at the Taj Mahal', tags: ['culture'] },
-          { text: 'Survived a Mumbai local train at peak hour', tags: ['transit'] },
-          { text: 'Bought chai from a vendor who accepted Lightning', tags: ['bitcoin', 'culinary'] }
-        ]
-      },
-      regional: {
-        eastAsia: [
-          { text: 'Mastered a bowl of noodles from a street-side stall', tags: ['culinary'] },
-          { text: 'Visited a centuries-old temple at dawn', tags: ['culture'] },
-          { text: 'Rode a high-speed rail across the countryside', tags: ['transit'] },
-          { text: 'Tried a bizarre local vending machine snack', tags: ['culinary'] },
-          { text: 'Navigated a mega-city subway without speaking the language', tags: ['transit'] },
-          { text: 'Attended a traditional tea ceremony', tags: ['culture'] },
-          { text: 'Found a Bitcoin meetup in a coworking space', tags: ['bitcoin'] }
-        ],
-        southeastAsia: [
-          { text: 'Ate insect skewers from a night market', tags: ['culinary'] },
-          { text: 'Hopped between islands on a local ferry', tags: ['transit'] },
-          { text: 'Explored an ancient temple complex', tags: ['culture'] },
-          { text: 'Got a custom-tailored outfit for $20', tags: ['culture'] },
-          { text: 'Rode a scooter through rice terraces', tags: ['transit', 'culture'] },
-          { text: 'Bartered at a floating market', tags: ['culinary'] },
-          { text: 'Paid for a massage with Lightning', tags: ['bitcoin'] }
-        ],
-        westernEurope: [
-          { text: 'Explored a 1000-year-old castle vault', tags: ['culture'] },
-          { text: 'Attended a performance in a historic opera house', tags: ['culture'] },
-          { text: 'Successfully ordered coffee in the native dialect', tags: ['culinary'] },
-          { text: 'Mastered the metro system without a map', tags: ['transit'] },
-          { text: 'Ate at a Michelin-starred restaurant for lunch', tags: ['culinary'] },
-          { text: 'Biked through a city like a local', tags: ['transit'] },
-          { text: 'Used Lightning to buy a baguette at a bakery', tags: ['bitcoin', 'culinary'] }
-        ],
-        easternEurope: [
-          { text: 'Explored Soviet-era brutalist architecture', tags: ['culture'] },
-          { text: 'Ate hearty pierogi from a grandmother\'s stall', tags: ['culinary'] },
-          { text: 'Navigated the tram system without Google Maps', tags: ['transit'] },
-          { text: 'Visited a Cold War bunker museum', tags: ['culture'] },
-          { text: 'Tried local street-fermented beverages', tags: ['culinary'] },
-          { text: 'Found a hidden Bitcoin ATM in a basement club', tags: ['bitcoin'] }
-        ],
-        latinAmerica: [
-          { text: 'Learned basic salsa steps from a local instructor', tags: ['culture'] },
-          { text: 'Successfully used a local Collectivo mini-bus route', tags: ['transit'] },
-          { text: 'Visited the ruins of an ancient civilization', tags: ['culture'] },
-          { text: 'Ate street tacos from a cart at 2am', tags: ['culinary'] },
-          { text: 'Haggled at a bustling local mercado', tags: ['culinary', 'culture'] },
-          { text: 'Used Lightning to pay a street musician', tags: ['bitcoin', 'culture'] },
-          { text: 'Rode a chicken bus across the countryside', tags: ['transit'] }
-        ],
-        africa: [
-          { text: 'Watched wildlife on a sunrise safari', tags: ['culture'] },
-          { text: 'Ate injera with your hands at a local home', tags: ['culinary'] },
-          { text: 'Negotiated a fare with a shared taxi driver', tags: ['transit'] },
-          { text: 'Visited a vibrant open-air market', tags: ['culinary', 'culture'] },
-          { text: 'Learned a few phrases in a local tribal language', tags: ['culture'] },
-          { text: 'Rode a moto-taxi through busy streets', tags: ['transit'] },
-          { text: 'Sent sats to a vendor via mobile Lightning', tags: ['bitcoin'] }
-        ],
-        oceania: [
-          { text: 'Snorkelled a coral reef at sunrise', tags: ['culture'] },
-          { text: 'Ate a meat pie from a roadside bakery', tags: ['culinary'] },
-          { text: 'Hitched a ride on a sailing boat', tags: ['transit'] },
-          { text: 'Hiked a coastal trail with incredible views', tags: ['culture'] },
-          { text: 'Tried a local craft IPA at a beach bar', tags: ['culinary'] },
-          { text: 'Found a Bitcoin-accepting surf shop', tags: ['bitcoin'] }
-        ],
-        middleEast: [
-          { text: 'Explored a centuries-old souk maze', tags: ['culture'] },
-          { text: 'Ate street-side shawarma from a busy cart', tags: ['culinary'] },
-          { text: 'Negotiated a desert safari without getting scammed', tags: ['transit', 'culture'] },
-          { text: 'Visited a mosque with stunning tilework', tags: ['culture'] },
-          { text: 'Drank tea with locals in a cafe', tags: ['culinary', 'culture'] },
-          { text: 'Used Lightning to buy spices in the market', tags: ['bitcoin', 'culinary'] }
-        ],
-        northAmerica: [
-          { text: 'Ate at a legendary hole-in-the-wall diner', tags: ['culinary'] },
-          { text: 'Navigated a major city\'s subway completely lost', tags: ['transit'] },
-          { text: 'Visited a world-class museum for free', tags: ['culture'] },
-          { text: 'Tried a regional food you can\'t get anywhere else', tags: ['culinary'] },
-          { text: 'Took a Greyhound bus cross-state', tags: ['transit'] },
-          { text: 'Found a Bitcoin-friendly cafe downtown', tags: ['bitcoin'] }
-        ]
-      }
-    };
+const COUNTRY_REGIONS = {
+  US:'northAmerica',CA:'northAmerica',MX:'northAmerica',
+  BR:'latinAmerica',AR:'latinAmerica',CO:'latinAmerica',CL:'latinAmerica',PE:'latinAmerica',
+  GB:'westernEurope',FR:'westernEurope',DE:'westernEurope',ES:'westernEurope',
+  IT:'westernEurope',NL:'westernEurope',CH:'westernEurope',SE:'westernEurope',
+  NO:'westernEurope',PT:'westernEurope',GR:'westernEurope',IE:'westernEurope',
+  AT:'westernEurope',PL:'easternEurope',UA:'easternEurope',BE:'westernEurope',
+  DK:'westernEurope',FI:'westernEurope',RO:'easternEurope',CZ:'easternEurope',
+  HU:'easternEurope',HR:'easternEurope',
+  JP:'eastAsia',CN:'eastAsia',KR:'eastAsia',TW:'eastAsia',MN:'eastAsia',
+  IN:'eastAsia',TH:'southeastAsia',VN:'southeastAsia',ID:'southeastAsia',
+  PH:'southeastAsia',MY:'southeastAsia',SG:'southeastAsia',
+  LK:'southeastAsia',NP:'eastAsia',KH:'southeastAsia',MM:'southeastAsia',
+  BD:'eastAsia',UZ:'eastAsia',KZ:'eastAsia',
+  AU:'oceania',NZ:'oceania',FJ:'oceania',
+  ZA:'africa',NG:'africa',KE:'africa',MA:'africa',
+  EG:'africa',GH:'africa',ET:'africa',TZ:'africa',
+  DZ:'africa',SN:'africa',MZ:'africa',AO:'africa',
+  AE:'middleEast',SA:'middleEast',IL:'middleEast',
+  QA:'middleEast',JO:'middleEast',OM:'middleEast',BH:'middleEast',
+  LB:'middleEast',KW:'middleEast',TR:'middleEast'
+};
 
-    // Map countries to regions
-    const COUNTRY_REGIONS = {
-      'United States': 'northAmerica', 'Canada': 'northAmerica', 'Mexico': 'northAmerica',
-      'Brazil': 'latinAmerica', 'Argentina': 'latinAmerica', 'Colombia': 'latinAmerica', 'Chile': 'latinAmerica', 'Peru': 'latinAmerica',
-      'United Kingdom': 'westernEurope', 'France': 'westernEurope', 'Germany': 'westernEurope', 'Spain': 'westernEurope',
-      'Italy': 'westernEurope', 'Netherlands': 'westernEurope', 'Switzerland': 'westernEurope', 'Sweden': 'westernEurope',
-      'Norway': 'westernEurope', 'Portugal': 'westernEurope', 'Greece': 'westernEurope', 'Ireland': 'westernEurope',
-      'Austria': 'westernEurope', 'Poland': 'easternEurope', 'Ukraine': 'easternEurope', 'Belgium': 'westernEurope',
-      'Denmark': 'westernEurope', 'Finland': 'westernEurope', 'Romania': 'easternEurope', 'Czech Republic': 'easternEurope',
-      'Hungary': 'easternEurope', 'Croatia': 'easternEurope',
-      'Japan': 'eastAsia', 'China': 'eastAsia', 'South Korea': 'eastAsia', 'Taiwan': 'eastAsia', 'Mongolia': 'eastAsia',
-      'India': 'eastAsia', 'Thailand': 'southeastAsia', 'Vietnam': 'southeastAsia', 'Indonesia': 'southeastAsia',
-      'Philippines': 'southeastAsia', 'Malaysia': 'southeastAsia', 'Singapore': 'southeastAsia',
-      'Sri Lanka': 'southeastAsia', 'Nepal': 'eastAsia', 'Cambodia': 'southeastAsia', 'Myanmar': 'southeastAsia',
-      'Bangladesh': 'eastAsia', 'Uzbekistan': 'eastAsia', 'Kazakhstan': 'eastAsia',
-      'Australia': 'oceania', 'New Zealand': 'oceania', 'Fiji': 'oceania',
-      'South Africa': 'africa', 'Nigeria': 'africa', 'Kenya': 'africa', 'Morocco': 'africa',
-      'Egypt': 'africa', 'Ghana': 'africa', 'Ethiopia': 'africa', 'Tanzania': 'africa',
-      'Algeria': 'africa', 'Senegal': 'africa', 'Mozambique': 'africa', 'Angola': 'africa',
-      'United Arab Emirates': 'middleEast', 'Saudi Arabia': 'middleEast', 'Israel': 'middleEast',
-      'Qatar': 'middleEast', 'Jordan': 'middleEast', 'Oman': 'middleEast', 'Bahrain': 'middleEast',
-      'Lebanon': 'middleEast', 'Kuwait': 'middleEast',
-      'Turkey': 'middleEast'
-    };
+const ACTIVITY_DB = {
+  specific:{
+    JP:[{text:'Navigated Shibuya Scramble without breaking stride',tags:['transit','culture']},{text:'Stayed overnight in a traditional ryokan with onsen',tags:['culture']},{text:'Ate fresh sushi at Tsukiji Outer Market at 5am',tags:['culinary']},{text:'Hiked the Kumano Kodo pilgrimage trail',tags:['culture']},{text:'Paid for ramen with Lightning at a Bitcoin cafe',tags:['bitcoin','culinary']}],
+    CN:[{text:'Hiked a remote unrestored section of the Great Wall',tags:['culture']},{text:'Ordered street food using only WeChat gestures',tags:['culinary','transit']},{text:'Navigated Shanghai Metro during rush hour',tags:['transit']},{text:'Visited Terracotta Warriors before the crowds',tags:['culture']},{text:'Found a Bitcoin OTC desk in Shenzhen market',tags:['bitcoin']}],
+    US:[{text:'Road-tripped Route 66 in a convertible',tags:['transit','culture']},{text:'Ate at a 50-year-old family-run diner',tags:['culinary']},{text:'Hiked a national park at sunrise',tags:['culture']},{text:'Paid for gas with Lightning via BTCPay',tags:['bitcoin','transit']},{text:'Navigated NYC subway like a local',tags:['transit']}],
+    IN:[{text:'Rode a tuk-tuk through Old Delhi chaos',tags:['transit','culture']},{text:'Ate street-side masala dosa at midnight',tags:['culinary']},{text:'Watched sunrise at the Taj Mahal',tags:['culture']},{text:'Survived Mumbai local train at peak hour',tags:['transit']},{text:'Bought chai from a Lightning-enabled vendor',tags:['bitcoin','culinary']}]
+  },
+  regional:{
+    eastAsia:[{text:'Mastered a bowl of noodles from a street stall',tags:['culinary']},{text:'Visited a centuries-old temple at dawn',tags:['culture']},{text:'Rode high-speed rail across the countryside',tags:['transit']},{text:'Tried a bizarre vending machine snack',tags:['culinary']},{text:'Navigated a mega-city subway without the language',tags:['transit']},{text:'Attended a traditional tea ceremony',tags:['culture']},{text:'Found a Bitcoin meetup in a coworking space',tags:['bitcoin']}],
+    southeastAsia:[{text:'Ate insect skewers from a night market',tags:['culinary']},{text:'Hopped between islands on a local ferry',tags:['transit']},{text:'Explored an ancient temple complex',tags:['culture']},{text:'Got a custom-tailored outfit for cheap',tags:['culture']},{text:'Rode a scooter through rice terraces',tags:['transit','culture']},{text:'Bartered at a floating market',tags:['culinary']},{text:'Paid for a massage with Lightning',tags:['bitcoin']}],
+    westernEurope:[{text:'Explored a 1000-year-old castle vault',tags:['culture']},{text:'Attended a performance in a historic opera house',tags:['culture']},{text:'Ordered coffee in the native dialect',tags:['culinary']},{text:'Mastered the metro without a map',tags:['transit']},{text:'Ate at a Michelin-starred restaurant',tags:['culinary']},{text:'Biked through a city like a local',tags:['transit']},{text:'Used Lightning to buy a baguette',tags:['bitcoin','culinary']}],
+    easternEurope:[{text:'Explored Soviet-era brutalist architecture',tags:['culture']},{text:'Ate pierogi from a grandmother stall',tags:['culinary']},{text:'Navigated the tram without Google Maps',tags:['transit']},{text:'Visited a Cold War bunker museum',tags:['culture']},{text:'Found a hidden Bitcoin ATM in a basement club',tags:['bitcoin']}],
+    latinAmerica:[{text:'Learned salsa steps from a local instructor',tags:['culture']},{text:'Used a local Collectivo mini-bus route',tags:['transit']},{text:'Visited ruins of an ancient civilization',tags:['culture']},{text:'Ate street tacos from a cart at 2am',tags:['culinary']},{text:'Haggled at a bustling local mercado',tags:['culinary','culture']},{text:'Used Lightning to pay a street musician',tags:['bitcoin','culture']},{text:'Rode a chicken bus across the countryside',tags:['transit']}],
+    africa:[{text:'Watched wildlife on a sunrise safari',tags:['culture']},{text:'Ate injera with your hands at a local home',tags:['culinary']},{text:'Negotiated a shared taxi fare',tags:['transit']},{text:'Visited a vibrant open-air market',tags:['culinary','culture']},{text:'Rode a moto-taxi through busy streets',tags:['transit']},{text:'Sent sats via mobile Lightning',tags:['bitcoin']}],
+    oceania:[{text:'Snorkelled a coral reef at sunrise',tags:['culture']},{text:'Ate a meat pie from a roadside bakery',tags:['culinary']},{text:'Hitched a ride on a sailing boat',tags:['transit']},{text:'Hiked a coastal trail with views',tags:['culture']},{text:'Found a Bitcoin-accepting surf shop',tags:['bitcoin']}],
+    middleEast:[{text:'Explored a centuries-old souk maze',tags:['culture']},{text:'Ate street-side shawarma from a cart',tags:['culinary']},{text:'Negotiated a desert safari',tags:['transit','culture']},{text:'Visited a mosque with stunning tilework',tags:['culture']},{text:'Drank tea with locals in a cafe',tags:['culinary','culture']},{text:'Used Lightning to buy spices in the market',tags:['bitcoin','culinary']}],
+    northAmerica:[{text:'Ate at a legendary hole-in-the-wall diner',tags:['culinary']},{text:'Navigated a major subway completely lost',tags:['transit']},{text:'Visited a world-class museum for free',tags:['culture']},{text:'Tried a regional food you cannot get elsewhere',tags:['culinary']},{text:'Took a Greyhound bus cross-state',tags:['transit']},{text:'Found a Bitcoin-friendly cafe downtown',tags:['bitcoin']}]
+  }
+};
 
-    const CONTINENTS = {
-      na: { label: 'North America', countries: ['United States', 'Canada', 'Mexico'] },
-      sa: { label: 'South America', countries: ['Brazil', 'Argentina', 'Colombia', 'Chile', 'Peru'] },
-      eu: { label: 'Europe', countries: ['United Kingdom', 'France', 'Germany', 'Spain', 'Italy', 'Netherlands', 'Switzerland', 'Sweden', 'Norway', 'Portugal', 'Greece', 'Ireland', 'Austria', 'Poland', 'Ukraine', 'Belgium', 'Denmark', 'Finland', 'Romania', 'Czech Republic', 'Hungary', 'Croatia'] },
-      as: { label: 'Asia', countries: ['Japan', 'China', 'South Korea', 'India', 'Thailand', 'Vietnam', 'Indonesia', 'Philippines', 'Malaysia', 'Singapore', 'Taiwan', 'Turkey', 'Sri Lanka', 'Nepal', 'Cambodia', 'Myanmar', 'Bangladesh', 'Uzbekistan', 'Kazakhstan', 'Mongolia'] },
-      oc: { label: 'Oceania', countries: ['Australia', 'New Zealand', 'Fiji'] },
-      af: { label: 'Africa', countries: ['South Africa', 'Nigeria', 'Kenya', 'Morocco', 'Egypt', 'Ghana', 'Ethiopia', 'Tanzania', 'Algeria', 'Senegal', 'Mozambique', 'Angola'] },
-      me: { label: 'Middle East', countries: ['United Arab Emirates', 'Saudi Arabia', 'Israel', 'Qatar', 'Jordan', 'Oman', 'Bahrain', 'Lebanon', 'Kuwait'] }
-    };
+const LEVELS = [{min:0,label:'Level 0: Couch Potato',icon:'\u{1F954}'},{min:1,label:'Level 1: Beginner Traveller',icon:'\u{1F392}'},{min:6,label:'Level 2: Intermediate Adventurer',icon:'\u2708\uFE0F'},{min:11,label:'Level 3: Advanced Explorer',icon:'\u{1F9ED}'}];
+const QUEST_TEXTS = [{min:0,text:'Venture beyond your border. Unlock Country #1.'},{min:1,text:'Regional Explorer. Log accomplishments in 5 countries.'},{min:6,text:'Sovereign Wanderer. Hunt for unique milestones across the globe.'}];
+const BADGE_CONFIG = {culinary:{threshold:5},culture:{threshold:5},transit:{threshold:5},bitcoin:{threshold:5}};
+const ALL_ISO = Object.keys(CS);
 
-    const ALL_COUNTRIES = Object.values(CONTINENTS).flatMap(c => c.countries);
+let state = JSON.parse(localStorage.getItem('bitcoinerTraveller')) || {};
+if(!state.visitedOrder) state.visitedOrder = [];
+if(!state.avatar) state.avatar = 'boy';
 
-    const LEVELS = [
-      { min: 0, label: 'Level 0: Couch Potato', icon: '🥔' },
-      { min: 1, label: 'Level 1: Beginner Traveller', icon: '🎒' },
-      { min: 6, label: 'Level 2: Intermediate Adventurer', icon: '✈️' },
-      { min: 11, label: 'Level 3: Advanced Explorer', icon: '🧭' }
-    ];
+function shuffle(a){const arr=[...a];for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
 
-    const QUEST_TEXTS = [
-      { min: 0, text: 'Venture beyond your border. Unlock Country #1.' },
-      { min: 1, text: 'Regional Explorer. Log accomplishments in 5 countries.' },
-      { min: 6, text: 'Sovereign Wanderer. Hunt for unique context-specific milestones across the globe.' }
-    ];
+function generateActivitySet(iso){
+  const region = COUNTRY_REGIONS[iso];
+  const pool = [];
+  if(ACTIVITY_DB.specific[iso]) pool.push(...ACTIVITY_DB.specific[iso]);
+  if(region && ACTIVITY_DB.regional[region]) pool.push(...ACTIVITY_DB.regional[region]);
+  if(pool.length===0) pool.push({text:'Explored the city center on foot',tags:['culture']},{text:'Tried a local dish at a busy restaurant',tags:['culinary']},{text:'Used public transport to get around',tags:['transit']},{text:'Visited a famous landmark',tags:['culture']},{text:'Found a place that accepts Bitcoin',tags:['bitcoin']});
+  return shuffle(pool).slice(0,3);
+}
 
-    const BADGE_CONFIG = {
-      culinary: { label: 'Culinary Connoisseur', icon: '🍜', threshold: 5 },
-      culture: { label: 'Cultural Guardian', icon: '🏛️', threshold: 5 },
-      transit: { label: 'Urban Legend', icon: '🚆', threshold: 5 },
-      bitcoin: { label: 'Orange Pilled', icon: '₿', threshold: 5 }
-    };
+function getCenter(iso){
+  const c = CS[iso].c;
+  let sx=0,sy=0;
+  for(let i=0;i<c.length;i+=2){sx+=c[i];sy+=c[i+1];}
+  const n=c.length/2;
+  return {x:sx/n,y:sy/n};
+}
 
-    let state = JSON.parse(localStorage.getItem('bitcoinerTraveller')) || {};
+function countUnlocked(){return ALL_ISO.filter(i=>state[i]&&state[i].unlocked).length;}
+function countTagged(tag){let t=0;for(const i of ALL_ISO){const d=state[i];if(d&&d.savedChoices){for(const c of d.savedChoices){if(c.tags&&c.tags.includes(tag)) t++;}}}return t;}
 
-    // =====================================================================
-    // ACTIVITY GENERATION — generateActivitySet(countryName)
-    // =====================================================================
-    function shuffle(arr) {
-      const a = [...arr];
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-      }
-      return a;
-    }
+function buildSvgPath(iso){
+  const c = CS[iso].c;
+  let d = 'M'+c[0]+','+c[1];
+  for(let i=2;i<c.length;i+=2) d+='L'+c[i]+','+c[i+1];
+  return d+'Z';
+}
 
-    function generateActivitySet(country) {
-      const region = COUNTRY_REGIONS[country];
-      const pool = [];
+function renderMap(){
+  const g = document.getElementById('countriesGroup');
+  const lg = document.getElementById('labelsGroup');
+  g.innerHTML='';lg.innerHTML='';
+  ALL_ISO.forEach(iso=>{
+    const data=state[iso]||{unlocked:false};
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',buildSvgPath(iso));
+    path.setAttribute('class','country-path'+(data.unlocked?' unlocked':''));
+    path.dataset.iso=iso;
+    path.addEventListener('click',()=>openModal(iso));
+    path.addEventListener('mouseenter',()=>{if(!data.unlocked)path.style.fill='#1e3a5f';});
+    path.addEventListener('mouseleave',()=>{if(!data.unlocked)path.style.fill='';});
+    g.appendChild(path);
+    const ctr=getCenter(iso);
+    const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x',ctr.x);
+    txt.setAttribute('y',ctr.y);
+    txt.setAttribute('class','country-label');
+    txt.setAttribute('text-anchor','middle');
+    txt.setAttribute('dominant-baseline','central');
+    txt.textContent=iso;
+    lg.appendChild(txt);
+  });
+  renderTravelLine();
+  updateAvatarPosition();
+}
 
-      // Check for country-specific entries
-      if (ACTIVITY_DB.specific[country]) {
-        pool.push(...ACTIVITY_DB.specific[country]);
-      }
+function getLevelInfo(count){let l=LEVELS[0];for(const x of LEVELS){if(count>=x.min)l=x;}return l;}
+function getNextThreshold(count){for(const l of LEVELS){if(l.min>count)return l;}return null;}
+function getQuestText(count){let q=QUEST_TEXTS[0];for(const x of QUEST_TEXTS){if(count>=x.min)q=x;}return q.text;}
 
-      // Add regional entries
-      if (region && ACTIVITY_DB.regional[region]) {
-        pool.push(...ACTIVITY_DB.regional[region]);
-      }
+function renderLevel(){
+  const c=countUnlocked(),lvl=getLevelInfo(c),next=getNextThreshold(c);
+  document.getElementById('levelDisplay').textContent=lvl.icon+' '+lvl.label;
+  document.getElementById('countryCount').textContent=c;
+  document.getElementById('questText').textContent=getQuestText(c);
+  if(next){const r=next.min-lvl.min,p=r>0?((c-lvl.min)/r)*100:0;document.getElementById('progressBar').style.width=Math.min(p,100)+'%';document.getElementById('nextLevelHint').textContent=(next.min-c)+' more to '+next.label.replace(/Level \d+: /,'');}
+  else{document.getElementById('progressBar').style.width='100%';document.getElementById('nextLevelHint').textContent='Max level reached!';}
+  renderBadges();
+}
 
-      // Fallback generic
-      if (pool.length === 0) {
-        pool.push(
-          { text: 'Explored the city center on foot', tags: ['culture'] },
-          { text: 'Tried a local dish at a busy restaurant', tags: ['culinary'] },
-          { text: 'Used public transport to get around', tags: ['transit'] },
-          { text: 'Visited a famous landmark', tags: ['culture'] },
-          { text: 'Found a place that accepts Bitcoin', tags: ['bitcoin'] }
-        );
-      }
+function renderBadges(){
+  for(const k of Object.keys(BADGE_CONFIG)){
+    const cnt=countTagged(k),el=document.getElementById('badge-'+k),pr=el.querySelector('.badge-progress');
+    if(pr)pr.textContent=cnt;
+    if(cnt>=5){el.classList.remove('locked');el.classList.add('unlocked','border-blue-500','bg-blue-900/20');el.classList.remove('border-gray-700');}
+    else{el.classList.remove('unlocked','border-blue-500','bg-blue-900/20');el.classList.add('locked','border-gray-700');}
+  }
+}
 
-      const shuffled = shuffle(pool);
-      return shuffled.slice(0, 3);
-    }
+function openModal(iso){
+  const data=state[iso]||{unlocked:false,activities:[],savedChoices:[]};
+  document.getElementById('modalCountryName').textContent=CS[iso].n;
+  const ch=document.getElementById('activityChoices');ch.innerHTML='';
+  const choices=data.savedChoices&&data.savedChoices.length===3?data.savedChoices:generateActivitySet(iso);
+  choices.forEach(c=>{
+    const sel=data.savedChoices&&data.savedChoices.some(s=>s.text===c.text);
+    const l=document.createElement('label');
+    l.className='activity-option flex items-center gap-3 p-3 rounded-lg bg-gray-800 cursor-pointer transition border '+(sel?'border-emerald-500 bg-emerald-900/20':'border-gray-700')+' hover:border-emerald-500';
+    const cb=document.createElement('input');cb.type='checkbox';cb.className='activity-checkbox w-5 h-5 rounded accent-emerald-500 cursor-pointer shrink-0';
+    cb.dataset.activityText=c.text;cb.dataset.activityTags=JSON.stringify(c.tags);cb.checked=sel;
+    const sp=document.createElement('span');sp.className='text-sm text-gray-200';sp.textContent=c.text;
+    l.appendChild(cb);l.appendChild(sp);ch.appendChild(l);
+  });
+  document.getElementById('activityModal').dataset.iso=iso;
+  document.getElementById('activityModal').classList.remove('hidden');
+}
 
-    // =====================================================================
-    // CORE FUNCTIONS
-    // =====================================================================
-    function getCountryData(name) {
-      if (!state[name]) state[name] = { unlocked: false, activities: [], savedChoices: [] };
-      return state[name];
-    }
+function closeModal(){document.getElementById('activityModal').classList.add('hidden');}
 
-    function countUnlocked() {
-      return ALL_COUNTRIES.filter(c => state[c] && state[c].unlocked).length;
-    }
+function spawnParticles(iso){
+  const el=document.querySelector('path[data-iso="'+iso+'"]');
+  if(!el)return;
+  const rect=el.getBoundingClientRect();
+  const emojis=['\u2728','\u{1F31F}','\u26A1','\u{1F30D}','\u{1F5FA}'];
+  for(let i=0;i<5;i++){
+    const p=document.createElement('div');p.className='unlock-particle';
+    p.textContent=emojis[i%emojis.length];
+    p.style.left=(rect.left+rect.width*(0.2+0.6*Math.random()))+'px';
+    p.style.top=(rect.top+rect.height*(0.2+0.6*Math.random()))+'px';
+    p.style.animationDelay=(i*0.08)+'s';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1500);
+  }
+}
 
-    function countTagged(tag) {
-      let total = 0;
-      for (const name of ALL_COUNTRIES) {
-        const data = state[name];
-        if (data && data.savedChoices) {
-          for (const choice of data.savedChoices) {
-            if (choice.tags && choice.tags.includes(tag)) total++;
-          }
-        }
-      }
-      return total;
-    }
+function saveActivities(){
+  const iso=document.getElementById('activityModal').dataset.iso;
+  if(!state[iso])state[iso]={unlocked:false,activities:[],savedChoices:[]};
+  const data=state[iso];
+  const sc=[];
+  document.querySelectorAll('.activity-checkbox:checked').forEach(cb=>{sc.push({text:cb.dataset.activityText,tags:JSON.parse(cb.dataset.activityTags)});});
+  const wasUnlocked=data.unlocked;
+  data.savedChoices=sc;data.activities=sc.map(c=>c.text);data.unlocked=sc.length>0;
+  if(data.unlocked&&!wasUnlocked){
+    if(!state.visitedOrder)state.visitedOrder=[];
+    state.visitedOrder.push(iso);
+  }
+  state[iso]=data;persist();
+  if(data.unlocked&&!wasUnlocked)spawnParticles(iso);
+  renderLevel();renderMap();closeModal();
+}
 
-    function getLevelInfo(count) {
-      let lvl = LEVELS[0];
-      for (const l of LEVELS) {
-        if (count >= l.min) lvl = l;
-      }
-      return lvl;
-    }
+function renderTravelLine(){
+  const g=document.getElementById('travelLineGroup');g.innerHTML='';
+  if(!state.visitedOrder||state.visitedOrder.length<2)return;
+  let d='';const pts=[];
+  for(const iso of state.visitedOrder){if(state[iso]&&state[iso].unlocked){const c=getCenter(iso);pts.push(c);}}
+  if(pts.length<2)return;
+  d='M'+pts[0].x+','+pts[0].y;
+  for(let i=1;i<pts.length;i++)d+='L'+pts[i].x+','+pts[i].y;
+  const pulse=document.createElementNS('http://www.w3.org/2000/svg','path');
+  pulse.setAttribute('d',d);pulse.setAttribute('class','travel-line-pulse');
+  g.appendChild(pulse);
+  const line=document.createElementNS('http://www.w3.org/2000/svg','path');
+  line.setAttribute('d',d);line.setAttribute('class','travel-line');
+  line.style.animation='dashMove 1s linear infinite';
+  g.appendChild(line);
+}
 
-    function getNextThreshold(count) {
-      for (const l of LEVELS) {
-        if (l.min > count) return l;
-      }
-      return null;
-    }
+function updateAvatarPosition(){
+  const el=document.getElementById('avatarOnMap');
+  const order=state.visitedOrder||[];
+  let lastIso=null;
+  for(let i=order.length-1;i>=0;i--){if(state[order[i]]&&state[order[i]].unlocked){lastIso=order[i];break;}}
+  if(!lastIso){el.classList.add('hidden');return;}
+  const svg=document.getElementById('worldSvg');
+  const ctr=getCenter(lastIso);
+  const rect=svg.getBoundingClientRect();
+  const scaleX=rect.width/1000,scaleY=rect.height/500;
+  const x=rect.left+ctr.x*scaleX,y=rect.top+ctr.y*scaleY;
+  const avatars={boy:'\u{1F9D1}',girl:'\u{1F469}',cat:'\u{1F431}',dog:'\u{1F436}'};
+  el.textContent=avatars[state.avatar]||'\u{1F9D1}';
+  el.style.left=x+'px';el.style.top=y+'px';
+  el.classList.remove('hidden');
+}
 
-    function getQuestText(count) {
-      let qt = QUEST_TEXTS[0];
-      for (const q of QUEST_TEXTS) {
-        if (count >= q.min) qt = q;
-      }
-      return qt.text;
-    }
+function persist(){localStorage.setItem('bitcoinerTraveller',JSON.stringify(state));}
 
-    // =====================================================================
-    // RENDER FUNCTIONS
-    // =====================================================================
-    function renderLevel() {
-      const count = countUnlocked();
-      const lvl = getLevelInfo(count);
-      const next = getNextThreshold(count);
+function resetProgress(){
+  if(confirm('Reset all travel progress?')){state={visitedOrder:[],avatar:state.avatar};persist();renderLevel();renderMap();}
+}
 
-      document.getElementById('levelDisplay').textContent = `${lvl.icon} ${lvl.label}`;
-      document.getElementById('countryCount').textContent = count;
-      document.getElementById('questText').textContent = getQuestText(count);
+function showToast(msg){
+  const el=document.getElementById('toast');el.textContent=msg;
+  el.classList.remove('hidden','toast');void el.offsetWidth;el.classList.add('toast');
+  setTimeout(()=>el.classList.add('hidden'),2700);
+}
 
-      if (next) {
-        const needed = next.min - count;
-        const range = next.min - lvl.min;
-        const pct = range > 0 ? ((count - lvl.min) / range) * 100 : 0;
-        document.getElementById('progressBar').style.width = Math.min(pct, 100) + '%';
-        document.getElementById('nextLevelHint').textContent = `${needed} more to ${next.label.replace(/Level \d+: /,'')}`;
-      } else {
-        document.getElementById('progressBar').style.width = '100%';
-        document.getElementById('nextLevelHint').textContent = '🏆 Max level reached!';
-      }
-
-      renderBadges();
-    }
-
-    function renderBadges() {
-      for (const [key, cfg] of Object.entries(BADGE_CONFIG)) {
-        const count = countTagged(key);
-        const el = document.getElementById(`badge-${key}`);
-        const progressEl = el.querySelector('.badge-progress');
-        if (progressEl) progressEl.textContent = count;
-        if (count >= cfg.threshold) {
-          el.classList.remove('locked');
-          el.classList.add('unlocked');
-          el.classList.add('border-blue-500', 'bg-blue-900/20');
-          el.classList.remove('border-gray-700');
-        } else {
-          el.classList.remove('unlocked', 'border-blue-500', 'bg-blue-900/20');
-          el.classList.add('locked', 'border-gray-700');
-        }
-      }
-    }
-
-    function renderMap() {
-      Object.keys(CONTINENTS).forEach(key => {
-        const container = document.querySelector(`[data-continent="${key}"]`);
-        if (!container) return;
-        container.innerHTML = '';
-        CONTINENTS[key].countries.forEach(name => {
-          const data = getCountryData(name);
-          const btn = document.createElement('button');
-          btn.className = `country-btn rounded-lg border px-2 py-1 font-medium transition cursor-pointer ${
-            data.unlocked
-              ? 'unlocked border-emerald-500 bg-emerald-900/30 text-emerald-300'
-              : 'border-gray-700 bg-gray-800/60 text-gray-300 hover:border-blue-500 hover:bg-gray-800'
-          }`;
-          btn.textContent = name;
-          btn.dataset.country = name;
-          btn.addEventListener('click', () => openModal(name));
-          container.appendChild(btn);
-        });
-      });
-    }
-
-    function openModal(name) {
-      const data = getCountryData(name);
-      document.getElementById('modalCountryName').textContent = name;
-
-      const choicesContainer = document.getElementById('activityChoices');
-      choicesContainer.innerHTML = '';
-
-      // If already has saved choices, show them; otherwise generate fresh
-      const choices = data.savedChoices && data.savedChoices.length === 3
-        ? data.savedChoices
-        : generateActivitySet(name);
-
-      choices.forEach((choice, idx) => {
-        const selected = data.savedChoices && data.savedChoices.some(c => c.text === choice.text);
-        const label = document.createElement('label');
-        label.className = `activity-option flex items-center gap-3 p-3 rounded-lg bg-gray-800 cursor-pointer transition border ${selected ? 'border-emerald-500 bg-emerald-900/20' : 'border-gray-700'} hover:border-emerald-500`;
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        cb.className = 'activity-checkbox w-5 h-5 rounded accent-emerald-500 cursor-pointer shrink-0';
-        cb.dataset.activityText = choice.text;
-        cb.dataset.activityTags = JSON.stringify(choice.tags);
-        cb.checked = selected;
-        const span = document.createElement('span');
-        span.className = 'text-sm text-gray-200';
-        span.textContent = choice.text;
-        label.appendChild(cb);
-        label.appendChild(span);
-        choicesContainer.appendChild(label);
-      });
-
-      document.getElementById('activityModal').dataset.country = name;
-      document.getElementById('activityModal').classList.remove('hidden');
-    }
-
-    function closeModal() {
-      document.getElementById('activityModal').classList.add('hidden');
-    }
-
-    function spawnParticles(country) {
-      const btn = document.querySelector(`[data-country="${country}"]`);
-      if (!btn) return;
-      const rect = btn.getBoundingClientRect();
-      const emojis = ['✨', '🌟', '⚡', '🌍', '🗺️'];
-      for (let i = 0; i < 5; i++) {
-        const p = document.createElement('div');
-        p.className = 'unlock-particle';
-        p.textContent = emojis[i % emojis.length];
-        p.style.left = (rect.left + rect.width * (0.2 + 0.6 * Math.random())) + 'px';
-        p.style.top = (rect.top + rect.height * (0.2 + 0.6 * Math.random())) + 'px';
-        p.style.animationDelay = (i * 0.08) + 's';
-        document.body.appendChild(p);
-        setTimeout(() => p.remove(), 1500);
-      }
-    }
-
-    function saveActivities() {
-      const name = document.getElementById('activityModal').dataset.country;
-      const data = getCountryData(name);
-
-      const savedChoices = [];
-      document.querySelectorAll('.activity-checkbox:checked').forEach(cb => {
-        savedChoices.push({
-          text: cb.dataset.activityText,
-          tags: JSON.parse(cb.dataset.activityTags)
-        });
-      });
-
-      data.savedChoices = savedChoices;
-      data.activities = savedChoices.map(c => c.text);
-      const wasUnlocked = data.unlocked;
-      data.unlocked = savedChoices.length > 0;
-
-      state[name] = data;
+function initAvatars(){
+  document.querySelectorAll('.avatar-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      state.avatar=btn.dataset.avatar;
+      document.querySelectorAll('.avatar-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
       persist();
-
-      if (data.unlocked && !wasUnlocked) {
-        spawnParticles(name);
-      }
-
-      renderLevel();
-      renderMap();
-      closeModal();
-    }
-
-    function persist() {
-      localStorage.setItem('bitcoinerTraveller', JSON.stringify(state));
-    }
-
-    function resetProgress() {
-      if (confirm('Reset all travel progress? This cannot be undone.')) {
-        state = {};
-        persist();
-        renderLevel();
-        renderMap();
-      }
-    }
-
-    function showToast(msg) {
-      const el = document.getElementById('toast');
-      el.textContent = msg;
-      el.classList.remove('hidden');
-      el.classList.remove('toast');
-      void el.offsetWidth;
-      el.classList.add('toast');
-      setTimeout(() => el.classList.add('hidden'), 2700);
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      renderLevel();
-      renderMap();
-
-      document.getElementById('closeModal').addEventListener('click', closeModal);
-      document.getElementById('saveActivities').addEventListener('click', saveActivities);
-      document.getElementById('resetBtn').addEventListener('click', resetProgress);
-      document.getElementById('copyBtn').addEventListener('click', () => {
-        navigator.clipboard.writeText('bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7').then(() => {
-          showToast('📋 Address copied to clipboard!');
-        }).catch(() => {
-          showToast('Failed to copy. Select manually.');
-        });
-      });
-
-      document.getElementById('activityModal').addEventListener('click', (e) => {
-        if (e.target === e.currentTarget) closeModal();
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeModal();
-      });
+      updateAvatarPosition();
     });
-  </script>
+    if(btn.dataset.avatar===state.avatar)btn.classList.add('active');
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  renderLevel();renderMap();initAvatars();
+  document.getElementById('closeModal').addEventListener('click',closeModal);
+  document.getElementById('saveActivities').addEventListener('click',saveActivities);
+  document.getElementById('resetBtn').addEventListener('click',resetProgress);
+  document.getElementById('copyBtn').addEventListener('click',()=>{
+    navigator.clipboard.writeText('bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7').then(()=>showToast('Address copied!')).catch(()=>showToast('Failed to copy.'));
+  });
+  document.getElementById('activityModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+});
+
+</script>
 </body>
 </html>
