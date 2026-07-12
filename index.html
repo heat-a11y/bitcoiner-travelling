@@ -12,12 +12,13 @@ body{background:#030712;overflow-x:hidden}
 .pb{border:2px solid #1f2937;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.05)}
 .toast{animation:ft 2.5s ease forwards}
 @keyframes ft{0%{opacity:0;transform:translateY(10px)}12%{opacity:1;transform:translateY(0)}88%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
-.modal-overlay{background:rgba(0,0,0,0.7);backdrop-filter:blur(4px)}
-.country-btn{cursor:pointer;transition:all 0.2s ease;position:relative;border-radius:4px;font-size:9px;line-height:1.1;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:600;overflow:hidden}
+.modal-overlay{background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);transition:opacity 0.3s ease}
+.country-btn{cursor:pointer;transition:all 0.2s ease;position:relative;border-radius:4px;font-size:9px;line-height:1.1;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:600;overflow:hidden;min-height:20px}
 .country-btn:hover{z-index:5;transform:scale(1.12);box-shadow:0 0 20px rgba(255,255,255,0.2)}
 .country-btn.unlocked{background:rgba(16,185,129,0.5)!important;border-color:#10b981!important}
-.country-btn.unlocked::after{content:'\2713';position:absolute;top:1px;right:2px;font-size:7px;color:#6ee7b7}
+.country-btn.unlocked::after{content:'¹3';position:absolute;top:1px;right:2px;font-size:7px;color:#6ee7b7}
 .map-grid{display:grid;grid-template-columns:repeat(36,1fr);gap:2px;padding:4px;background:radial-gradient(ellipse at 50% 50%,#0c1929,#030712);border-radius:12px}
+.map-container{width:100%;height:auto;max-height:70vh;overflow-y:auto;-webkit-overflow-scrolling:touch}@media(min-width:1024px){.map-container{max-height:550px;overflow-y:visible}}
 .continent-na{background:radial-gradient(ellipse at 50% 50%,rgba(59,130,246,0.15),transparent)}
 .continent-eu{background:radial-gradient(ellipse at 50% 50%,rgba(139,92,246,0.15),transparent)}
 .continent-as{background:radial-gradient(ellipse at 50% 50%,rgba(245,158,11,0.15),transparent)}
@@ -32,14 +33,32 @@ body{background:#030712;overflow-x:hidden}
 ::-webkit-scrollbar-track{background:#111827}
 ::-webkit-scrollbar-thumb{background:#374151;border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:#4b5563}
-@media(max-width:768px){.country-btn{font-size:7px;border-radius:2px}.map-grid{gap:1px}}
+.country-fallback{scrollbar-width:thin;scrollbar-color:#374151 transparent}
+.country-fallback::-webkit-scrollbar{height:4px}
+.country-fallback::-webkit-scrollbar-thumb{background:#374151;border-radius:2px}
+@media(max-width:767px){
+  .country-btn{font-size:7px;border-radius:2px;min-height:24px}
+  .map-grid{gap:1px}
+  .modal-overlay{align-items:flex-end!important;padding:0!important}
+  .modal-overlay>div{border-radius:16px 16px 0 0!important;max-height:85vh!important;margin-top:auto;transform:translateY(0);transition:transform 0.3s ease}
+  .sheet-handle{width:36px;height:4px;background:#4b5563;border-radius:2px;margin:8px auto 4px;display:block}
+  .touch-btn{min-height:44px!important}
+  .avatar-btn{min-width:44px!important;min-height:44px!important;width:44px!important;height:44px!important;font-size:18px!important}
+  .badge-touch{min-height:44px!important}
+  .min-mobile-text{font-size:11px!important}
+  .modal-overlay.hidden>div{transform:translateY(100%)}
+}
+@media(min-width:768px){
+  .sheet-handle{display:none}
+  .modal-overlay.hidden>div{transform:none}
+}
 </style>
 </head>
 <body class="min-h-screen text-gray-100">
-<div class="max-w-7xl mx-auto px-2 py-2">
+<div class="max-w-7xl mx-auto px-2 py-2 flex flex-col lg:grid lg:grid-cols-12 lg:gap-6">
 
 <!-- Header -->
-<div class="bg-gray-900/95 rounded-xl p-2 md:p-3 mb-2 pb border border-gray-800">
+<div class="bg-gray-900/95 rounded-xl p-2 md:p-3 mb-2 pb border border-gray-800 lg:col-span-12">
   <div class="flex flex-col md:flex-row items-center gap-2">
     <div class="flex-1 text-center md:text-left">
       <div class="flex items-center gap-2 justify-center md:justify-start">
@@ -59,18 +78,18 @@ body{background:#030712;overflow-x:hidden}
       <div class="bg-gray-800/60 rounded-lg px-2 py-1 border border-gray-700">
         <div class="text-[8px] uppercase tracking-wider text-gray-400 mb-0.5 text-center">Avatar</div>
         <div class="flex gap-1">
-          <button class="avatar-btn w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-xs cursor-pointer border border-transparent hover:border-emerald-500 transition" data-avatar="boy">🧑</button>
-          <button class="avatar-btn w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-xs cursor-pointer border border-transparent hover:border-emerald-500 transition" data-avatar="girl">👩</button>
-          <button class="avatar-btn w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-xs cursor-pointer border border-transparent hover:border-emerald-500 transition" data-avatar="cat">🐱</button>
-          <button class="avatar-btn w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-xs cursor-pointer border border-transparent hover:border-emerald-500 transition" data-avatar="dog">🐶</button>
+          <button class="avatar-btn w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-xs cursor-pointer border border-transparent hover:border-emerald-500 transition touch-btn" data-avatar="boy">🧑</button>
+          <button class="avatar-btn w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-xs cursor-pointer border border-transparent hover:border-emerald-500 transition touch-btn" data-avatar="girl">👩</button>
+          <button class="avatar-btn w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-xs cursor-pointer border border-transparent hover:border-emerald-500 transition touch-btn" data-avatar="cat">🐱</button>
+          <button class="avatar-btn w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-xs cursor-pointer border border-transparent hover:border-emerald-500 transition touch-btn" data-avatar="dog">🐶</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Quest + Key -->
-<div class="flex items-center justify-between mb-2 gap-2">
+<!-- Quest + Key (mobile only, before map) -->
+<div class="flex items-center justify-between mb-2 gap-2 lg:hidden">
   <div class="flex-1 rounded-lg px-2.5 py-1 text-[10px] flex items-center gap-1.5" style="background:linear-gradient(90deg,rgba(16,185,129,0.08),transparent);border-left:3px solid #10b981">
     <span class="text-emerald-400 font-bold">🎯</span>
     <span id="questText" class="text-gray-300"></span>
@@ -86,47 +105,61 @@ body{background:#030712;overflow-x:hidden}
   </div>
 </div>
 
-<!-- World Map Grid -->
-<div class="rounded-xl pb mb-2 overflow-hidden border border-gray-800" style="background:radial-gradient(ellipse at 50% 50%,#0c1929,#030712)">
-  <div class="p-1.5 border-b border-gray-800 flex items-center justify-between">
-    <h2 class="text-xs font-bold text-white">🗺️ World Explorer</h2>
-    <div class="flex gap-1.5">
-      <span class="text-[8px] text-gray-500"><span id="btcPrice" class="text-amber-400 font-bold">—</span> BTC</span>
-      <button id="resetBtn" class="text-[8px] text-gray-400 hover:text-red-400 transition px-1.5 py-0.5 rounded border border-gray-700">↻ Reset</button>
+<!-- LEFT COLUMN: Map -->
+<div class="lg:col-span-9">
+  <div class="map-container rounded-xl pb mb-2 overflow-hidden border border-gray-800" style="background:radial-gradient(ellipse at 50% 50%,#0c1929,#030712)">
+    <div class="p-1.5 border-b border-gray-800 flex items-center justify-between">
+      <h2 class="text-xs font-bold text-white">🗺️ World Explorer</h2>
+      <div class="flex gap-1.5">
+        <span class="text-[8px] text-gray-500"><span id="btcPrice" class="text-amber-400 font-bold">—</span> BTC</span>
+        <button id="resetBtn" class="text-[8px] text-gray-400 hover:text-red-400 transition px-1.5 py-0.5 rounded border border-gray-700 touch-btn">↻ Reset</button>
+      </div>
+    </div>
+    <div class="map-grid" id="mapGrid">
+      <!-- Countries rendered by JS -->
     </div>
   </div>
-  <div class="map-grid" id="mapGrid">
-    <!-- Countries rendered by JS -->
-  </div>
+  <!-- Mobile country fallback list (hidden on desktop) -->
+  <div id="countryFallback" class="block lg:hidden mb-2"></div>
 </div>
 
-<!-- Bottom -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+<!-- RIGHT COLUMN: Sidebar (desktop) -->
+<div class="lg:col-span-3 space-y-2">
+  <!-- Quest (desktop version, hidden on mobile) -->
+  <div class="hidden lg:block rounded-lg px-2.5 py-1 text-[10px] flex items-center gap-1.5" style="background:linear-gradient(90deg,rgba(16,185,129,0.08),transparent);border-left:3px solid #10b981">
+    <span class="text-emerald-400 font-bold">🎯</span>
+    <span id="questTextSide" class="text-gray-300"></span>
+  </div>
+  
+  <!-- Badges -->
   <div class="rounded-xl pb bg-gray-900/40 border border-gray-800 p-2.5">
     <h3 class="text-emerald-400 font-bold text-[9px] uppercase tracking-wider mb-1.5">🏅 Badges</h3>
-    <div class="grid grid-cols-4 gap-1">
-      <div id="b-culinary" class="bi locked flex flex-col items-center gap-0.5 p-1 rounded-lg bg-gray-800/50 border border-gray-700"><span class="text-sm">🍜</span><span class="text-[7px] text-gray-400 font-semibold leading-tight">Food</span><span class="text-[6px] text-gray-500"><span class="bp" data-badge="culinary">0</span></span></div>
-      <div id="b-culture" class="bi locked flex flex-col items-center gap-0.5 p-1 rounded-lg bg-gray-800/50 border border-gray-700"><span class="text-sm">🏛️</span><span class="text-[7px] text-gray-400 font-semibold leading-tight">Culture</span><span class="text-[6px] text-gray-500"><span class="bp" data-badge="culture">0</span></span></div>
-      <div id="b-transit" class="bi locked flex flex-col items-center gap-0.5 p-1 rounded-lg bg-gray-800/50 border border-gray-700"><span class="text-sm">🚆</span><span class="text-[7px] text-gray-400 font-semibold leading-tight">Transit</span><span class="text-[6px] text-gray-500"><span class="bp" data-badge="transit">0</span></span></div>
-      <div id="b-bitcoin" class="bi locked flex flex-col items-center gap-0.5 p-1 rounded-lg bg-gray-800/50 border border-gray-700"><span class="text-sm">₿</span><span class="text-[7px] text-gray-400 font-semibold leading-tight">Bitcoin</span><span class="text-[6px] text-gray-500"><span class="bp" data-badge="bitcoin">0</span></span></div>
+    <div class="grid grid-cols-2 gap-1">
+      <div id="b-culinary" class="badge-touch bi locked flex flex-row items-center gap-1.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700"><span class="text-sm shrink-0">🍜</span><div class="flex flex-col min-w-0"><span class="text-[8px] text-gray-400 font-semibold leading-tight min-mobile-text">Food</span><span class="text-[7px] text-gray-500"><span class="bp" data-badge="culinary">0</span></span></div></div>
+      <div id="b-culture" class="badge-touch bi locked flex flex-row items-center gap-1.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700"><span class="text-sm shrink-0">🏛️</span><div class="flex flex-col min-w-0"><span class="text-[8px] text-gray-400 font-semibold leading-tight min-mobile-text">Culture</span><span class="text-[7px] text-gray-500"><span class="bp" data-badge="culture">0</span></span></div></div>
+      <div id="b-transit" class="badge-touch bi locked flex flex-row items-center gap-1.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700"><span class="text-sm shrink-0">🚆</span><div class="flex flex-col min-w-0"><span class="text-[8px] text-gray-400 font-semibold leading-tight min-mobile-text">Transit</span><span class="text-[7px] text-gray-500"><span class="bp" data-badge="transit">0</span></span></div></div>
+      <div id="b-bitcoin" class="badge-touch bi locked flex flex-row items-center gap-1.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700"><span class="text-sm shrink-0">₿</span><div class="flex flex-col min-w-0"><span class="text-[8px] text-gray-400 font-semibold leading-tight min-mobile-text">Bitcoin</span><span class="text-[7px] text-gray-500"><span class="bp" data-badge="bitcoin">0</span></span></div></div>
     </div>
   </div>
+  
+  <!-- Support -->
   <div class="rounded-xl pb bg-gray-900/40 border border-gray-800 p-2.5 flex items-center justify-between">
-    <div>
+    <div class="min-w-0">
       <h3 class="text-amber-400 font-bold text-[9px] uppercase tracking-wider mb-0.5">⚡ Support</h3>
-      <p class="text-[7px] text-gray-400 font-mono">bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7</p>
+      <p class="text-[7px] text-gray-400 font-mono truncate">bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7</p>
     </div>
-    <button id="copyBtn" class="bg-amber-600 hover:bg-amber-500 text-white text-[8px] font-semibold px-2 py-1 rounded transition whitespace-nowrap">📋 Copy</button>
+    <button id="copyBtn" class="bg-amber-600 hover:bg-amber-500 text-white text-[8px] font-semibold px-2 py-1 rounded transition whitespace-nowrap touch-btn shrink-0">📋 Copy</button>
   </div>
 </div>
 </div>
 
-<!-- Country Modal -->
+<!-- Country Modal (bottom-sheet on mobile) -->
 <div id="countryModal" class="fixed inset-0 modal-overlay flex items-center justify-center p-2 hidden z-50">
-  <div class="bg-gray-900 rounded-xl pb max-w-md w-full p-3 border border-gray-700" style="max-height:90vh;overflow-y:auto">
+  <div class="bg-gray-900 rounded-xl pb max-w-md w-full p-3 border border-gray-700 relative" style="max-height:90vh;overflow-y:auto">
+    <div class="sheet-handle"></div>
     <div class="flex items-center justify-between mb-2">
       <h3 class="text-sm font-bold text-white"><span id="modalCountry">Country</span> <span id="modalFlag" class="text-lg"></span></h3>
-      <button id="closeModal" class="text-gray-400 hover:text-white text-base leading-none">&times;</button>
+      <button id="closeModal" class="text-gray-400 hover:text-white text-base leading-none touch-btn px-2">&times;</button>
     </div>
     
     <div id="btcBenefits" class="space-y-2 mb-3"></div>
@@ -173,7 +206,10 @@ function rL(){
   var c=uc(),lvl=lI(c),nxt=nT(c);
   document.getElementById("levelDisplay").textContent=lvl.i+" "+lvl.l;
   document.getElementById("countryCount").textContent=c;
-  document.getElementById("questText").textContent=qT(c);
+  var qt=qT(c);
+  document.getElementById("questText").textContent=qt;
+  var qs=document.getElementById("questTextSide");
+  if(qs)qs.textContent=qt;
   if(nxt){var r=nxt.m-lvl.m,p=r>0?((c-lvl.m)/r)*100:0;document.getElementById("progressBar").style.width=Math.min(p,100)+"%";document.getElementById("nextLevelHint").textContent=(nxt.m-c)+" to "+nxt.l;}
   else{document.getElementById("progressBar").style.width="100%";document.getElementById("nextLevelHint").textContent="MAX!";}
 }
@@ -281,6 +317,23 @@ function oM(iso){
 
 function cM(){document.getElementById("countryModal").classList.add("hidden");}
 
+// Country fallback list for mobile
+function rCF(){
+  var el=document.getElementById("countryFallback");
+  if(!el)return;
+  el.innerHTML='<div class="flex gap-1 overflow-x-auto pb-1 country-fallback">'+
+    CD.map(function(c){
+      var cc=CC[c.c];
+      var d=st[c.i]||{};
+      return '<button class="touch-btn text-[9px] px-2 py-1 rounded whitespace-nowrap border shrink-0 '+(d.u?'':'')+'" '+
+        'style="background:'+(d.u?'rgba(16,185,129,0.4)':cc.bg)+';color:'+(d.u?'#6ee7b7':cc.text)+';border-color:'+(d.u?'#10b981':cc.border)+'" '+
+        'data-iso="'+c.i+'">'+(d.u?'\u2713 ':'')+c.n+'</button>';
+    }).join('')+'</div>';
+  el.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click',function(){oM(b.dataset.iso);});
+  });
+}
+
 function sC(){
   var iso=document.getElementById("countryModal").dataset.iso;
   if(!st[iso])st[iso]={u:false,acts:[]};
@@ -292,12 +345,12 @@ function sC(){
   d.acts=acts;d.u=acts.length>0;
   if(d.u&&!was){if(!st.vo)st.vo=[];st.vo.push(iso);}
   st[iso]=d;pst();
-  rL();rM();cM();
+  rL();rM();rCF();cM();
 }
 
 function pst(){localStorage.setItem("bt3",JSON.stringify(st));}
 
-function rP(){if(confirm("Reset all progress?")){st={vo:[],av:st.av};pst();rL();rM();}}
+function rP(){if(confirm("Reset all progress?")){st={vo:[],av:st.av};pst();rL();rM();rCF();}}
 
 function sT(m){
   var el=document.getElementById("toast");el.textContent=m;
@@ -306,7 +359,7 @@ function sT(m){
 }
 
 document.addEventListener("DOMContentLoaded",function(){
-  rL();rM();
+  rL();rM();rCF();
   
   document.querySelectorAll(".avatar-btn").forEach(function(b){
     b.addEventListener("click",function(){st.av=b.dataset.avatar;document.querySelectorAll(".avatar-btn").forEach(function(x){x.style.borderColor="transparent";});b.style.borderColor="#10b981";pst();});
@@ -321,6 +374,30 @@ document.addEventListener("DOMContentLoaded",function(){
   });
   document.getElementById("countryModal").addEventListener("click",function(e){if(e.target===e.currentTarget)cM();});
   document.addEventListener("keydown",function(e){if(e.key==="Escape")cM();});
+  
+  // Bottom sheet swipe-to-close
+  (function(){
+    var modal=document.getElementById("countryModal");
+    var content=modal.querySelector("div");
+    var startY=0,startTranslate=0,isDragging=false;
+    content.addEventListener("touchstart",function(e){
+      if(window.innerWidth>=768)return;
+      startY=e.touches[0].clientY;
+      isDragging=true;
+    },{passive:true});
+    content.addEventListener("touchmove",function(e){
+      if(!isDragging||window.innerWidth>=768)return;
+      var dy=e.touches[0].clientY-startY;
+      if(dy>0)content.style.transform="translateY("+dy+"px)";
+    },{passive:true});
+    content.addEventListener("touchend",function(e){
+      if(!isDragging||window.innerWidth>=768)return;
+      isDragging=false;
+      var dy=e.changedTouches[0].clientY-startY;
+      if(dy>100)cM();
+      content.style.transform="";
+    },{passive:true});
+  })();
   
   // Refresh BTC price every 60s
   setInterval(fetchBTC,60000);
