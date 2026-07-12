@@ -125,10 +125,21 @@ body{background:#030712;overflow-x:hidden}
 
 <!-- RIGHT COLUMN: Sidebar (desktop) -->
 <div class="lg:col-span-3 space-y-2">
-  <!-- Quest (desktop version, hidden on mobile) -->
-  <div class="hidden lg:block rounded-lg px-2.5 py-1 text-[10px] flex items-center gap-1.5" style="background:linear-gradient(90deg,rgba(16,185,129,0.08),transparent);border-left:3px solid #10b981">
-    <span class="text-emerald-400 font-bold">🎯</span>
-    <span id="questTextSide" class="text-gray-300"></span>
+  <!-- Quest + Key (desktop version, hidden on mobile) -->
+  <div class="hidden lg:block space-y-1.5">
+    <div class="rounded-lg px-2.5 py-1 text-[10px] flex items-center gap-1.5" style="background:linear-gradient(90deg,rgba(16,185,129,0.08),transparent);border-left:3px solid #10b981">
+      <span class="text-emerald-400 font-bold">🎯</span>
+      <span id="questTextSide" class="text-gray-300"></span>
+    </div>
+    <div class="flex gap-1 text-[9px] text-gray-500 flex-wrap">
+      <span class="px-1.5 py-0.5 rounded" style="background:#1e3a5f;color:#93c5fd">NA</span>
+      <span class="px-1.5 py-0.5 rounded" style="background:#3b0764;color:#c4b5fd">EU</span>
+      <span class="px-1.5 py-0.5 rounded" style="background:#78350f;color:#fde68a">AS</span>
+      <span class="px-1.5 py-0.5 rounded" style="background:#14532d;color:#86efac">LA</span>
+      <span class="px-1.5 py-0.5 rounded" style="background:#5c0a1f;color:#fda4af">ME</span>
+      <span class="px-1.5 py-0.5 rounded" style="background:#3c1208;color:#fdba74">AF</span>
+      <span class="px-1.5 py-0.5 rounded" style="background:#164e63;color:#67e8f9">OC</span>
+    </div>
   </div>
   
   <!-- Badges -->
