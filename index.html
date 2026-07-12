@@ -9,35 +9,45 @@
 <style>
 *{font-family:'Inter','Roboto',sans-serif}
 body{background:#030712;overflow-x:hidden}
-.glow-emerald{box-shadow:0 0 15px rgba(52,211,153,0.5),0 0 30px rgba(52,211,153,0.2)}
-.glow-blue{box-shadow:0 0 15px rgba(59,130,246,0.5),0 0 30px rgba(59,130,246,0.2)}
+.glow-e{box-shadow:0 0 12px rgba(52,211,153,0.4)}
+.glow-b{box-shadow:0 0 12px rgba(59,130,246,0.4)}
+.glow-a{box-shadow:0 0 12px rgba(251,191,36,0.4)}
 .modal-overlay{background:rgba(0,0,0,0.7);backdrop-filter:blur(4px)}
 .toast{animation:fadeInOut 2.5s ease forwards}
 @keyframes fadeInOut{0%{opacity:0;transform:translateY(10px)}12%{opacity:1;transform:translateY(0)}88%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
-.pixel-border{border:2px solid #1f2937;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.05)}
-.level-card{background:linear-gradient(135deg,rgba(17,24,39,0.95),rgba(3,7,18,0.98))}
-.quest-panel{background:linear-gradient(90deg,rgba(16,185,129,0.08),transparent);border-left:3px solid #10b981}
+.pb{border:2px solid #1f2937;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.05)}
 .country-path{cursor:pointer;transition:all 0.2s ease;fill:#1f2937;stroke:#374151;stroke-width:0.5}
 .country-path:hover{fill:#1e3a5f;stroke:#3b82f6;stroke-width:1}
 .country-path.unlocked{fill:#064e3b!important;stroke:#10b981!important;stroke-width:1}
 .country-path.unlocked:hover{fill:#065f46!important}
-.travel-line{stroke:#10b981;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:url(#glow);stroke-dasharray:8 4}
-@keyframes dashMove{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-12}}
-@keyframes pulseGlow{0%,100%{opacity:0.3}50%{opacity:0.8}}
-.travel-line-pulse{stroke:#34d399;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0.4;animation:pulseGlow 2s ease-in-out infinite}
+.travel-line{stroke:#10b981;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:url(#g);stroke-dasharray:8 4}
+@keyframes dm{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-12}}
+@keyframes pg{0%,100%{opacity:0.3}50%{opacity:0.8}}
+.travel-line-pulse{stroke:#34d399;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0.4;animation:pg 2s ease-in-out infinite}
 .avatar-btn{transition:all 0.2s ease;border:2px solid transparent;cursor:pointer}
 .avatar-btn.active{border-color:#10b981;background:rgba(16,185,129,0.15);box-shadow:0 0 12px rgba(52,211,153,0.3)}
 .avatar-btn:hover{border-color:#3b82f6}
-.avatar-sprite-on-map{position:absolute;pointer-events:none;z-index:10;transition:all 0.6s cubic-bezier(0.34,1.56,0.64,1);font-size:1.5rem;transform:translate(-50%,-50%)}
-.unlock-particle{position:fixed;pointer-events:none;font-size:1.5rem;z-index:40;animation:particleUp 1.2s ease-out forwards}
-@keyframes particleUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(0.3)}}
-.activity-option{transition:all 0.2s ease}
-.activity-option:hover{border-color:#10b981;background:rgba(16,185,129,0.08)}
-svg .country-label{font-size:3px;fill:#9ca3af;pointer-events:none;font-weight:600}
-.badge-icon{transition:all 0.3s ease}
-.badge-icon.unlocked{filter:drop-shadow(0 0 8px rgba(59,130,246,0.7))}
-.badge-icon.locked{filter:grayscale(0.8) opacity(0.4)}
-#worldMapContainer{position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 50%,#0c1929,#030712)}
+.avatar-on-map{position:absolute;pointer-events:none;z-index:10;transition:all 0.6s;font-size:1.5rem;transform:translate(-50%,-50%)}
+.particle{position:fixed;pointer-events:none;font-size:1.5rem;z-index:40;animation:pu 1.2s ease-out forwards}
+@keyframes pu{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(0.3)}}
+.opt{transition:all 0.2s ease}
+.opt:hover{border-color:#10b981;background:rgba(16,185,129,0.08)}
+svg .cl{font-size:3px;fill:#9ca3af;pointer-events:none;font-weight:600}
+.bi{transition:all 0.3s ease}
+.bi.unlocked{filter:drop-shadow(0 0 8px rgba(59,130,246,0.7))}
+.bi.locked{filter:grayscale(0.8) opacity(0.4)}
+#mapWrap{position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 50%,#0c1929,#030712)}
+#radarCanvas{width:100%;height:auto;max-width:280px;display:block;margin:0 auto}
+.fbtn{transition:all 0.15s ease;cursor:pointer}
+.fbtn.active{background:#10b981;color:#000;border-color:#10b981}
+.fbtn.active-r{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.achv{transition:all 0.2s ease}
+.achv.unlocked{background:rgba(16,185,129,0.1);border-color:#10b981}
+.achv.locked{opacity:0.5}
+.rarity-C{color:#9ca3af;border-color:#9ca3af}
+.rarity-R{color:#3b82f6;border-color:#3b82f6}
+.rarity-E{color:#8b5cf6;border-color:#8b5cf6}
+.rarity-L{color:#f59e0b;border-color:#f59e0b}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:#111827}
 ::-webkit-scrollbar-thumb{background:#374151;border-radius:3px}
@@ -45,442 +55,410 @@ svg .country-label{font-size:3px;fill:#9ca3af;pointer-events:none;font-weight:60
 </style>
 </head>
 <body class="min-h-screen text-gray-100">
-<div class="max-w-6xl mx-auto px-4 py-4">
-  <div class="level-card rounded-2xl p-4 md:p-5 mb-3 pixel-border">
-    <div class="flex flex-col md:flex-row items-center gap-3">
-      <div class="flex-1 text-center md:text-left">
-        <div class="text-xs uppercase tracking-widest text-emerald-400 mb-0.5">Travel Rank</div>
-        <div id="levelDisplay" class="text-2xl md:text-4xl font-black text-white"></div>
-        <div class="mt-1 flex items-center justify-center md:justify-start gap-3 text-xs text-gray-400">
-          <span>🌍 <span id="countryCount">0</span> countries</span>
-          <span class="w-1 h-1 rounded-full bg-gray-600"></span>
-          <span id="nextLevelHint" class="text-gray-500"></span>
-        </div>
-        <div class="mt-2 max-w-xs mx-auto md:mx-0 bg-gray-800 rounded-full h-1.5 overflow-hidden">
-          <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500" style="width:0%"></div>
+<div class="max-w-6xl mx-auto px-3 py-3">
+
+<div class="bg-gray-900/95 rounded-2xl p-3 md:p-4 mb-3 pb border border-gray-800">
+  <div class="flex flex-col md:flex-row items-center gap-2">
+    <div class="flex-1 text-center md:text-left">
+      <div class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">Travel Rank</div>
+      <div id="levelDisplay" class="text-xl md:text-3xl font-black text-white"></div>
+      <div class="mt-1 flex items-center justify-center md:justify-start gap-2 text-[11px] text-gray-400">
+        <span>&#127758; <span id="countryCount">0</span> countries</span>
+        <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+        <span id="nextLevelHint" class="text-gray-500"></span>
+      </div>
+      <div class="mt-1.5 max-w-xs mx-auto md:mx-0 bg-gray-800 rounded-full h-1.5 overflow-hidden">
+        <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <div class="bg-gray-800/60 rounded-xl px-2.5 py-1.5 border border-gray-700">
+        <div class="text-[9px] uppercase tracking-wider text-gray-400 mb-1 text-center">Avatar</div>
+        <div class="flex gap-1.5">
+          <button class="avatar-btn w-8 h-8 rounded-lg bg-gray-700 flex items-center justify-center text-base" data-avatar="boy" title="Boy">&#129489;</button>
+          <button class="avatar-btn w-8 h-8 rounded-lg bg-gray-700 flex items-center justify-center text-base" data-avatar="girl" title="Girl">&#128105;</button>
+          <button class="avatar-btn w-8 h-8 rounded-lg bg-gray-700 flex items-center justify-center text-base" data-avatar="cat" title="Cat">&#128049;</button>
+          <button class="avatar-btn w-8 h-8 rounded-lg bg-gray-700 flex items-center justify-center text-base" data-avatar="dog" title="Dog">&#128054;</button>
         </div>
       </div>
-      <div class="flex-shrink-0 bg-gray-800/60 rounded-xl px-3 py-2 border border-gray-700">
-        <div class="text-[10px] uppercase tracking-wider text-gray-400 mb-1.5 text-center">Select Avatar</div>
-        <div class="flex gap-2">
-          <button class="avatar-btn w-9 h-9 rounded-lg bg-gray-700 flex items-center justify-center text-lg" data-avatar="boy" title="Boy">🧑</button>
-          <button class="avatar-btn w-9 h-9 rounded-lg bg-gray-700 flex items-center justify-center text-lg" data-avatar="girl" title="Girl">👩</button>
-          <button class="avatar-btn w-9 h-9 rounded-lg bg-gray-700 flex items-center justify-center text-lg" data-avatar="cat" title="Cat">🐱</button>
-          <button class="avatar-btn w-9 h-9 rounded-lg bg-gray-700 flex items-center justify-center text-lg" data-avatar="dog" title="Dog">🐶</button>
-        </div>
+      <div class="flex flex-col gap-1">
+        <button id="exportBtn" class="text-[9px] bg-gray-800 hover:bg-gray-700 px-2 py-1 rounded border border-gray-700">&#128229; Export</button>
+        <button id="importBtn" class="text-[9px] bg-gray-800 hover:bg-gray-700 px-2 py-1 rounded border border-gray-700">&#128228; Import</button>
       </div>
     </div>
   </div>
-  <div id="questPanel" class="quest-panel rounded-lg px-4 py-2 mb-3 text-xs flex items-center gap-2">
-    <span class="text-emerald-400 font-bold">OBJECTIVE:</span>
+</div>
+
+<div class="flex items-center justify-between mb-2 gap-2">
+  <div class="flex-1 rounded-lg px-3 py-1.5 text-[11px] flex items-center gap-1.5" style="background:linear-gradient(90deg,rgba(16,185,129,0.08),transparent);border-left:3px solid #10b981">
+    <span class="text-emerald-400 font-bold">&#127919; GOAL:</span>
     <span id="questText" class="text-gray-300"></span>
   </div>
-  <div id="worldMapContainer" class="rounded-2xl pixel-border mb-4 bg-gray-900/50">
-    <div class="p-3 border-b border-gray-800 flex items-center justify-between">
-      <h2 class="text-base font-bold text-white">🗺 World Map</h2>
-      <button id="resetBtn" class="text-[10px] text-gray-400 hover:text-red-400 transition px-2 py-1 rounded-lg border border-gray-700 hover:border-red-500">Reset</button>
+  <div class="flex gap-1">
+    <button id="tabMap" class="fbtn active text-[10px] bg-gray-800 px-2.5 py-1.5 rounded-lg border border-gray-700 font-semibold">&#127758; Map</button>
+    <button id="tabBadges" class="fbtn text-[10px] bg-gray-800 px-2.5 py-1.5 rounded-lg border border-gray-700 font-semibold">&#127942; Badges</button>
+  </div>
+</div>
+
+<div id="mapSection">
+  <div id="mapWrap" class="rounded-2xl pb mb-3 bg-gray-900/50 border border-gray-800">
+    <div class="p-2.5 border-b border-gray-800 flex items-center justify-between">
+      <h2 class="text-sm font-bold text-white">&#127758; World Map</h2>
+      <button id="resetBtn" class="text-[9px] text-gray-400 hover:text-red-400 transition px-2 py-1 rounded border border-gray-700 hover:border-red-500">&#8635; Reset</button>
     </div>
-    <div class="relative" id="mapWrapper">
+    <div class="relative">
       <svg id="worldSvg" viewBox="0 0 1000 500" class="w-full h-auto" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <filter id="glowStrong"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        </defs>
+        <defs><filter id="g"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
         <rect width="1000" height="500" fill="#030712"/>
-        <g id="countriesGroup"></g>
-        <g id="travelLineGroup"></g>
-        <g id="labelsGroup"></g>
+        <g id="cg"></g><g id="tlg"></g><g id="lg"></g>
       </svg>
-      <div id="avatarOnMap" class="avatar-sprite-on-map hidden"></div>
+      <div id="avatarOnMap" class="avatar-on-map hidden"></div>
     </div>
   </div>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-    <div class="rounded-xl pixel-border bg-gray-900/40 p-4">
-      <h3 class="text-emerald-400 font-bold text-xs uppercase tracking-wider mb-2">🏅 Achievement Badges</h3>
-      <div class="grid grid-cols-2 gap-2">
-        <div id="badge-culinary" class="badge-icon locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
-          <span class="text-xl">🍜</span>
-          <span class="text-[9px] text-gray-400 font-semibold text-center leading-tight">Culinary</span>
-          <span class="text-[8px] text-gray-500"><span class="badge-progress" data-badge="culinary">0</span>/5</span>
-        </div>
-        <div id="badge-culture" class="badge-icon locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
-          <span class="text-xl">🏛</span>
-          <span class="text-[9px] text-gray-400 font-semibold text-center leading-tight">Culture</span>
-          <span class="text-[8px] text-gray-500"><span class="badge-progress" data-badge="culture">0</span>/5</span>
-        </div>
-        <div id="badge-transit" class="badge-icon locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
-          <span class="text-xl">🚆</span>
-          <span class="text-[9px] text-gray-400 font-semibold text-center leading-tight">Transit</span>
-          <span class="text-[8px] text-gray-500"><span class="badge-progress" data-badge="transit">0</span>/5</span>
-        </div>
-        <div id="badge-bitcoin" class="badge-icon locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
-          <span class="text-xl">₿</span>
-          <span class="text-[9px] text-gray-400 font-semibold text-center leading-tight">Orange</span>
-          <span class="text-[8px] text-gray-500"><span class="badge-progress" data-badge="bitcoin">0</span>/5</span>
-        </div>
+</div>
+
+<div id="badgesSection" class="hidden">
+  <div class="rounded-xl pb bg-gray-900/50 border border-gray-800 p-3 mb-3">
+    <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">&#128200; Exploration Radar</h3>
+    <canvas id="radarCanvas" width="280" height="220"></canvas>
+  </div>
+  <div class="rounded-xl pb bg-gray-900/50 border border-gray-800 p-3 mb-3">
+    <div class="flex flex-wrap gap-1.5 mb-2">
+      <span class="text-[9px] text-gray-400 uppercase font-bold mr-1 self-center">Rarity:</span>
+      <button class="fbtn active-r text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600 rarity-C" data-rarity="all">All</button>
+      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600 rarity-C" data-rarity="C">Common</button>
+      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600 rarity-R" data-rarity="R">Rare</button>
+      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600 rarity-E" data-rarity="E">Epic</button>
+      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600 rarity-L" data-rarity="L">Legendary</button>
+    </div>
+    <div class="flex flex-wrap gap-1.5 mb-2">
+      <span class="text-[9px] text-gray-400 uppercase font-bold mr-1 self-center">Category:</span>
+      <button class="fbtn active text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-cat="all">All</button>
+      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-cat="culinary">&#127858; Food</button>
+      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-cat="culture">&#127963; Culture</button>
+      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-cat="transit">&#128646; Transit</button>
+      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-cat="bitcoin">&#8383; Bitcoin</button>
+    </div>
+    <div class="flex flex-wrap gap-1.5">
+      <span class="text-[9px] text-gray-400 uppercase font-bold mr-1 self-center">Status:</span>
+      <button class="fbtn active text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-status="all">All</button>
+      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-status="unlocked">&#9989; Unlocked</button>
+      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-status="locked">&#128274; Locked</button>
+    </div>
+  </div>
+  <div id="badgeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-3"></div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+  <div class="rounded-xl pb bg-gray-900/40 border border-gray-800 p-3">
+    <h3 class="text-emerald-400 font-bold text-[10px] uppercase tracking-wider mb-2">&#127942; Achievement Badges</h3>
+    <div class="grid grid-cols-2 gap-1.5">
+      <div id="b-culinary" class="bi locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
+        <span class="text-lg">&#127858;</span><span class="text-[8px] text-gray-400 font-semibold text-center leading-tight">Culinary</span>
+        <span class="text-[7px] text-gray-500"><span class="bp" data-badge="culinary">0</span>/5</span>
+      </div>
+      <div id="b-culture" class="bi locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
+        <span class="text-lg">&#127963;</span><span class="text-[8px] text-gray-400 font-semibold text-center leading-tight">Culture</span>
+        <span class="text-[7px] text-gray-500"><span class="bp" data-badge="culture">0</span>/5</span>
+      </div>
+      <div id="b-transit" class="bi locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
+        <span class="text-lg">&#128646;</span><span class="text-[8px] text-gray-400 font-semibold text-center leading-tight">Transit</span>
+        <span class="text-[7px] text-gray-500"><span class="bp" data-badge="transit">0</span>/5</span>
+      </div>
+      <div id="b-bitcoin" class="bi locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
+        <span class="text-lg">&#8383;</span><span class="text-[8px] text-gray-400 font-semibold text-center leading-tight">Bitcoin</span>
+        <span class="text-[7px] text-gray-500"><span class="bp" data-badge="bitcoin">0</span>/5</span>
       </div>
     </div>
-    <div class="rounded-xl pixel-border bg-gray-900/40 p-4">
-      <h3 class="text-blue-400 font-bold text-xs uppercase tracking-wider mb-2">Bitcoin Travel Tips</h3>
-      <ul class="space-y-1.5 text-xs text-gray-300">
-        <li class="flex gap-2"><span class="text-blue-400 shrink-0">Use Lightning apps (Phoenix, Breez) to avoid bank forex fees.</li>
-        <li class="flex gap-2"><span class="text-blue-400 shrink-0">Keep hardware wallet in carry-on, never checked luggage.</li>
-        <li class="flex gap-2"><span class="text-blue-400 shrink-0">Encrypt paper backup of seed phrase stored separately.</li>
-        <li class="flex gap-2"><span class="text-blue-400 shrink-0">Save digital passport copies to secure cloud before departure.</li>
-      </ul>
-    </div>
-    <div class="rounded-xl pixel-border bg-gray-900/40 p-4 flex flex-col items-center text-center">
-      <h3 class="text-amber-400 font-bold text-xs uppercase tracking-wider mb-2">Support with Bitcoin</h3>
-      <p class="text-[10px] text-gray-400 mb-2 break-all select-all font-mono bg-gray-800 px-2 py-1.5 rounded-lg w-full">bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7</p>
-      <button id="copyBtn" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition glow-blue w-full">Copy Address</button>
-    </div>
+  </div>
+  <div class="rounded-xl pb bg-gray-900/40 border border-gray-800 p-3">
+    <h3 class="text-blue-400 font-bold text-[10px] uppercase tracking-wider mb-2">&#8383; Bitcoin Tips</h3>
+    <ul class="space-y-1 text-[11px] text-gray-300">
+      <li class="flex gap-1.5">Lightning apps (Phoenix, Breez) avoid bank forex fees.</li>
+      <li class="flex gap-1.5">Hardware wallet in carry-on, never checked luggage.</li>
+      <li class="flex gap-1.5">Encrypted seed backup stored separately from wallet.</li>
+      <li class="flex gap-1.5">Digital passport copies to secure cloud pre-departure.</li>
+    </ul>
+  </div>
+  <div class="rounded-xl pb bg-gray-900/40 border border-gray-800 p-3 flex flex-col items-center text-center">
+    <h3 class="text-amber-400 font-bold text-[10px] uppercase tracking-wider mb-2">Support</h3>
+    <p class="text-[9px] text-gray-400 mb-1.5 break-all select-all font-mono bg-gray-800 px-2 py-1 rounded-lg w-full">bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7</p>
+    <button id="copyBtn" class="bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-semibold px-3 py-1.5 rounded-lg transition glow-a w-full">&#128203; Copy Address</button>
   </div>
 </div>
-<div id="activityModal" class="fixed inset-0 modal-overlay flex items-center justify-center p-4 hidden z-50">
-  <div class="bg-gray-900 rounded-2xl pixel-border max-w-md w-full p-5 border border-gray-700">
-    <div class="flex items-center justify-between mb-3">
-      <h3 class="text-lg font-bold text-white"><span id="modalCountryName">Country</span></h3>
-      <button id="closeModal" class="text-gray-400 hover:text-white text-xl leading-none">&times;</button>
+</div>
+
+<div id="activityModal" class="fixed inset-0 modal-overlay flex items-center justify-center p-3 hidden z-50">
+  <div class="bg-gray-900 rounded-2xl pb max-w-md w-full p-4 border border-gray-700" style="max-height:90vh;overflow-y:auto">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="text-base font-bold text-white"><span id="modalCountryName">Country</span></h3>
+      <button id="closeModal" class="text-gray-400 hover:text-white text-lg leading-none">&times;</button>
     </div>
-    <p class="text-xs text-gray-400 mb-3">What did you accomplish here?</p>
-    <div id="activityChoices" class="space-y-2 mb-4"></div>
-    <button id="saveActivities" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg transition glow-emerald text-sm">Save &amp; Continue</button>
+    <p class="text-[11px] text-gray-400 mb-2">What did you accomplish here?</p>
+    <div id="activityChoices" class="space-y-1.5 mb-3"></div>
+    <button id="saveActivities" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg transition glow-e text-xs">Save &amp; Continue</button>
   </div>
 </div>
-<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-emerald-400 px-4 py-2 rounded-lg text-xs font-semibold pixel-border toast hidden z-50 whitespace-nowrap"></div>
+
+<div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-800 text-emerald-400 px-3 py-1.5 rounded-lg text-[11px] font-semibold pb toast hidden z-50 whitespace-nowrap"></div>
+
 <script>
+var CS={"US":{"n":"United States","c":[120,95,145,82,175,88,210,100,215,110,200,118,175,122,145,118,130,115]},"CA":{"n":"Canada","c":[100,55,150,35,210,28,260,35,270,42,255,55,220,60,180,65,140,70,105,62]},"MX":{"n":"Mexico","c":[175,128,195,128,200,135,198,145,185,155,173,145,172,135]},"BR":{"n":"Brazil","c":[240,220,280,215,300,240,295,255,270,275,245,260,235,235]},"AR":{"n":"Argentina","c":[255,280,275,282,278,295,275,310,260,328,248,310,248,295]},"CO":{"n":"Colombia","c":[242,205,262,205,265,215,248,225,240,218]},"CL":{"n":"Chile","c":[268,285,280,290,282,305,278,335,270,348,265,330,266,295]},"PE":{"n":"Peru","c":[242,230,262,230,268,242,265,255,248,268,237,248]},"GB":{"n":"United Kingdom","c":[340,85,352,82,355,88,345,98,340,94]},"FR":{"n":"France","c":[345,98,365,98,368,108,355,118,343,108]},"DE":{"n":"Germany","c":[360,85,380,82,385,90,375,102,358,95]},"ES":{"n":"Spain","c":[335,105,355,105,358,115,345,125,333,112]},"IT":{"n":"Italy","c":[365,108,378,110,380,120,368,138,360,120]},"NL":{"n":"Netherlands","c":[355,80,368,82,365,88,358,88]},"CH":{"n":"Switzerland","c":[368,98,382,98,380,105,372,107]},"SE":{"n":"Sweden","c":[380,55,398,45,408,60,395,78,378,65]},"NO":{"n":"Norway","c":[372,40,400,30,405,38,395,55,378,50]},"PT":{"n":"Portugal","c":[330,112,340,112,338,122,332,125]},"GR":{"n":"Greece","c":[395,125,410,122,412,130,400,140,393,135]},"IE":{"n":"Ireland","c":[330,78,342,78,340,85,335,88]},"AT":{"n":"Austria","c":[378,95,392,95,390,102,382,105]},"PL":{"n":"Poland","c":[385,75,402,75,405,82,390,86,383,82]},"UA":{"n":"Ukraine","c":[410,65,432,62,438,70,425,85,408,75]},"BE":{"n":"Belgium","c":[350,88,365,88,362,95,355,96]},"DK":{"n":"Denmark","c":[368,68,382,68,380,75,372,77]},"FI":{"n":"Finland","c":[405,38,428,30,438,45,420,58,405,45]},"RO":{"n":"Romania","c":[410,95,430,92,435,100,420,110,412,105]},"CZ":{"n":"Czech Republic","c":[378,85,394,85,392,92,384,94]},"HU":{"n":"Hungary","c":[398,92,415,92,412,100,396,100]},"HR":{"n":"Croatia","c":[385,100,400,102,398,110,383,108]},"JP":{"n":"Japan","c":[620,75,635,65,642,80,630,98,618,85]},"CN":{"n":"China","c":[530,65,580,50,620,58,625,68,600,85,560,85,525,75]},"KR":{"n":"South Korea","c":[615,88,628,88,630,95,618,105,612,100]},"IN":{"n":"India","c":[550,105,585,102,598,125,575,145,548,132,542,118]},"TH":{"n":"Thailand","c":[578,148,598,148,602,158,585,172,575,155]},"VN":{"n":"Vietnam","c":[600,148,615,148,618,158,608,178,596,162]},"ID":{"n":"Indonesia","c":[580,195,620,188,650,198,630,208,590,208,575,202]},"PH":{"n":"Philippines","c":[630,150,645,148,648,158,635,172,625,158]},"MY":{"n":"Malaysia","c":[578,170,598,172,600,180,582,182,575,178]},"SG":{"n":"Singapore","c":[600,190,610,190,608,194,602,195]},"TW":{"n":"Taiwan","c":[650,108,662,108,665,118,652,122,648,115]},"TR":{"n":"Turkey","c":[440,100,468,98,478,105,465,120,442,112]},"LK":{"n":"Sri Lanka","c":[570,145,582,145,580,152,574,154]},"NP":{"n":"Nepal","c":[555,92,575,92,572,100,562,102]},"KH":{"n":"Cambodia","c":[590,155,606,155,604,162,588,162]},"MM":{"n":"Myanmar","c":[565,130,585,128,590,138,575,150,562,138]},"BD":{"n":"Bangladesh","c":[570,108,586,108,584,118,568,118]},"UZ":{"n":"Uzbekistan","c":[510,78,535,75,538,84,515,86]},"KZ":{"n":"Kazakhstan","c":[465,48,525,35,550,50,520,62,480,68,460,62]},"MN":{"n":"Mongolia","c":[550,45,600,35,625,50,585,58,560,55]},"AU":{"n":"Australia","c":[610,290,670,270,710,290,715,305,670,328,625,318,612,305]},"NZ":{"n":"New Zealand","c":[710,335,725,332,728,342,715,355,708,348]},"FJ":{"n":"Fiji","c":[730,280,745,278,748,285,735,288]},"ZA":{"n":"South Africa","c":[395,310,428,305,440,312,428,335,400,332,390,322]},"NG":{"n":"Nigeria","c":[345,165,372,162,378,170,358,180,345,175]},"KE":{"n":"Kenya","c":[395,175,418,175,420,185,400,195,392,188]},"MA":{"n":"Morocco","c":[330,130,355,128,358,138,338,142,328,138]},"EG":{"n":"Egypt","c":[378,140,402,138,408,148,390,160,375,148]},"GH":{"n":"Ghana","c":[348,172,368,170,365,180,345,178]},"ET":{"n":"Ethiopia","c":[400,162,428,158,435,168,415,182,395,170]},"TZ":{"n":"Tanzania","c":[400,198,425,195,432,205,412,218,400,212]},"DZ":{"n":"Algeria","c":[340,118,380,105,400,118,380,132,342,130]},"SN":{"n":"Senegal","c":[325,150,345,148,342,158,332,160]},"MZ":{"n":"Mozambique","c":[415,222,438,222,442,235,425,252,410,235]},"AO":{"n":"Angola","c":[368,228,390,225,395,238,378,252,365,235]},"AE":{"n":"UAE","c":[490,112,505,108,512,112,505,120,490,118]},"SA":{"n":"Saudi Arabia","c":[455,108,480,100,500,105,505,118,490,128,465,130,452,120]},"IL":{"n":"Israel","c":[465,128,472,125,478,128,475,135,468,136]},"QA":{"n":"Qatar","c":[510,120,518,118,522,122,515,126]},"JO":{"n":"Jordan","c":[470,130,478,128,482,135,475,140,468,138]},"OM":{"n":"Oman","c":[525,118,538,112,545,118,540,130,528,132]},"BH":{"n":"Bahrain","c":[505,115,510,113,512,117,507,119]},"LB":{"n":"Lebanon","c":[468,122,475,120,478,125,472,127]},"KW":{"n":"Kuwait","c":[498,108,505,105,508,110,500,112]}};
+var CR={"US":"na","CA":"na","MX":"na","BR":"la","AR":"la","CO":"la","CL":"la","PE":"la","GB":"we","FR":"we","DE":"we","ES":"we","IT":"we","NL":"we","CH":"we","SE":"we","NO":"we","PT":"we","GR":"we","IE":"we","AT":"we","PL":"ee","UA":"ee","BE":"we","DK":"we","FI":"we","RO":"ee","CZ":"ee","HU":"ee","HR":"ee","JP":"ea","CN":"ea","KR":"ea","TW":"ea","MN":"ea","IN":"ea","TH":"sa","VN":"sa","ID":"sa","PH":"sa","MY":"sa","SG":"sa","LK":"sa","NP":"ea","KH":"sa","MM":"sa","BD":"ea","UZ":"ea","KZ":"ea","AU":"oc","NZ":"oc","FJ":"oc","ZA":"af","NG":"af","KE":"af","MA":"af","EG":"af","GH":"af","ET":"af","TZ":"af","DZ":"af","SN":"af","MZ":"af","AO":"af","AE":"me","SA":"me","IL":"me","QA":"me","JO":"me","OM":"me","BH":"me","LB":"me","KW":"me","TR":"me"};
+var AD={"specific":{"JP":[{"t":"Braved Shibuya Scramble at peak hour","r":"R","c":["transit","culture"],"d":2},{"t":"Stayed in a traditional ryokan with onsen","r":"E","c":["culture"],"d":3},{"t":"Ate fresh sushi at Tsukiji at dawn","r":"R","c":["culinary"],"d":2},{"t":"Hiked the Kumano Kodo pilgrimage","r":"E","c":["culture"],"d":3},{"t":"Paid for ramen with Lightning","r":"L","c":["bitcoin","culinary"],"d":4}],"CN":[{"t":"Hiked abandoned Great Wall section","r":"E","c":["culture"],"d":3},{"t":"Ordered street food via WeChat only","r":"R","c":["culinary","transit"],"d":2},{"t":"Navigated Shanghai Metro rush hour","r":"C","c":["transit"],"d":1},{"t":"Saw Terracotta Warriors at opening","r":"R","c":["culture"],"d":2},{"t":"Found Bitcoin OTC desk in Shenzhen","r":"L","c":["bitcoin"],"d":4}],"US":[{"t":"Road-tripped Route 66","r":"E","c":["transit","culture"],"d":3},{"t":"Ate at 50-year-old family diner","r":"R","c":["culinary"],"d":2},{"t":"Hiked national park at sunrise","r":"R","c":["culture"],"d":2},{"t":"Paid gas with Lightning via BTCPay","r":"L","c":["bitcoin","transit"],"d":4},{"t":"Navigated NYC subway like a local","r":"C","c":["transit"],"d":1}],"IN":[{"t":"Rode tuk-tuk through Old Delhi","r":"C","c":["transit","culture"],"d":1},{"t":"Ate street masala dosa at midnight","r":"R","c":["culinary"],"d":2},{"t":"Watched sunrise at Taj Mahal","r":"E","c":["culture"],"d":3},{"t":"Survived Mumbai train peak hour","r":"R","c":["transit"],"d":2},{"t":"Bought chai with Lightning","r":"L","c":["bitcoin","culinary"],"d":4}]},"regional":{"ea":[{"t":"Mastered noodles from a street stall","r":"C","c":["culinary"],"d":1},{"t":"Visited a temple at dawn","r":"C","c":["culture"],"d":1},{"t":"Rode bullet train across country","r":"R","c":["transit"],"d":2},{"t":"Tried bizarre vending machine snack","r":"C","c":["culinary"],"d":1},{"t":"Navigated subway without speaking language","r":"R","c":["transit"],"d":2},{"t":"Attended traditional tea ceremony","r":"R","c":["culture"],"d":2},{"t":"Found Bitcoin meetup in coworking","r":"E","c":["bitcoin"],"d":3}],"sa":[{"t":"Ate insect skewers at night market","r":"R","c":["culinary"],"d":2},{"t":"Island-hopped on local ferry","r":"C","c":["transit"],"d":1},{"t":"Explored ancient temple complex","r":"C","c":["culture"],"d":1},{"t":"Got custom outfit for cheap","r":"C","c":["culture"],"d":1},{"t":"Rode scooter through rice terraces","r":"R","c":["transit","culture"],"d":2},{"t":"Bartered at floating market","r":"R","c":["culinary"],"d":2},{"t":"Paid massage with Lightning","r":"E","c":["bitcoin"],"d":3}],"we":[{"t":"Explored 1000-year-old castle vault","r":"E","c":["culture"],"d":3},{"t":"Attended historic opera performance","r":"E","c":["culture"],"d":3},{"t":"Ordered coffee in native dialect","r":"C","c":["culinary"],"d":1},{"t":"Mastered metro without a map","r":"C","c":["transit"],"d":1},{"t":"Ate Michelin-starred lunch","r":"E","c":["culinary"],"d":3},{"t":"Biked city like a local","r":"C","c":["transit"],"d":1},{"t":"Bought baguette with Lightning","r":"L","c":["bitcoin","culinary"],"d":4}],"ee":[{"t":"Explored Soviet brutalist architecture","r":"R","c":["culture"],"d":2},{"t":"Ate pierogi from grandmother stall","r":"C","c":["culinary"],"d":1},{"t":"Navigated tram without maps","r":"C","c":["transit"],"d":1},{"t":"Visited Cold War bunker museum","r":"R","c":["culture"],"d":2},{"t":"Found Bitcoin ATM in basement club","r":"E","c":["bitcoin"],"d":3}],"la":[{"t":"Learned salsa from local instructor","r":"C","c":["culture"],"d":1},{"t":"Used collectivo minibus route","r":"C","c":["transit"],"d":1},{"t":"Visited ancient civilization ruins","r":"E","c":["culture"],"d":3},{"t":"Ate street tacos at 2am","r":"C","c":["culinary"],"d":1},{"t":"Haggled at local mercado","r":"C","c":["culinary","culture"],"d":1},{"t":"Paid street musician with Lightning","r":"E","c":["bitcoin","culture"],"d":3},{"t":"Rode chicken bus across country","r":"R","c":["transit"],"d":2}],"af":[{"t":"Watched wildlife on sunrise safari","r":"E","c":["culture"],"d":3},{"t":"Ate injera with hands at local home","r":"R","c":["culinary"],"d":2},{"t":"Negotiated shared taxi fare","r":"C","c":["transit"],"d":1},{"t":"Visited vibrant open-air market","r":"C","c":["culinary","culture"],"d":1},{"t":"Rode moto-taxi through busy streets","r":"C","c":["transit"],"d":1},{"t":"Sent sats via mobile Lightning","r":"E","c":["bitcoin"],"d":3}],"oc":[{"t":"Snorkelled coral reef at sunrise","r":"E","c":["culture"],"d":3},{"t":"Ate meat pie from roadside bakery","r":"C","c":["culinary"],"d":1},{"t":"Hitched ride on sailing boat","r":"R","c":["transit"],"d":2},{"t":"Hiked coastal trail with views","r":"C","c":["culture"],"d":1},{"t":"Found Bitcoin-accepting surf shop","r":"E","c":["bitcoin"],"d":3}],"me":[{"t":"Explored centuries-old souk maze","r":"R","c":["culture"],"d":2},{"t":"Ate street shawarma from cart","r":"C","c":["culinary"],"d":1},{"t":"Negotiated desert safari","r":"R","c":["transit","culture"],"d":2},{"t":"Visited stunning tile mosque","r":"C","c":["culture"],"d":1},{"t":"Drank tea with locals","r":"C","c":["culinary","culture"],"d":1},{"t":"Bought spices with Lightning","r":"E","c":["bitcoin","culinary"],"d":3}],"na":[{"t":"Ate at legendary hole-in-the-wall","r":"C","c":["culinary"],"d":1},{"t":"Navigated subway completely lost","r":"C","c":["transit"],"d":1},{"t":"Visited world-class museum free","r":"C","c":["culture"],"d":1},{"t":"Tried regional food exclusive","r":"R","c":["culinary"],"d":2},{"t":"Rode Greyhound cross-state","r":"C","c":["transit"],"d":1},{"t":"Found Bitcoin-friendly cafe","r":"R","c":["bitcoin"],"d":2}]}};
 
-const CS = {
-  US:{n:'United States',c:[120,95,145,82,175,88,210,100,215,110,200,118,175,122,145,118,130,115]},
-  CA:{n:'Canada',c:[100,55,150,35,210,28,260,35,270,42,255,55,220,60,180,65,140,70,105,62]},
-  MX:{n:'Mexico',c:[175,128,195,128,200,135,198,145,185,155,173,145,172,135]},
-  BR:{n:'Brazil',c:[240,220,280,215,300,240,295,255,270,275,245,260,235,235]},
-  AR:{n:'Argentina',c:[255,280,275,282,278,295,275,310,260,328,248,310,248,295]},
-  CO:{n:'Colombia',c:[242,205,262,205,265,215,248,225,240,218]},
-  CL:{n:'Chile',c:[268,285,280,290,282,305,278,335,270,348,265,330,266,295]},
-  PE:{n:'Peru',c:[242,230,262,230,268,242,265,255,248,268,237,248]},
-  GB:{n:'United Kingdom',c:[340,85,352,82,355,88,345,98,340,94]},
-  FR:{n:'France',c:[345,98,365,98,368,108,355,118,343,108]},
-  DE:{n:'Germany',c:[360,85,380,82,385,90,375,102,358,95]},
-  ES:{n:'Spain',c:[335,105,355,105,358,115,345,125,333,112]},
-  IT:{n:'Italy',c:[365,108,378,110,380,120,368,138,360,120]},
-  NL:{n:'Netherlands',c:[355,80,368,82,365,88,358,88]},
-  CH:{n:'Switzerland',c:[368,98,382,98,380,105,372,107]},
-  SE:{n:'Sweden',c:[380,55,398,45,408,60,395,78,378,65]},
-  NO:{n:'Norway',c:[372,40,400,30,405,38,395,55,378,50]},
-  PT:{n:'Portugal',c:[330,112,340,112,338,122,332,125]},
-  GR:{n:'Greece',c:[395,125,410,122,412,130,400,140,393,135]},
-  IE:{n:'Ireland',c:[330,78,342,78,340,85,335,88]},
-  AT:{n:'Austria',c:[378,95,392,95,390,102,382,105]},
-  PL:{n:'Poland',c:[385,75,402,75,405,82,390,86,383,82]},
-  UA:{n:'Ukraine',c:[410,65,432,62,438,70,425,85,408,75]},
-  BE:{n:'Belgium',c:[350,88,365,88,362,95,355,96]},
-  DK:{n:'Denmark',c:[368,68,382,68,380,75,372,77]},
-  FI:{n:'Finland',c:[405,38,428,30,438,45,420,58,405,45]},
-  RO:{n:'Romania',c:[410,95,430,92,435,100,420,110,412,105]},
-  CZ:{n:'Czech Republic',c:[378,85,394,85,392,92,384,94]},
-  HU:{n:'Hungary',c:[398,92,415,92,412,100,396,100]},
-  HR:{n:'Croatia',c:[385,100,400,102,398,110,383,108]},
-  JP:{n:'Japan',c:[620,75,635,65,642,80,630,98,618,85]},
-  CN:{n:'China',c:[530,65,580,50,620,58,625,68,600,85,560,85,525,75]},
-  KR:{n:'South Korea',c:[615,88,628,88,630,95,618,105,612,100]},
-  IN:{n:'India',c:[550,105,585,102,598,125,575,145,548,132,542,118]},
-  TH:{n:'Thailand',c:[578,148,598,148,602,158,585,172,575,155]},
-  VN:{n:'Vietnam',c:[600,148,615,148,618,158,608,178,596,162]},
-  ID:{n:'Indonesia',c:[580,195,620,188,650,198,630,208,590,208,575,202]},
-  PH:{n:'Philippines',c:[630,150,645,148,648,158,635,172,625,158]},
-  MY:{n:'Malaysia',c:[578,170,598,172,600,180,582,182,575,178]},
-  SG:{n:'Singapore',c:[600,190,610,190,608,194,602,195]},
-  TW:{n:'Taiwan',c:[650,108,662,108,665,118,652,122,648,115]},
-  TR:{n:'Turkey',c:[440,100,468,98,478,105,465,120,442,112]},
-  LK:{n:'Sri Lanka',c:[570,145,582,145,580,152,574,154]},
-  NP:{n:'Nepal',c:[555,92,575,92,572,100,562,102]},
-  KH:{n:'Cambodia',c:[590,155,606,155,604,162,588,162]},
-  MM:{n:'Myanmar',c:[565,130,585,128,590,138,575,150,562,138]},
-  BD:{n:'Bangladesh',c:[570,108,586,108,584,118,568,118]},
-  UZ:{n:'Uzbekistan',c:[510,78,535,75,538,84,515,86]},
-  KZ:{n:'Kazakhstan',c:[465,48,525,35,550,50,520,62,480,68,460,62]},
-  MN:{n:'Mongolia',c:[550,45,600,35,625,50,585,58,560,55]},
-  AU:{n:'Australia',c:[610,290,670,270,710,290,715,305,670,328,625,318,612,305]},
-  NZ:{n:'New Zealand',c:[710,335,725,332,728,342,715,355,708,348]},
-  FJ:{n:'Fiji',c:[730,280,745,278,748,285,735,288]},
-  ZA:{n:'South Africa',c:[395,310,428,305,440,312,428,335,400,332,390,322]},
-  NG:{n:'Nigeria',c:[345,165,372,162,378,170,358,180,345,175]},
-  KE:{n:'Kenya',c:[395,175,418,175,420,185,400,195,392,188]},
-  MA:{n:'Morocco',c:[330,130,355,128,358,138,338,142,328,138]},
-  EG:{n:'Egypt',c:[378,140,402,138,408,148,390,160,375,148]},
-  GH:{n:'Ghana',c:[348,172,368,170,365,180,345,178]},
-  ET:{n:'Ethiopia',c:[400,162,428,158,435,168,415,182,395,170]},
-  TZ:{n:'Tanzania',c:[400,198,425,195,432,205,412,218,400,212]},
-  DZ:{n:'Algeria',c:[340,118,380,105,400,118,380,132,342,130]},
-  SN:{n:'Senegal',c:[325,150,345,148,342,158,332,160]},
-  MZ:{n:'Mozambique',c:[415,222,438,222,442,235,425,252,410,235]},
-  AO:{n:'Angola',c:[368,228,390,225,395,238,378,252,365,235]},
-  AE:{n:'UAE',c:[490,112,505,108,512,112,505,120,490,118]},
-  SA:{n:'Saudi Arabia',c:[455,108,480,100,500,105,505,118,490,128,465,130,452,120]},
-  IL:{n:'Israel',c:[465,128,472,125,478,128,475,135,468,136]},
-  QA:{n:'Qatar',c:[510,120,518,118,522,122,515,126]},
-  JO:{n:'Jordan',c:[470,130,478,128,482,135,475,140,468,138]},
-  OM:{n:'Oman',c:[525,118,538,112,545,118,540,130,528,132]},
-  BH:{n:'Bahrain',c:[505,115,510,113,512,117,507,119]},
-  LB:{n:'Lebanon',c:[468,122,475,120,478,125,472,127]},
-  KW:{n:'Kuwait',c:[498,108,505,105,508,110,500,112]}
-};
+var RL={C:"Common",R:"Rare",E:"Epic",L:"Legendary"};
+var RC={C:"#9ca3af",R:"#3b82f6",E:"#8b5cf6",L:"#f59e0b"};
+var AI=Object.keys(CS);
+var LV=[{m:0,l:"Couch Potato",i:"🥔"},{m:1,l:"Beginner Traveller",i:"🎒"},{m:6,l:"Intermediate Adventurer",i:"✈"},{m:11,l:"Advanced Explorer",i:"🧭"}];
+var QT=[{m:0,t:"Venture beyond your border. Unlock Country #1."},{m:1,t:"Regional Explorer. Log accomplishments in 5 countries."},{m:6,t:"Sovereign Wanderer. Hunt for unique milestones across the globe."}];
+var BC={culinary:{n:"Culinary Connoisseur",i:"🍜"},culture:{n:"Cultural Guardian",i:"🏛"},transit:{n:"Urban Legend",i:"🚆"},bitcoin:{n:"Orange Pilled",i:"₿"}};
+var RP={C:1,R:2,E:3,L:5};
+var TI={culinary:"🍜",culture:"🏛",transit:"🚆",bitcoin:"₿"};
 
-const COUNTRY_REGIONS = {
-  US:'northAmerica',CA:'northAmerica',MX:'northAmerica',
-  BR:'latinAmerica',AR:'latinAmerica',CO:'latinAmerica',CL:'latinAmerica',PE:'latinAmerica',
-  GB:'westernEurope',FR:'westernEurope',DE:'westernEurope',ES:'westernEurope',
-  IT:'westernEurope',NL:'westernEurope',CH:'westernEurope',SE:'westernEurope',
-  NO:'westernEurope',PT:'westernEurope',GR:'westernEurope',IE:'westernEurope',
-  AT:'westernEurope',PL:'easternEurope',UA:'easternEurope',BE:'westernEurope',
-  DK:'westernEurope',FI:'westernEurope',RO:'easternEurope',CZ:'easternEurope',
-  HU:'easternEurope',HR:'easternEurope',
-  JP:'eastAsia',CN:'eastAsia',KR:'eastAsia',TW:'eastAsia',MN:'eastAsia',
-  IN:'eastAsia',TH:'southeastAsia',VN:'southeastAsia',ID:'southeastAsia',
-  PH:'southeastAsia',MY:'southeastAsia',SG:'southeastAsia',
-  LK:'southeastAsia',NP:'eastAsia',KH:'southeastAsia',MM:'southeastAsia',
-  BD:'eastAsia',UZ:'eastAsia',KZ:'eastAsia',
-  AU:'oceania',NZ:'oceania',FJ:'oceania',
-  ZA:'africa',NG:'africa',KE:'africa',MA:'africa',
-  EG:'africa',GH:'africa',ET:'africa',TZ:'africa',
-  DZ:'africa',SN:'africa',MZ:'africa',AO:'africa',
-  AE:'middleEast',SA:'middleEast',IL:'middleEast',
-  QA:'middleEast',JO:'middleEast',OM:'middleEast',BH:'middleEast',
-  LB:'middleEast',KW:'middleEast',TR:'middleEast'
-};
+var st=JSON.parse(localStorage.getItem("bt"))||{};
+if(!st.vo)st.vo=[];
+if(!st.av)st.av="boy";
 
-const ACTIVITY_DB = {
-  specific:{
-    JP:[{text:'Navigated Shibuya Scramble without breaking stride',tags:['transit','culture']},{text:'Stayed overnight in a traditional ryokan with onsen',tags:['culture']},{text:'Ate fresh sushi at Tsukiji Outer Market at 5am',tags:['culinary']},{text:'Hiked the Kumano Kodo pilgrimage trail',tags:['culture']},{text:'Paid for ramen with Lightning at a Bitcoin cafe',tags:['bitcoin','culinary']}],
-    CN:[{text:'Hiked a remote unrestored section of the Great Wall',tags:['culture']},{text:'Ordered street food using only WeChat gestures',tags:['culinary','transit']},{text:'Navigated Shanghai Metro during rush hour',tags:['transit']},{text:'Visited Terracotta Warriors before the crowds',tags:['culture']},{text:'Found a Bitcoin OTC desk in Shenzhen market',tags:['bitcoin']}],
-    US:[{text:'Road-tripped Route 66 in a convertible',tags:['transit','culture']},{text:'Ate at a 50-year-old family-run diner',tags:['culinary']},{text:'Hiked a national park at sunrise',tags:['culture']},{text:'Paid for gas with Lightning via BTCPay',tags:['bitcoin','transit']},{text:'Navigated NYC subway like a local',tags:['transit']}],
-    IN:[{text:'Rode a tuk-tuk through Old Delhi chaos',tags:['transit','culture']},{text:'Ate street-side masala dosa at midnight',tags:['culinary']},{text:'Watched sunrise at the Taj Mahal',tags:['culture']},{text:'Survived Mumbai local train at peak hour',tags:['transit']},{text:'Bought chai from a Lightning-enabled vendor',tags:['bitcoin','culinary']}]
-  },
-  regional:{
-    eastAsia:[{text:'Mastered a bowl of noodles from a street stall',tags:['culinary']},{text:'Visited a centuries-old temple at dawn',tags:['culture']},{text:'Rode high-speed rail across the countryside',tags:['transit']},{text:'Tried a bizarre vending machine snack',tags:['culinary']},{text:'Navigated a mega-city subway without the language',tags:['transit']},{text:'Attended a traditional tea ceremony',tags:['culture']},{text:'Found a Bitcoin meetup in a coworking space',tags:['bitcoin']}],
-    southeastAsia:[{text:'Ate insect skewers from a night market',tags:['culinary']},{text:'Hopped between islands on a local ferry',tags:['transit']},{text:'Explored an ancient temple complex',tags:['culture']},{text:'Got a custom-tailored outfit for cheap',tags:['culture']},{text:'Rode a scooter through rice terraces',tags:['transit','culture']},{text:'Bartered at a floating market',tags:['culinary']},{text:'Paid for a massage with Lightning',tags:['bitcoin']}],
-    westernEurope:[{text:'Explored a 1000-year-old castle vault',tags:['culture']},{text:'Attended a performance in a historic opera house',tags:['culture']},{text:'Ordered coffee in the native dialect',tags:['culinary']},{text:'Mastered the metro without a map',tags:['transit']},{text:'Ate at a Michelin-starred restaurant',tags:['culinary']},{text:'Biked through a city like a local',tags:['transit']},{text:'Used Lightning to buy a baguette',tags:['bitcoin','culinary']}],
-    easternEurope:[{text:'Explored Soviet-era brutalist architecture',tags:['culture']},{text:'Ate pierogi from a grandmother stall',tags:['culinary']},{text:'Navigated the tram without Google Maps',tags:['transit']},{text:'Visited a Cold War bunker museum',tags:['culture']},{text:'Found a hidden Bitcoin ATM in a basement club',tags:['bitcoin']}],
-    latinAmerica:[{text:'Learned salsa steps from a local instructor',tags:['culture']},{text:'Used a local Collectivo mini-bus route',tags:['transit']},{text:'Visited ruins of an ancient civilization',tags:['culture']},{text:'Ate street tacos from a cart at 2am',tags:['culinary']},{text:'Haggled at a bustling local mercado',tags:['culinary','culture']},{text:'Used Lightning to pay a street musician',tags:['bitcoin','culture']},{text:'Rode a chicken bus across the countryside',tags:['transit']}],
-    africa:[{text:'Watched wildlife on a sunrise safari',tags:['culture']},{text:'Ate injera with your hands at a local home',tags:['culinary']},{text:'Negotiated a shared taxi fare',tags:['transit']},{text:'Visited a vibrant open-air market',tags:['culinary','culture']},{text:'Rode a moto-taxi through busy streets',tags:['transit']},{text:'Sent sats via mobile Lightning',tags:['bitcoin']}],
-    oceania:[{text:'Snorkelled a coral reef at sunrise',tags:['culture']},{text:'Ate a meat pie from a roadside bakery',tags:['culinary']},{text:'Hitched a ride on a sailing boat',tags:['transit']},{text:'Hiked a coastal trail with views',tags:['culture']},{text:'Found a Bitcoin-accepting surf shop',tags:['bitcoin']}],
-    middleEast:[{text:'Explored a centuries-old souk maze',tags:['culture']},{text:'Ate street-side shawarma from a cart',tags:['culinary']},{text:'Negotiated a desert safari',tags:['transit','culture']},{text:'Visited a mosque with stunning tilework',tags:['culture']},{text:'Drank tea with locals in a cafe',tags:['culinary','culture']},{text:'Used Lightning to buy spices in the market',tags:['bitcoin','culinary']}],
-    northAmerica:[{text:'Ate at a legendary hole-in-the-wall diner',tags:['culinary']},{text:'Navigated a major subway completely lost',tags:['transit']},{text:'Visited a world-class museum for free',tags:['culture']},{text:'Tried a regional food you cannot get elsewhere',tags:['culinary']},{text:'Took a Greyhound bus cross-state',tags:['transit']},{text:'Found a Bitcoin-friendly cafe downtown',tags:['bitcoin']}]
+function sh(a){var r=[...a];for(var i=r.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=r[i];r[i]=r[j];r[j]=t;}return r;}
+
+function ga(iso){
+  var reg=CR[iso];var pool=[];
+  if(AD.specific[iso])pool=pool.concat(AD.specific[iso]);
+  if(reg&&AD.regional[reg])pool=pool.concat(AD.regional[reg]);
+  if(pool.length===0)pool.push({t:"Explored city center",r:"C",c:["culture"],d:1},{t:"Tried local dish",r:"C",c:["culinary"],d:1},{t:"Used public transport",r:"C",c:["transit"],d:1},{t:"Visited landmark",r:"C",c:["culture"],d:1},{t:"Found Bitcoin spot",r:"R",c:["bitcoin"],d:2});
+  return sh(pool).slice(0,3);
+}
+
+function ct(iso){
+  var c=CS[iso].c;var x=0,y=0;
+  for(var i=0;i<c.length;i+=2){x+=c[i];y+=c[i+1];}
+  var n=c.length/2;return {x:x/n,y:y/n};
+}
+
+function uc(){return AI.filter(function(i){return st[i]&&st[i].u}).length;}
+function cT(tag){var t=0;for(var i=0;i<AI.length;i++){var d=st[AI[i]];if(d&&d.sc)for(var j=0;j<d.sc.length;j++){if(d.sc[j].tags&&d.sc[j].tags.indexOf(tag)>=0)t++;}}return t;}
+function cR(r){var t=0;for(var i=0;i<AI.length;i++){var d=st[AI[i]];if(d&&d.sc)for(var j=0;j<d.sc.length;j++){if(d.sc[j].rar===r)t++;}}return t;}
+function alA(){var a=[];for(var i=0;i<AI.length;i++){var d=st[AI[i]];if(d&&d.sc){for(var j=0;j<d.sc.length;j++){a.push({text:d.sc[j].text,rar:d.sc[j].rar,tags:d.sc[j].tags,diff:d.sc[j].diff,iso:AI[i],country:CS[AI[i]].n});}}}return a;}
+
+function bp(iso){
+  var c=CS[iso].c;var d="M"+c[0]+","+c[1];
+  for(var i=2;i<c.length;i+=2)d+="L"+c[i]+","+c[i+1];
+  return d+"Z";
+}
+
+function rM(){
+  var g=document.getElementById("cg"),lg=document.getElementById("lg");
+  g.innerHTML="";lg.innerHTML="";
+  for(var i=0;i<AI.length;i++){
+    var iso=AI[i];var d=st[iso]||{};
+    var p=document.createElementNS("http://www.w3.org/2000/svg","path");
+    p.setAttribute("d",bp(iso));
+    p.setAttribute("class","country-path"+(d.u?" unlocked":""));
+    p.dataset.iso=iso;
+    p.addEventListener("click",(function(iso){return function(){oM(iso);};})(iso));
+    p.addEventListener("mouseenter",(function(d){return function(){if(!d.u)this.style.fill="#1e3a5f";};})(d));
+    p.addEventListener("mouseleave",(function(d){return function(){if(!d.u)this.style.fill="";};})(d));
+    g.appendChild(p);
+    var c=ct(iso);
+    var t=document.createElementNS("http://www.w3.org/2000/svg","text");
+    t.setAttribute("x",c.x);t.setAttribute("y",c.y);
+    t.setAttribute("class","cl");t.setAttribute("text-anchor","middle");t.setAttribute("dominant-baseline","central");
+    t.textContent=iso;lg.appendChild(t);
   }
-};
-
-const LEVELS = [{min:0,label:'Level 0: Couch Potato',icon:'\u{1F954}'},{min:1,label:'Level 1: Beginner Traveller',icon:'\u{1F392}'},{min:6,label:'Level 2: Intermediate Adventurer',icon:'\u2708\uFE0F'},{min:11,label:'Level 3: Advanced Explorer',icon:'\u{1F9ED}'}];
-const QUEST_TEXTS = [{min:0,text:'Venture beyond your border. Unlock Country #1.'},{min:1,text:'Regional Explorer. Log accomplishments in 5 countries.'},{min:6,text:'Sovereign Wanderer. Hunt for unique milestones across the globe.'}];
-const BADGE_CONFIG = {culinary:{threshold:5},culture:{threshold:5},transit:{threshold:5},bitcoin:{threshold:5}};
-const ALL_ISO = Object.keys(CS);
-
-let state = JSON.parse(localStorage.getItem('bitcoinerTraveller')) || {};
-if(!state.visitedOrder) state.visitedOrder = [];
-if(!state.avatar) state.avatar = 'boy';
-
-function shuffle(a){const arr=[...a];for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
-
-function generateActivitySet(iso){
-  const region = COUNTRY_REGIONS[iso];
-  const pool = [];
-  if(ACTIVITY_DB.specific[iso]) pool.push(...ACTIVITY_DB.specific[iso]);
-  if(region && ACTIVITY_DB.regional[region]) pool.push(...ACTIVITY_DB.regional[region]);
-  if(pool.length===0) pool.push({text:'Explored the city center on foot',tags:['culture']},{text:'Tried a local dish at a busy restaurant',tags:['culinary']},{text:'Used public transport to get around',tags:['transit']},{text:'Visited a famous landmark',tags:['culture']},{text:'Found a place that accepts Bitcoin',tags:['bitcoin']});
-  return shuffle(pool).slice(0,3);
+  rTL();uA();
 }
 
-function getCenter(iso){
-  const c = CS[iso].c;
-  let sx=0,sy=0;
-  for(let i=0;i<c.length;i+=2){sx+=c[i];sy+=c[i+1];}
-  const n=c.length/2;
-  return {x:sx/n,y:sy/n};
+function lI(c){var l=LV[0];for(var i=0;i<LV.length;i++){if(c>=LV[i].m)l=LV[i];}return l;}
+function nT(c){for(var i=0;i<LV.length;i++){if(LV[i].m>c)return LV[i];}return null;}
+function qT(c){var q=QT[0];for(var i=0;i<QT.length;i++){if(c>=QT[i].m)q=QT[i];}return q.t;}
+
+function rL(){
+  var c=uc(),lvl=lI(c),nxt=nT(c);
+  document.getElementById("levelDisplay").textContent=lvl.i+" "+lvl.l;
+  document.getElementById("countryCount").textContent=c;
+  document.getElementById("questText").textContent=qT(c);
+  if(nxt){var r=nxt.m-lvl.m,p=r>0?((c-lvl.m)/r)*100:0;document.getElementById("progressBar").style.width=Math.min(p,100)+"%";document.getElementById("nextLevelHint").textContent=(nxt.m-c)+" more to "+nxt.l;}
+  else{document.getElementById("progressBar").style.width="100%";document.getElementById("nextLevelHint").textContent="Max level!";}
+  rB();dR();
 }
 
-function countUnlocked(){return ALL_ISO.filter(i=>state[i]&&state[i].unlocked).length;}
-function countTagged(tag){let t=0;for(const i of ALL_ISO){const d=state[i];if(d&&d.savedChoices){for(const c of d.savedChoices){if(c.tags&&c.tags.includes(tag)) t++;}}}return t;}
-
-function buildSvgPath(iso){
-  const c = CS[iso].c;
-  let d = 'M'+c[0]+','+c[1];
-  for(let i=2;i<c.length;i+=2) d+='L'+c[i]+','+c[i+1];
-  return d+'Z';
-}
-
-function renderMap(){
-  const g = document.getElementById('countriesGroup');
-  const lg = document.getElementById('labelsGroup');
-  g.innerHTML='';lg.innerHTML='';
-  ALL_ISO.forEach(iso=>{
-    const data=state[iso]||{unlocked:false};
-    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-    path.setAttribute('d',buildSvgPath(iso));
-    path.setAttribute('class','country-path'+(data.unlocked?' unlocked':''));
-    path.dataset.iso=iso;
-    path.addEventListener('click',()=>openModal(iso));
-    path.addEventListener('mouseenter',()=>{if(!data.unlocked)path.style.fill='#1e3a5f';});
-    path.addEventListener('mouseleave',()=>{if(!data.unlocked)path.style.fill='';});
-    g.appendChild(path);
-    const ctr=getCenter(iso);
-    const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
-    txt.setAttribute('x',ctr.x);
-    txt.setAttribute('y',ctr.y);
-    txt.setAttribute('class','country-label');
-    txt.setAttribute('text-anchor','middle');
-    txt.setAttribute('dominant-baseline','central');
-    txt.textContent=iso;
-    lg.appendChild(txt);
-  });
-  renderTravelLine();
-  updateAvatarPosition();
-}
-
-function getLevelInfo(count){let l=LEVELS[0];for(const x of LEVELS){if(count>=x.min)l=x;}return l;}
-function getNextThreshold(count){for(const l of LEVELS){if(l.min>count)return l;}return null;}
-function getQuestText(count){let q=QUEST_TEXTS[0];for(const x of QUEST_TEXTS){if(count>=x.min)q=x;}return q.text;}
-
-function renderLevel(){
-  const c=countUnlocked(),lvl=getLevelInfo(c),next=getNextThreshold(c);
-  document.getElementById('levelDisplay').textContent=lvl.icon+' '+lvl.label;
-  document.getElementById('countryCount').textContent=c;
-  document.getElementById('questText').textContent=getQuestText(c);
-  if(next){const r=next.min-lvl.min,p=r>0?((c-lvl.min)/r)*100:0;document.getElementById('progressBar').style.width=Math.min(p,100)+'%';document.getElementById('nextLevelHint').textContent=(next.min-c)+' more to '+next.label.replace(/Level \d+: /,'');}
-  else{document.getElementById('progressBar').style.width='100%';document.getElementById('nextLevelHint').textContent='Max level reached!';}
-  renderBadges();
-}
-
-function renderBadges(){
-  for(const k of Object.keys(BADGE_CONFIG)){
-    const cnt=countTagged(k),el=document.getElementById('badge-'+k),pr=el.querySelector('.badge-progress');
+function rB(){
+  var keys=Object.keys(BC);
+  for(var i=0;i<keys.length;i++){
+    var k=keys[i];var cnt=cT(k),el=document.getElementById("b-"+k),pr=el.querySelector(".bp");
     if(pr)pr.textContent=cnt;
-    if(cnt>=5){el.classList.remove('locked');el.classList.add('unlocked','border-blue-500','bg-blue-900/20');el.classList.remove('border-gray-700');}
-    else{el.classList.remove('unlocked','border-blue-500','bg-blue-900/20');el.classList.add('locked','border-gray-700');}
+    if(cnt>=5){el.classList.remove("locked");el.classList.add("unlocked","border-blue-500","bg-blue-900/20");el.classList.remove("border-gray-700");}
+    else{el.classList.remove("unlocked","border-blue-500","bg-blue-900/20");el.classList.add("locked","border-gray-700");}
+  }
+  rA();
+}
+
+function dR(){
+  var c=document.getElementById("radarCanvas");if(!c)return;
+  var ctx=c.getContext("2d");var w=c.width,h=c.height;
+  ctx.clearRect(0,0,w,h);
+  var cx=w/2,cy=h/2-10,radius=90;
+  var cats=["culinary","culture","transit","bitcoin"];
+  var max=Math.max(cT("culinary"),cT("culture"),cT("transit"),cT("bitcoin"),5);
+  var as=(2*Math.PI)/cats.length;
+  var cols={culinary:"#10b981",culture:"#3b82f6",transit:"#8b5cf6",bitcoin:"#f59e0b"};
+  for(var r=1;r<=3;r++){
+    ctx.beginPath();var rd=(radius/3)*r;
+    for(var i=0;i<=cats.length;i++){var a=-Math.PI/2+i*as;var x=cx+rd*Math.cos(a),y=cy+rd*Math.sin(a);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+    ctx.strokeStyle="rgba(255,255,255,0.08)";ctx.lineWidth=0.5;ctx.stroke();
+  }
+  for(var i=0;i<cats.length;i++){
+    var a=-Math.PI/2+i*as;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+radius*Math.cos(a),cy+radius*Math.sin(a));
+    ctx.strokeStyle="rgba(255,255,255,0.08)";ctx.lineWidth=0.5;ctx.stroke();
+  }
+  ctx.beginPath();
+  for(var i=0;i<=cats.length;i++){
+    var idx=i%cats.length;var val=Math.min(cT(cats[idx]),max);var rd=(val/max)*radius;
+    var a=-Math.PI/2+i*as;var x=cx+rd*Math.cos(a),y=cy+rd*Math.sin(a);
+    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  }
+  ctx.fillStyle="rgba(16,185,129,0.2)";ctx.fill();
+  ctx.strokeStyle="#10b981";ctx.lineWidth=2;ctx.stroke();
+  for(var i=0;i<cats.length;i++){
+    var val=Math.min(cT(cats[i]),max);var rd=(val/max)*radius;
+    var a=-Math.PI/2+i*as;var x=cx+rd*Math.cos(a),y=cy+rd*Math.sin(a);
+    ctx.beginPath();ctx.arc(x,y,4,0,2*Math.PI);ctx.fillStyle=cols[cats[i]];ctx.fill();
+  }
+  ctx.font="10px Inter,sans-serif";ctx.textAlign="center";
+  var labels={culinary:"Food",culture:"Culture",transit:"Transit",bitcoin:"Bitcoin"};
+  for(var i=0;i<cats.length;i++){
+    var a=-Math.PI/2+i*as;var x=cx+(radius+18)*Math.cos(a),y=cy+(radius+18)*Math.sin(a);
+    ctx.fillStyle="#9ca3af";ctx.fillText(labels[cats[i]],x,y);
   }
 }
 
-function openModal(iso){
-  const data=state[iso]||{unlocked:false,activities:[],savedChoices:[]};
-  document.getElementById('modalCountryName').textContent=CS[iso].n;
-  const ch=document.getElementById('activityChoices');ch.innerHTML='';
-  const choices=data.savedChoices&&data.savedChoices.length===3?data.savedChoices:generateActivitySet(iso);
-  choices.forEach(c=>{
-    const sel=data.savedChoices&&data.savedChoices.some(s=>s.text===c.text);
-    const l=document.createElement('label');
-    l.className='activity-option flex items-center gap-3 p-3 rounded-lg bg-gray-800 cursor-pointer transition border '+(sel?'border-emerald-500 bg-emerald-900/20':'border-gray-700')+' hover:border-emerald-500';
-    const cb=document.createElement('input');cb.type='checkbox';cb.className='activity-checkbox w-5 h-5 rounded accent-emerald-500 cursor-pointer shrink-0';
-    cb.dataset.activityText=c.text;cb.dataset.activityTags=JSON.stringify(c.tags);cb.checked=sel;
-    const sp=document.createElement('span');sp.className='text-sm text-gray-200';sp.textContent=c.text;
+function rA(){
+  var g=document.getElementById("badgeGrid");if(!g)return;
+  g.innerHTML="";
+  var rarityF=(document.querySelector("[data-rarity].active-r")||{}).dataset?document.querySelector("[data-rarity].active-r").dataset.rarity:"all";
+  var catF=(document.querySelector("[data-cat].active")||{}).dataset?document.querySelector("[data-cat].active").dataset.cat:"all";
+  var statusF=(document.querySelector("[data-status].active")||{}).dataset?document.querySelector("[data-status].active").dataset.status:"all";
+  var acts=alA();
+  var filtered=acts.slice();
+  if(rarityF!="all")filtered=filtered.filter(function(a){return a.rar===rarityF;});
+  if(catF!="all")filtered=filtered.filter(function(a){return a.tags&&a.tags.indexOf(catF)>=0;});
+  if(statusF=="locked")filtered=[];
+  if(!filtered.length||statusF=="unlocked"&&!filtered.length){
+    g.innerHTML="<div class="col-span-full text-center text-gray-500 text-[11px] py-8">No achievements match your filters.</div>";return;
+  }
+  var seen={};
+  for(var i=0;i<filtered.length;i++){
+    var a=filtered[i];
+    if(seen[a.text])continue;seen[a.text]=true;
+    var div=document.createElement("div");
+    div.className="achv rounded-lg border p-2 unlocked";
+    div.style.borderColor=RC[a.rar]||"#374151";
+    var st="";for(var s=0;s<5;s++){st+=s<(a.diff||1)?"★":"☆";}
+    div.innerHTML="<div class="text-[9px] font-bold" style="color:"+RC[a.rar]+"">["+RL[a.rar]+"]</div><div class="text-[10px] text-gray-200 leading-tight my-0.5">"+a.text+"</div><div class="text-[8px] text-gray-500">"+st+" <span class="text-gray-600">|</span> "+a.country+"</div><div class="text-[8px] text-gray-600 mt-0.5">"+(a.tags||[]).map(function(t){return TI[t]||"";}).join(" ")+"</div>";
+    g.appendChild(div);
+  }
+}
+
+function oM(iso){
+  var d=st[iso]||{u:false,acts:[],sc:[]};
+  document.getElementById("modalCountryName").textContent=CS[iso].n;
+  var ch=document.getElementById("activityChoices");ch.innerHTML="";
+  var choices=d.sc&&d.sc.length===3?d.sc:ga(iso);
+  for(var i=0;i<choices.length;i++){
+    var c=choices[i];var sel=d.sc&&d.sc.some(function(s){return s.text===c.t||s.text===c.text;});
+    var l=document.createElement("label");
+    l.className="opt flex items-center gap-2.5 p-2.5 rounded-lg bg-gray-800 cursor-pointer transition border "+(sel?"border-emerald-500 bg-emerald-900/20":"border-gray-700")+" hover:border-emerald-500";
+    var cb=document.createElement("input");cb.type="checkbox";cb.className="ac w-4 h-4 rounded accent-emerald-500 cursor-pointer shrink-0";
+    cb.dataset.at=c.t||c.text;cb.dataset.ar=c.r||"C";cb.dataset.ac=JSON.stringify(c.c||c.tags||[]);cb.dataset.ad=c.d||1;cb.checked=sel;
+    var sp=document.createElement("span");sp.className="text-[12px] text-gray-200 flex-1";
+    sp.innerHTML="<span style="color:"+RC[c.r||"C"]+";font-weight:600">["+(RL[c.r||"C"])+"]</span> "+(c.t||c.text)+" <span class="text-gray-500 text-[10px]">"+(c.d||1)+"★</span>";
     l.appendChild(cb);l.appendChild(sp);ch.appendChild(l);
-  });
-  document.getElementById('activityModal').dataset.iso=iso;
-  document.getElementById('activityModal').classList.remove('hidden');
-}
-
-function closeModal(){document.getElementById('activityModal').classList.add('hidden');}
-
-function spawnParticles(iso){
-  const el=document.querySelector('path[data-iso="'+iso+'"]');
-  if(!el)return;
-  const rect=el.getBoundingClientRect();
-  const emojis=['\u2728','\u{1F31F}','\u26A1','\u{1F30D}','\u{1F5FA}'];
-  for(let i=0;i<5;i++){
-    const p=document.createElement('div');p.className='unlock-particle';
-    p.textContent=emojis[i%emojis.length];
-    p.style.left=(rect.left+rect.width*(0.2+0.6*Math.random()))+'px';
-    p.style.top=(rect.top+rect.height*(0.2+0.6*Math.random()))+'px';
-    p.style.animationDelay=(i*0.08)+'s';
-    document.body.appendChild(p);
-    setTimeout(()=>p.remove(),1500);
   }
+  document.getElementById("activityModal").dataset.iso=iso;
+  document.getElementById("activityModal").classList.remove("hidden");
 }
 
-function saveActivities(){
-  const iso=document.getElementById('activityModal').dataset.iso;
-  if(!state[iso])state[iso]={unlocked:false,activities:[],savedChoices:[]};
-  const data=state[iso];
-  const sc=[];
-  document.querySelectorAll('.activity-checkbox:checked').forEach(cb=>{sc.push({text:cb.dataset.activityText,tags:JSON.parse(cb.dataset.activityTags)});});
-  const wasUnlocked=data.unlocked;
-  data.savedChoices=sc;data.activities=sc.map(c=>c.text);data.unlocked=sc.length>0;
-  if(data.unlocked&&!wasUnlocked){
-    if(!state.visitedOrder)state.visitedOrder=[];
-    state.visitedOrder.push(iso);
-  }
-  state[iso]=data;persist();
-  if(data.unlocked&&!wasUnlocked)spawnParticles(iso);
-  renderLevel();renderMap();closeModal();
+function cM(){document.getElementById("activityModal").classList.add("hidden");}
+
+function sP(iso){
+  var el=document.querySelector("path[data-iso=""+iso+""]");if(!el)return;
+  var rect=el.getBoundingClientRect();var emojis=["✨","🌟","⚡","🌍"];
+  for(var i=0;i<5;i++){var p=document.createElement("div");p.className="particle";p.textContent=emojis[i%4];
+    p.style.left=(rect.left+rect.width*(0.2+0.6*Math.random()))+"px";p.style.top=(rect.top+rect.height*(0.2+0.6*Math.random()))+"px";
+    p.style.animationDelay=(i*0.08)+"s";document.body.appendChild(p);setTimeout(function(){p.remove();},1500);}
 }
 
-function renderTravelLine(){
-  const g=document.getElementById('travelLineGroup');g.innerHTML='';
-  if(!state.visitedOrder||state.visitedOrder.length<2)return;
-  let d='';const pts=[];
-  for(const iso of state.visitedOrder){if(state[iso]&&state[iso].unlocked){const c=getCenter(iso);pts.push(c);}}
+function sA(){
+  var iso=document.getElementById("activityModal").dataset.iso;
+  if(!st[iso])st[iso]={u:false,acts:[],sc:[]};
+  var d=st[iso];var sc=[];
+  var cbs=document.querySelectorAll(".ac:checked");
+  for(var i=0;i<cbs.length;i++){var cb=cbs[i];sc.push({text:cb.dataset.at,rar:cb.dataset.ar,tags:JSON.parse(cb.dataset.ac),diff:parseInt(cb.dataset.ad)});}
+  var was=d.u;
+  d.sc=sc;d.acts=sc.map(function(c){return c.text;});d.u=sc.length>0;
+  if(d.u&&!was){if(!st.vo)st.vo=[];st.vo.push(iso);}
+  st[iso]=d;pst();
+  if(d.u&&!was)sP(iso);
+  rL();rM();cM();
+}
+
+function rTL(){
+  var g=document.getElementById("tlg");g.innerHTML="";
+  if(!st.vo||st.vo.length<2)return;
+  var pts=[];for(var i=0;i<st.vo.length;i++){if(st[st.vo[i]]&&st[st.vo[i]].u)pts.push(ct(st.vo[i]));}
   if(pts.length<2)return;
-  d='M'+pts[0].x+','+pts[0].y;
-  for(let i=1;i<pts.length;i++)d+='L'+pts[i].x+','+pts[i].y;
-  const pulse=document.createElementNS('http://www.w3.org/2000/svg','path');
-  pulse.setAttribute('d',d);pulse.setAttribute('class','travel-line-pulse');
-  g.appendChild(pulse);
-  const line=document.createElementNS('http://www.w3.org/2000/svg','path');
-  line.setAttribute('d',d);line.setAttribute('class','travel-line');
-  line.style.animation='dashMove 1s linear infinite';
-  g.appendChild(line);
+  var d="M"+pts[0].x+","+pts[0].y;for(var i=1;i<pts.length;i++)d+="L"+pts[i].x+","+pts[i].y;
+  var pu=document.createElementNS("http://www.w3.org/2000/svg","path");pu.setAttribute("d",d);pu.setAttribute("class","travel-line-pulse");g.appendChild(pu);
+  var li=document.createElementNS("http://www.w3.org/2000/svg","path");li.setAttribute("d",d);li.setAttribute("class","travel-line");li.style.animation="dm 1s linear infinite";g.appendChild(li);
 }
 
-function updateAvatarPosition(){
-  const el=document.getElementById('avatarOnMap');
-  const order=state.visitedOrder||[];
-  let lastIso=null;
-  for(let i=order.length-1;i>=0;i--){if(state[order[i]]&&state[order[i]].unlocked){lastIso=order[i];break;}}
-  if(!lastIso){el.classList.add('hidden');return;}
-  const svg=document.getElementById('worldSvg');
-  const ctr=getCenter(lastIso);
-  const rect=svg.getBoundingClientRect();
-  const scaleX=rect.width/1000,scaleY=rect.height/500;
-  const x=rect.left+ctr.x*scaleX,y=rect.top+ctr.y*scaleY;
-  const avatars={boy:'\u{1F9D1}',girl:'\u{1F469}',cat:'\u{1F431}',dog:'\u{1F436}'};
-  el.textContent=avatars[state.avatar]||'\u{1F9D1}';
-  el.style.left=x+'px';el.style.top=y+'px';
-  el.classList.remove('hidden');
+function uA(){
+  var el=document.getElementById("avatarOnMap");var order=st.vo||[];
+  var last=null;for(var i=order.length-1;i>=0;i--){if(st[order[i]]&&st[order[i]].u){last=order[i];break;}}
+  if(!last){el.classList.add("hidden");return;}
+  var svg=document.getElementById("worldSvg");var c=ct(last);
+  var rect=svg.getBoundingClientRect();var sx=rect.width/1000,sy=rect.height/500;
+  var av={boy:"🧑",girl:"👩",cat:"🐱",dog:"🐶"};
+  el.textContent=av[st.av]||"🧑";el.style.left=(rect.left+c.x*sx)+"px";el.style.top=(rect.top+c.y*sy)+"px";el.classList.remove("hidden");
 }
 
-function persist(){localStorage.setItem('bitcoinerTraveller',JSON.stringify(state));}
+function pst(){localStorage.setItem("bt",JSON.stringify(st));}
 
-function resetProgress(){
-  if(confirm('Reset all travel progress?')){state={visitedOrder:[],avatar:state.avatar};persist();renderLevel();renderMap();}
+function rP(){
+  if(confirm("Reset all travel progress?")){var av=st.av;st={vo:[],av:av};pst();rL();rM();}
 }
 
-function showToast(msg){
-  const el=document.getElementById('toast');el.textContent=msg;
-  el.classList.remove('hidden','toast');void el.offsetWidth;el.classList.add('toast');
-  setTimeout(()=>el.classList.add('hidden'),2700);
+function sT(m){
+  var el=document.getElementById("toast");el.textContent=m;
+  el.classList.remove("hidden","toast");void el.offsetWidth;el.classList.add("toast");
+  setTimeout(function(){el.classList.add("hidden");},2700);
 }
 
-function initAvatars(){
-  document.querySelectorAll('.avatar-btn').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      state.avatar=btn.dataset.avatar;
-      document.querySelectorAll('.avatar-btn').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      persist();
-      updateAvatarPosition();
-    });
-    if(btn.dataset.avatar===state.avatar)btn.classList.add('active');
-  });
+function iA(){
+  var btns=document.querySelectorAll(".avatar-btn");
+  for(var i=0;i<btns.length;i++){(function(btn){
+    btn.addEventListener("click",function(){st.av=btn.dataset.avatar;var all=document.querySelectorAll(".avatar-btn");for(var j=0;j<all.length;j++)all[j].classList.remove("active");btn.classList.add("active");pst();uA();});
+    if(btn.dataset.avatar===st.av)btn.classList.add("active");
+  })(btns[i]);}
 }
 
-document.addEventListener('DOMContentLoaded',()=>{
-  renderLevel();renderMap();initAvatars();
-  document.getElementById('closeModal').addEventListener('click',closeModal);
-  document.getElementById('saveActivities').addEventListener('click',saveActivities);
-  document.getElementById('resetBtn').addEventListener('click',resetProgress);
-  document.getElementById('copyBtn').addEventListener('click',()=>{
-    navigator.clipboard.writeText('bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7').then(()=>showToast('Address copied!')).catch(()=>showToast('Failed to copy.'));
-  });
-  document.getElementById('activityModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+document.addEventListener("DOMContentLoaded",function(){
+  rL();rM();iA();
+  document.getElementById("closeModal").addEventListener("click",cM);
+  document.getElementById("saveActivities").addEventListener("click",sA);
+  document.getElementById("resetBtn").addEventListener("click",rP);
+  document.getElementById("copyBtn").addEventListener("click",function(){navigator.clipboard.writeText("bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7").then(function(){sT("Address copied!");}).catch(function(){sT("Failed to copy.");});});
+  document.getElementById("activityModal").addEventListener("click",function(e){if(e.target===e.currentTarget)cM();});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")cM();});
+  document.getElementById("tabMap").addEventListener("click",function(){document.getElementById("mapSection").classList.remove("hidden");document.getElementById("badgesSection").classList.add("hidden");document.getElementById("tabMap").classList.add("active");document.getElementById("tabBadges").classList.remove("active");});
+  document.getElementById("tabBadges").addEventListener("click",function(){document.getElementById("mapSection").classList.add("hidden");document.getElementById("badgesSection").classList.remove("hidden");document.getElementById("tabBadges").classList.add("active");document.getElementById("tabMap").classList.remove("active");rA();dR();});
+  var rbs=document.querySelectorAll("[data-rarity]");for(var i=0;i<rbs.length;i++){(function(b){b.addEventListener("click",function(){var all=document.querySelectorAll("[data-rarity]");for(var j=0;j<all.length;j++)all[j].classList.remove("active-r");b.classList.add("active-r");rA();});})(rbs[i]);}
+  var cbs2=document.querySelectorAll("[data-cat]");for(var i=0;i<cbs2.length;i++){(function(b){b.addEventListener("click",function(){var all=document.querySelectorAll("[data-cat]");for(var j=0;j<all.length;j++)all[j].classList.remove("active");b.classList.add("active");rA();});})(cbs2[i]);}
+  var sbs=document.querySelectorAll("[data-status]");for(var i=0;i<sbs.length;i++){(function(b){b.addEventListener("click",function(){var all=document.querySelectorAll("[data-status]");for(var j=0;j<all.length;j++)all[j].classList.remove("active");b.classList.add("active");rA();});})(sbs[i]);}
+  document.getElementById("exportBtn").addEventListener("click",function(){var blob=new Blob([JSON.stringify(st)],{type:"application/json"});var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="bitcoiner-traveller-backup.json";a.click();sT("Backup exported!");});
+  document.getElementById("importBtn").addEventListener("click",function(){var inp=document.createElement("input");inp.type="file";inp.accept=".json";inp.addEventListener("change",function(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(ev){try{var d=JSON.parse(ev.target.result);if(d.vo!==undefined){st=d;pst();rL();rM();sT("Backup imported!");}else sT("Invalid backup file.");}catch(e){sT("Error reading file.");}};reader.readAsText(file);});inp.click();});
 });
 
 </script>
