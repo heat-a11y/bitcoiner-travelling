@@ -18,7 +18,6 @@ body{background:#030712;overflow-x:hidden}
 .country-btn.unlocked{background:rgba(16,185,129,0.5)!important;border-color:#10b981!important}
 .country-btn.unlocked::after{content:'¹3';position:absolute;top:1px;right:2px;font-size:7px;color:#6ee7b7}
 .country-btn.selected{z-index:10!important;box-shadow:0 0 0 2px #f59e0b,0 0 16px rgba(245,158,11,0.5)!important;transform:scale(1.05)}
-.fb.selected{box-shadow:0 0 0 2px #f59e0b,0 0 12px rgba(245,158,11,0.4)!important}
 .map-grid{display:grid;grid-template-columns:repeat(36,1fr);gap:2px;padding:4px;background:radial-gradient(ellipse at 50% 50%,#0c1929,#030712);border-radius:12px;touch-action:manipulation;position:relative}
 .map-container{width:100%;min-height:120px;touch-action:manipulation;position:relative}@media(min-width:1024px){.map-container{min-height:0}}
 .map-overlay{position:absolute;top:4px;left:4px;width:calc(100% - 8px);height:calc(100% - 8px);pointer-events:none;z-index:6}
@@ -39,9 +38,7 @@ body{background:#030712;overflow-x:hidden}
 ::-webkit-scrollbar-track{background:#111827}
 ::-webkit-scrollbar-thumb{background:#374151;border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:#4b5563}
-.country-fallback{scrollbar-width:thin;scrollbar-color:#374151 transparent}
-.country-fallback::-webkit-scrollbar{height:4px}
-.country-fallback::-webkit-scrollbar-thumb{background:#374151;border-radius:2px}
+
 @media(max-width:767px){
   .country-btn{font-size:7px;border-radius:2px;min-height:30px}
   .country-btn:hover{transform:scale(1.06)}
@@ -131,8 +128,7 @@ body{background:#030712;overflow-x:hidden}
       </svg>
     </div>
   </div>
-  <!-- Mobile country fallback list (hidden on desktop) -->
-  <div id="countryFallback" class="block lg:hidden mb-2"></div>
+  
 </div>
 
 <!-- RIGHT COLUMN: Sidebar (desktop) -->
@@ -257,11 +253,10 @@ function rL(){
 function rM(){
   var g=document.getElementById("mapGrid");
   // Remove all country buttons but keep the SVG overlay
+  g.querySelectorAll(".country-btn").forEach(function(el){el.remove();});
   var svg=g.querySelector(".map-overlay");
-  while(g.firstChild)if(g.firstChild!==svg)g.removeChild(g.firstChild);
-  else break;
   // If no svg, create it
-  if(!svg||!svg.parentNode){
+  if(!svg){
     var ns="http://www.w3.org/2000/svg";
     svg=document.createElementNS(ns,"svg");
     svg.setAttribute("class","map-overlay");
@@ -269,7 +264,7 @@ function rM(){
     svg.setAttribute("viewBox","0 0 36 16");
     svg.setAttribute("preserveAspectRatio","none");
     svg.innerHTML='<path class="travel-line-glow" id="travelGlow"/><path class="travel-line" id="travelLine"/><text class="avatar-marker" id="avatarMarker"></text>';
-    g.appendChild(svg);
+    g.prepend(svg);
   }
   
   for(var i=0;i<CD.length;i++){
@@ -407,34 +402,14 @@ function oM(iso){
   document.getElementById("countryModal").dataset.iso=iso;
   document.getElementById("countryModal").classList.remove("hidden");
   // Highlight selected country
-  document.querySelectorAll(".country-btn.selected, .fb.selected").forEach(function(e){e.classList.remove("selected");});
+  document.querySelectorAll(".country-btn.selected").forEach(function(e){e.classList.remove("selected");});
   var selBtn=document.querySelector('.country-btn[data-iso="'+iso+'"]');
   if(selBtn)selBtn.classList.add("selected");
-  var selFb=document.querySelector('.fb[data-iso="'+iso+'"]');
-  if(selFb)selFb.classList.add("selected");
 }
 
 function cM(){
   document.getElementById("countryModal").classList.add("hidden");
   document.querySelectorAll(".country-btn.selected").forEach(function(e){e.classList.remove("selected");});
-}
-
-// Country fallback list for mobile
-function rCF(){
-  var el=document.getElementById("countryFallback");
-  if(!el)return;
-  el.innerHTML='<div class="text-[8px] text-gray-500 mb-1">🌍 Tap a country below:</div>'+
-    '<div class="flex gap-1.5 overflow-x-auto pb-1 country-fallback" style="-webkit-overflow-scrolling:touch">'+
-    CD.map(function(c){
-      var cc=CC[c.c];
-      var d=st[c.i]||{};
-      return '<button class="fb touch-btn text-[10px] px-3 py-1.5 rounded-lg whitespace-nowrap border shrink-0 font-semibold" '+
-        'style="background:'+(d.u?'rgba(16,185,129,0.5)':cc.bg)+';color:'+(d.u?'#6ee7b7':cc.text)+';border-color:'+(d.u?'#10b981':cc.border)+'" '+
-        'data-iso="'+c.i+'">'+(d.u?'\u2713 ':'')+c.n+'</button>';
-    }).join('')+'</div>';
-  el.querySelectorAll('button').forEach(function(b){
-    b.addEventListener('click',function(){oM(b.dataset.iso);});
-  });
 }
 
 function sC(){
@@ -448,12 +423,12 @@ function sC(){
   d.acts=acts;d.u=acts.length>0;
   if(d.u&&!was){if(!st.vo)st.vo=[];st.vo.push(iso);}
   st[iso]=d;pst();
-  rL();rM();rCF();cM();
+  rL();rM();cM();
 }
 
 function pst(){localStorage.setItem("bt3",JSON.stringify(st));}
 
-function rP(){if(confirm("Reset all progress?")){st={vo:[],av:st.av};pst();rL();rM();rCF();}}
+function rP(){if(confirm("Reset all progress?")){st={vo:[],av:st.av};pst();rL();rM();}}
 
 function sT(m){
   var el=document.getElementById("toast");el.textContent=m;
@@ -478,7 +453,7 @@ var TT=[
 ];
 
 document.addEventListener("DOMContentLoaded",function(){
-  rL();rM();rCF();
+  rL();rM();
   
   // Tip ticker
   var tipEl=document.getElementById("tipTicker");
