@@ -64,10 +64,10 @@ body{background:#030712;overflow-x:hidden}
     <div class="flex-1 text-center md:text-left">
       <div class="flex items-center gap-2 justify-center md:justify-start">
         <span class="text-lg">🌍</span>
-        <span class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">Bitcoiner Travelling</span>
+        <span class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold min-mobile-text">Bitcoiner Travelling</span>
       </div>
       <div id="levelDisplay" class="text-lg md:text-2xl font-black text-white"></div>
-      <div class="mt-0.5 flex items-center justify-center md:justify-start gap-2 text-[10px] text-gray-400">
+      <div class="mt-0.5 flex items-center justify-center md:justify-start gap-2 text-[10px] text-gray-400 min-mobile-text">
         <span>🗺️ <span id="countryCount">0</span>/75 countries</span>
         <span id="nextLevelHint" class="text-gray-500"></span>
       </div>
@@ -77,7 +77,7 @@ body{background:#030712;overflow-x:hidden}
     </div>
     <div class="flex items-center gap-2">
       <div class="bg-gray-800/60 rounded-lg px-2 py-1 border border-gray-700">
-        <div class="text-[8px] uppercase tracking-wider text-gray-400 mb-0.5 text-center">Avatar</div>
+        <div class="text-[8px] uppercase tracking-wider text-gray-400 mb-0.5 text-center min-mobile-text">Avatar</div>
         <div class="flex gap-1">
           <button class="avatar-btn w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-xs cursor-pointer border border-transparent hover:border-emerald-500 transition touch-btn" data-avatar="boy">🧑</button>
           <button class="avatar-btn w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-xs cursor-pointer border border-transparent hover:border-emerald-500 transition touch-btn" data-avatar="girl">👩</button>
@@ -91,28 +91,28 @@ body{background:#030712;overflow-x:hidden}
 
 <!-- Quest + Key (mobile only, before map) -->
 <div class="flex items-center justify-between mb-2 gap-2 lg:hidden">
-  <div class="flex-1 rounded-lg px-2.5 py-1 text-[10px] flex items-center gap-1.5" style="background:linear-gradient(90deg,rgba(16,185,129,0.08),transparent);border-left:3px solid #10b981">
+  <div class="flex-1 rounded-lg px-2.5 py-1 text-[10px] flex items-center gap-1.5 min-mobile-text" style="background:linear-gradient(90deg,rgba(16,185,129,0.08),transparent);border-left:3px solid #10b981">
     <span class="text-emerald-400 font-bold">🎯</span>
     <span id="questText" class="text-gray-300"></span>
   </div>
-  <div class="flex gap-1 text-[9px] text-gray-500">
-    <span class="px-1.5 py-0.5 rounded" style="background:#1e3a5f;color:#93c5fd">NA</span>
-    <span class="px-1.5 py-0.5 rounded" style="background:#3b0764;color:#c4b5fd">EU</span>
-    <span class="px-1.5 py-0.5 rounded" style="background:#78350f;color:#fde68a">AS</span>
-    <span class="px-1.5 py-0.5 rounded" style="background:#14532d;color:#86efac">LA</span>
-    <span class="px-1.5 py-0.5 rounded" style="background:#5c0a1f;color:#fda4af">ME</span>
-    <span class="px-1.5 py-0.5 rounded" style="background:#3c1208;color:#fdba74">AF</span>
-    <span class="px-1.5 py-0.5 rounded" style="background:#164e63;color:#67e8f9">OC</span>
-  </div>
+    <div class="flex gap-1 text-[9px] text-gray-500 min-mobile-text">
+      <span class="px-1.5 py-0.5 rounded" style="background:#1e3a5f;color:#93c5fd">NA</span>
+      <span class="px-1.5 py-0.5 rounded" style="background:#3b0764;color:#c4b5fd">EU</span>
+      <span class="px-1.5 py-0.5 rounded" style="background:#78350f;color:#fde68a">AS</span>
+      <span class="px-1.5 py-0.5 rounded" style="background:#14532d;color:#86efac">LA</span>
+      <span class="px-1.5 py-0.5 rounded" style="background:#5c0a1f;color:#fda4af">ME</span>
+      <span class="px-1.5 py-0.5 rounded" style="background:#3c1208;color:#fdba74">AF</span>
+      <span class="px-1.5 py-0.5 rounded" style="background:#164e63;color:#67e8f9">OC</span>
+    </div>
 </div>
 
 <!-- LEFT COLUMN: Map -->
 <div class="lg:col-span-9">
   <div class="map-container rounded-xl pb mb-2 overflow-hidden border border-gray-800" style="background:radial-gradient(ellipse at 50% 50%,#0c1929,#030712)">
     <div class="p-1.5 border-b border-gray-800 flex items-center justify-between">
-      <h2 class="text-xs font-bold text-white">🗺️ World Explorer</h2>
+      <h2 class="text-xs font-bold text-white min-mobile-text">🗺️ World Explorer</h2>
       <div class="flex gap-1.5">
-        <span class="text-[8px] text-gray-500"><span id="btcPrice" class="text-amber-400 font-bold">—</span> BTC</span>
+        <span class="text-[8px] text-gray-500 min-mobile-text"><span id="btcPrice" class="text-amber-400 font-bold">—</span> BTC</span>
         <button id="resetBtn" class="text-[8px] text-gray-400 hover:text-red-400 transition px-1.5 py-0.5 rounded border border-gray-700 touch-btn">↻ Reset</button>
       </div>
     </div>
@@ -128,11 +128,11 @@ body{background:#030712;overflow-x:hidden}
 <div class="lg:col-span-3 space-y-2">
   <!-- Quest + Key (desktop version, hidden on mobile) -->
   <div class="hidden lg:block space-y-1.5">
-    <div class="rounded-lg px-2.5 py-1 text-[10px] flex items-center gap-1.5" style="background:linear-gradient(90deg,rgba(16,185,129,0.08),transparent);border-left:3px solid #10b981">
+    <div class="rounded-lg px-2.5 py-1 text-[10px] flex items-center gap-1.5 min-mobile-text" style="background:linear-gradient(90deg,rgba(16,185,129,0.08),transparent);border-left:3px solid #10b981">
       <span class="text-emerald-400 font-bold">🎯</span>
       <span id="questTextSide" class="text-gray-300"></span>
     </div>
-    <div class="flex gap-1 text-[9px] text-gray-500 flex-wrap">
+    <div class="flex gap-1 text-[9px] text-gray-500 flex-wrap min-mobile-text">
       <span class="px-1.5 py-0.5 rounded" style="background:#1e3a5f;color:#93c5fd">NA</span>
       <span class="px-1.5 py-0.5 rounded" style="background:#3b0764;color:#c4b5fd">EU</span>
       <span class="px-1.5 py-0.5 rounded" style="background:#78350f;color:#fde68a">AS</span>
@@ -145,7 +145,7 @@ body{background:#030712;overflow-x:hidden}
   
   <!-- Badges -->
   <div class="rounded-xl pb bg-gray-900/40 border border-gray-800 p-2.5">
-    <h3 class="text-emerald-400 font-bold text-[9px] uppercase tracking-wider mb-1.5">🏅 Badges</h3>
+      <h3 class="text-emerald-400 font-bold text-[9px] uppercase tracking-wider mb-1.5 min-mobile-text">🏅 Badges</h3>
     <div class="grid grid-cols-2 gap-1">
       <div id="b-culinary" class="badge-touch bi locked flex flex-row items-center gap-1.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700"><span class="text-sm shrink-0">🍜</span><div class="flex flex-col min-w-0"><span class="text-[8px] text-gray-400 font-semibold leading-tight min-mobile-text">Food</span><span class="text-[7px] text-gray-500"><span class="bp" data-badge="culinary">0</span></span></div></div>
       <div id="b-culture" class="badge-touch bi locked flex flex-row items-center gap-1.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700"><span class="text-sm shrink-0">🏛️</span><div class="flex flex-col min-w-0"><span class="text-[8px] text-gray-400 font-semibold leading-tight min-mobile-text">Culture</span><span class="text-[7px] text-gray-500"><span class="bp" data-badge="culture">0</span></span></div></div>
@@ -157,8 +157,8 @@ body{background:#030712;overflow-x:hidden}
   <!-- Support -->
   <div class="rounded-xl pb bg-gray-900/40 border border-gray-800 p-2.5 flex items-center justify-between">
     <div class="min-w-0">
-      <h3 class="text-amber-400 font-bold text-[9px] uppercase tracking-wider mb-0.5">⚡ Support</h3>
-      <p class="text-[7px] text-gray-400 font-mono truncate">bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7</p>
+      <h3 class="text-amber-400 font-bold text-[9px] uppercase tracking-wider mb-0.5 min-mobile-text">⚡ Support</h3>
+      <p class="text-[7px] text-gray-400 font-mono truncate min-mobile-text">bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7</p>
     </div>
     <button id="copyBtn" class="bg-amber-600 hover:bg-amber-500 text-white text-[8px] font-semibold px-2 py-1 rounded transition whitespace-nowrap touch-btn shrink-0">📋 Copy</button>
   </div>
@@ -170,30 +170,30 @@ body{background:#030712;overflow-x:hidden}
   <div class="bg-gray-900 rounded-xl pb max-w-md w-full p-3 border border-gray-700 relative" style="max-height:90vh;overflow-y:auto">
     <div class="sheet-handle"></div>
     <div class="flex items-center justify-between mb-2">
-      <h3 class="text-sm font-bold text-white"><span id="modalCountry">Country</span> <span id="modalFlag" class="text-lg"></span></h3>
-      <button id="closeModal" class="text-gray-400 hover:text-white text-base leading-none touch-btn px-2">&times;</button>
+      <h3 class="text-sm font-bold text-white min-mobile-text"><span id="modalCountry">Country</span> <span id="modalFlag" class="text-lg"></span></h3>
+      <button id="closeModal" class="text-gray-400 hover:text-white text-base leading-none touch-btn px-2 min-mobile-text">&times;</button>
     </div>
     
     <div id="btcBenefits" class="space-y-2 mb-3"></div>
     
     <div id="btcChart" class="rounded-lg bg-gray-800/50 p-2 mb-3">
       <div class="flex items-center justify-between mb-1">
-        <span class="text-[9px] text-gray-400 font-semibold">₿ BTC / <span id="modalCurrency">USD</span> — 4 Year Performance</span>
-        <span id="modalChange" class="text-[10px] font-bold"></span>
+        <span class="text-[9px] text-gray-400 font-semibold min-mobile-text">₿ BTC / <span id="modalCurrency">USD</span> — 4 Year Performance</span>
+        <span id="modalChange" class="text-[10px] font-bold min-mobile-text"></span>
       </div>
       <div class="flex items-end gap-0.5 h-16" id="chartBars"></div>
-      <div class="flex justify-between text-[7px] text-gray-500 mt-0.5">
+      <div class="flex justify-between text-[7px] text-gray-500 mt-0.5 min-mobile-text">
         <span>2021</span><span>2022</span><span>2023</span><span>2024</span><span>2025</span>
       </div>
     </div>
 
     <div id="activities" class="space-y-1.5 mb-2"></div>
     
-    <button id="saveBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg transition text-xs">Save</button>
+    <button id="saveBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg transition text-xs touch-btn">Save</button>
   </div>
 </div>
 
-<div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-emerald-400 px-2.5 py-1 rounded-lg text-[9px] font-semibold pb toast hidden z-50 whitespace-nowrap"></div>
+<div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-emerald-400 px-2.5 py-1 rounded-lg text-[9px] font-semibold pb toast hidden z-50 whitespace-nowrap min-mobile-text"></div>
 
 <script>
 var CD=[{i:"CA",n:"Canada",c:"na",x:4,y:0,w:6,h:2},{i:"US",n:"United States",c:"na",x:4,y:2,w:6,h:2},{i:"MX",n:"Mexico",c:"na",x:5,y:4,w:3,h:1},{i:"GB",n:"United Kingdom",c:"eu",x:15,y:2,w:2,h:1},{i:"IE",n:"Ireland",c:"eu",x:14,y:2,w:1,h:1},{i:"FR",n:"France",c:"eu",x:15,y:3,w:2,h:1},{i:"DE",n:"Germany",c:"eu",x:17,y:2,w:2,h:1},{i:"ES",n:"Spain",c:"eu",x:14,y:4,w:2,h:1},{i:"PT",n:"Portugal",c:"eu",x:13,y:4,w:2,h:1},{i:"IT",n:"Italy",c:"eu",x:16,y:4,w:2,h:1},{i:"NL",n:"Netherlands",c:"eu",x:16,y:2,w:2,h:1},{i:"BE",n:"Belgium",c:"eu",x:15,y:2,w:2,h:1},{i:"CH",n:"Switzerland",c:"eu",x:17,y:3,w:2,h:1},{i:"AT",n:"Austria",c:"eu",x:18,y:3,w:2,h:1},{i:"PL",n:"Poland",c:"eu",x:19,y:2,w:2,h:1},{i:"CZ",n:"Czech Republic",c:"eu",x:18,y:3,w:2,h:1},{i:"HU",n:"Hungary",c:"eu",x:19,y:4,w:2,h:1},{i:"HR",n:"Croatia",c:"eu",x:17,y:4,w:2,h:1},{i:"SE",n:"Sweden",c:"eu",x:17,y:1,w:2,h:1},{i:"NO",n:"Norway",c:"eu",x:16,y:0,w:2,h:1},{i:"DK",n:"Denmark",c:"eu",x:16,y:1,w:2,h:1},{i:"FI",n:"Finland",c:"eu",x:19,y:0,w:2,h:1},{i:"UA",n:"Ukraine",c:"eu",x:20,y:3,w:2,h:1},{i:"RO",n:"Romania",c:"eu",x:20,y:4,w:2,h:1},{i:"GR",n:"Greece",c:"eu",x:18,y:5,w:2,h:1},{i:"RU",n:"Russia",c:"as",x:22,y:0,w:6,h:2},{i:"JP",n:"Japan",c:"as",x:30,y:2,w:2,h:2},{i:"CN",n:"China",c:"as",x:24,y:3,w:4,h:2},{i:"KR",n:"South Korea",c:"as",x:30,y:3,w:2,h:1},{i:"MN",n:"Mongolia",c:"as",x:25,y:2,w:3,h:1},{i:"IN",n:"India",c:"as",x:24,y:5,w:3,h:2},{i:"NP",n:"Nepal",c:"as",x:25,y:5,w:2,h:1},{i:"BD",n:"Bangladesh",c:"as",x:27,y:5,w:2,h:1},{i:"LK",n:"Sri Lanka",c:"as",x:26,y:7,w:2,h:1},{i:"KZ",n:"Kazakhstan",c:"as",x:21,y:2,w:4,h:1},{i:"UZ",n:"Uzbekistan",c:"as",x:22,y:4,w:2,h:1},{i:"TH",n:"Thailand",c:"sa",x:26,y:7,w:2,h:1},{i:"VN",n:"Vietnam",c:"sa",x:28,y:7,w:2,h:1},{i:"MM",n:"Myanmar",c:"sa",x:25,y:7,w:2,h:1},{i:"KH",n:"Cambodia",c:"sa",x:27,y:8,w:2,h:1},{i:"MY",n:"Malaysia",c:"sa",x:27,y:9,w:2,h:1},{i:"SG",n:"Singapore",c:"sa",x:28,y:10,w:2,h:1},{i:"ID",n:"Indonesia",c:"sa",x:26,y:10,w:4,h:1},{i:"PH",n:"Philippines",c:"sa",x:30,y:8,w:2,h:2},{i:"TW",n:"Taiwan",c:"sa",x:31,y:5,w:2,h:1},{i:"TR",n:"Turkey",c:"me",x:20,y:5,w:2,h:1},{i:"AE",n:"UAE",c:"me",x:22,y:6,w:2,h:1},{i:"SA",n:"Saudi Arabia",c:"me",x:21,y:6,w:3,h:1},{i:"IL",n:"Israel",c:"me",x:19,y:6,w:2,h:1},{i:"JO",n:"Jordan",c:"me",x:20,y:7,w:2,h:1},{i:"LB",n:"Lebanon",c:"me",x:19,y:6,w:2,h:1},{i:"KW",n:"Kuwait",c:"me",x:22,y:7,w:2,h:1},{i:"QA",n:"Qatar",c:"me",x:23,y:7,w:2,h:1},{i:"BH",n:"Bahrain",c:"me",x:22,y:7,w:2,h:1},{i:"OM",n:"Oman",c:"me",x:23,y:8,w:2,h:1},{i:"CO",n:"Colombia",c:"sa",x:4,y:6,w:2,h:1},{i:"BR",n:"Brazil",c:"sa",x:5,y:8,w:4,h:2},{i:"AR",n:"Argentina",c:"sa",x:6,y:11,w:3,h:2},{i:"CL",n:"Chile",c:"sa",x:4,y:10,w:2,h:2},{i:"PE",n:"Peru",c:"sa",x:4,y:8,w:2,h:1},{i:"MA",n:"Morocco",c:"af",x:11,y:4,w:2,h:1},{i:"DZ",n:"Algeria",c:"af",x:11,y:5,w:3,h:1},{i:"EG",n:"Egypt",c:"af",x:14,y:5,w:2,h:1},{i:"SN",n:"Senegal",c:"af",x:10,y:6,w:2,h:1},{i:"NG",n:"Nigeria",c:"af",x:12,y:7,w:3,h:1},{i:"GH",n:"Ghana",c:"af",x:11,y:7,w:2,h:1},{i:"KE",n:"Kenya",c:"af",x:14,y:8,w:2,h:1},{i:"ET",n:"Ethiopia",c:"af",x:15,y:7,w:2,h:1},{i:"TZ",n:"Tanzania",c:"af",x:14,y:9,w:2,h:1},{i:"ZA",n:"South Africa",c:"af",x:13,y:11,w:3,h:2},{i:"AO",n:"Angola",c:"af",x:12,y:9,w:2,h:1},{i:"MZ",n:"Mozambique",c:"af",x:15,y:10,w:2,h:1},{i:"AU",n:"Australia",c:"oc",x:29,y:11,w:5,h:2},{i:"NZ",n:"New Zealand",c:"oc",x:33,y:12,w:3,h:1},{i:"FJ",n:"Fiji",c:"oc",x:34,y:10,w:2,h:1}];
@@ -269,12 +269,12 @@ function oM(iso){
   // Bitcoin benefits
   var bh=document.getElementById("btcBenefits");
   bh.innerHTML='<div class="flex flex-wrap gap-1 mb-1">'+
-    '<span class="text-[8px] px-1.5 py-0.5 rounded font-bold" style="background:'+SC[bd.status]+'20;color:'+SC[bd.status]+';border:1px solid '+SC[bd.status]+'">'+bd.status+'</span>'+
-    '<span class="text-[8px] px-1.5 py-0.5 rounded font-bold" style="background:'+cc.bg+';color:'+cc.text+'">⚡ '+bd.lightning+' Lightning</span>'+
-    '<span class="text-[8px] px-1.5 py-0.5 rounded font-bold" style="background:#1f2937;color:#f59e0b">🏧 '+bd.atm+' ATMs</span>'+
+    '<span class="text-[8px] px-1.5 py-0.5 rounded font-bold min-mobile-text" style="background:'+SC[bd.status]+'20;color:'+SC[bd.status]+';border:1px solid '+SC[bd.status]+'">'+bd.status+'</span>'+
+    '<span class="text-[8px] px-1.5 py-0.5 rounded font-bold min-mobile-text" style="background:'+cc.bg+';color:'+cc.text+'">⚡ '+bd.lightning+' Lightning</span>'+
+    '<span class="text-[8px] px-1.5 py-0.5 rounded font-bold min-mobile-text" style="background:#1f2937;color:#f59e0b">🏧 '+bd.atm+' ATMs</span>'+
     '</div>'+
-    '<div class="text-[9px] text-gray-300 bg-gray-800/50 rounded p-1.5">'+bd.legal_detail+'</div>'+
-    '<div class="text-[8px] text-gray-400 mt-1"><span class="text-amber-400 font-bold">1 BTC = '+bd.rate.toLocaleString()+' '+bd.currency+'</span> ('+bd.currency_name+')</div>';
+    '<div class="text-[9px] text-gray-300 bg-gray-800/50 rounded p-1.5 min-mobile-text">'+bd.legal_detail+'</div>'+
+    '<div class="text-[8px] text-gray-400 mt-1 min-mobile-text"><span class="text-amber-400 font-bold">1 BTC = '+bd.rate.toLocaleString()+' '+bd.currency+'</span> ('+bd.currency_name+')</div>';
   
   // Chart
   var baseVal=100;
@@ -292,6 +292,7 @@ function oM(iso){
   var chEl=document.getElementById("modalChange");
   chEl.textContent=(isUp?"+":"")+changePct+"%";
   chEl.style.color=isUp?"#10b981":"#ef4444";
+  chEl.className="text-[10px] font-bold min-mobile-text";
   
   var cb=document.getElementById("chartBars");cb.innerHTML="";
   var maxVal=Math.max.apply(null,vals);
@@ -316,10 +317,10 @@ function oM(iso){
     if(saved.length>ci)selected=saved[ci];
     var sel=saved.indexOf(selected)>=0;
     var label=document.createElement("label");
-    label.className="opt flex items-center gap-1.5 p-1.5 rounded bg-gray-800 cursor-pointer border "+(sel?"border-emerald-500":"border-gray-700")+" hover:border-emerald-500 transition";
-    var cb2=document.createElement("input");cb2.type="checkbox";cb2.className="ac w-3 h-3 rounded accent-emerald-500 cursor-pointer shrink-0";
+    label.className="opt flex items-center gap-2 p-2 rounded bg-gray-800 cursor-pointer border "+(sel?"border-emerald-500":"border-gray-700")+" hover:border-emerald-500 transition touch-btn";
+    var cb2=document.createElement("input");cb2.type="checkbox";cb2.className="ac w-4 h-4 rounded accent-emerald-500 cursor-pointer shrink-0";
     cb2.dataset.text=selected;cb2.dataset.cat=cat;cb2.checked=sel;
-    var sp=document.createElement("span");sp.className="text-[10px] text-gray-200";sp.textContent=selected;
+    var sp=document.createElement("span");sp.className="text-[10px] text-gray-200 min-mobile-text";sp.textContent=selected;
     label.appendChild(cb2);label.appendChild(sp);acts.appendChild(label);
   }
   
