@@ -3,272 +3,168 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Bitcoiner Travelling</title>
+<title>Bitcoiner Travelling — World Map</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{font-family:'Inter','Roboto',sans-serif}
 body{background:#030712;overflow-x:hidden}
-.glow-e{box-shadow:0 0 12px rgba(52,211,153,0.4)}
-.glow-b{box-shadow:0 0 12px rgba(59,130,246,0.4)}
-.glow-a{box-shadow:0 0 12px rgba(251,191,36,0.4)}
-.modal-overlay{background:rgba(0,0,0,0.7);backdrop-filter:blur(4px)}
-.toast{animation:fadeInOut 2.5s ease forwards}
-@keyframes fadeInOut{0%{opacity:0;transform:translateY(10px)}12%{opacity:1;transform:translateY(0)}88%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
 .pb{border:2px solid #1f2937;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.05)}
-.country-path{cursor:pointer;transition:all 0.2s ease;fill:#1f2937;stroke:#374151;stroke-width:0.5}
-.country-path:hover{fill:#1e3a5f;stroke:#3b82f6;stroke-width:1}
-.country-path.unlocked{fill:#064e3b!important;stroke:#10b981!important;stroke-width:1}
-.country-path.unlocked:hover{fill:#065f46!important}
-.travel-line{stroke:#10b981;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:url(#g);stroke-dasharray:8 4}
-@keyframes dm{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-12}}
-@keyframes pg{0%,100%{opacity:0.3}50%{opacity:0.8}}
-.travel-line-pulse{stroke:#34d399;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0.4;animation:pg 2s ease-in-out infinite}
-.avatar-btn{transition:all 0.2s ease;border:2px solid transparent;cursor:pointer}
-.avatar-btn.active{border-color:#10b981;background:rgba(16,185,129,0.15);box-shadow:0 0 12px rgba(52,211,153,0.3)}
-.avatar-btn:hover{border-color:#3b82f6}
-.avatar-on-map{position:absolute;pointer-events:none;z-index:10;transition:all 0.6s;font-size:1.5rem;transform:translate(-50%,-50%)}
-.particle{position:fixed;pointer-events:none;font-size:1.5rem;z-index:40;animation:pu 1.2s ease-out forwards}
-@keyframes pu{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(0.3)}}
-.opt{transition:all 0.2s ease}
-.opt:hover{border-color:#10b981;background:rgba(16,185,129,0.08)}
-svg .cl{font-size:3px;fill:#9ca3af;pointer-events:none;font-weight:600}
-.bi{transition:all 0.3s ease}
-.bi.unlocked{filter:drop-shadow(0 0 8px rgba(59,130,246,0.7))}
-.bi.locked{filter:grayscale(0.8) opacity(0.4)}
-#mapWrap{position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 50%,#0c1929,#030712)}
-#radarCanvas{width:100%;height:auto;max-width:280px;display:block;margin:0 auto}
-.fbtn{transition:all 0.15s ease;cursor:pointer}
-.fbtn.active{background:#10b981;color:#000;border-color:#10b981}
-.fbtn.active-r{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
-.achv{transition:all 0.2s ease}
-.achv.unlocked{background:rgba(16,185,129,0.1);border-color:#10b981}
-.achv.locked{opacity:0.5}
-.rarity-C{color:#9ca3af;border-color:#9ca3af}
-.rarity-R{color:#3b82f6;border-color:#3b82f6}
-.rarity-E{color:#8b5cf6;border-color:#8b5cf6}
-.rarity-L{color:#f59e0b;border-color:#f59e0b}
+.toast{animation:ft 2.5s ease forwards}
+@keyframes ft{0%{opacity:0;transform:translateY(10px)}12%{opacity:1;transform:translateY(0)}88%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
+.modal-overlay{background:rgba(0,0,0,0.7);backdrop-filter:blur(4px)}
+.country-btn{cursor:pointer;transition:all 0.2s ease;position:relative;border-radius:4px;font-size:9px;line-height:1.1;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:600;overflow:hidden}
+.country-btn:hover{z-index:5;transform:scale(1.12);box-shadow:0 0 20px rgba(255,255,255,0.2)}
+.country-btn.unlocked{background:rgba(16,185,129,0.5)!important;border-color:#10b981!important}
+.country-btn.unlocked::after{content:'\2713';position:absolute;top:1px;right:2px;font-size:7px;color:#6ee7b7}
+.map-grid{display:grid;grid-template-columns:repeat(36,1fr);gap:2px;padding:4px;background:radial-gradient(ellipse at 50% 50%,#0c1929,#030712);border-radius:12px}
+.continent-na{background:radial-gradient(ellipse at 50% 50%,rgba(59,130,246,0.15),transparent)}
+.continent-eu{background:radial-gradient(ellipse at 50% 50%,rgba(139,92,246,0.15),transparent)}
+.continent-as{background:radial-gradient(ellipse at 50% 50%,rgba(245,158,11,0.15),transparent)}
+.continent-sa{background:radial-gradient(ellipse at 50% 50%,rgba(16,185,129,0.15),transparent)}
+.continent-me{background:radial-gradient(ellipse at 50% 50%,rgba(244,63,94,0.15),transparent)}
+.continent-af{background:radial-gradient(ellipse at 50% 50%,rgba(234,88,12,0.15),transparent)}
+.continent-oc{background:radial-gradient(ellipse at 50% 50%,rgba(6,182,212,0.15),transparent)}
+.continent-la{background:radial-gradient(ellipse at 50% 50%,rgba(34,197,94,0.15),transparent)}
+.bar-up{background:linear-gradient(180deg,#10b981,#047857)}
+.bar-down{background:linear-gradient(180deg,#ef4444,#991b1b)}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:#111827}
 ::-webkit-scrollbar-thumb{background:#374151;border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:#4b5563}
+@media(max-width:768px){.country-btn{font-size:7px;border-radius:2px}.map-grid{gap:1px}}
 </style>
 </head>
 <body class="min-h-screen text-gray-100">
-<div class="max-w-6xl mx-auto px-3 py-3">
+<div class="max-w-7xl mx-auto px-2 py-2">
 
-<div class="bg-gray-900/95 rounded-2xl p-3 md:p-4 mb-3 pb border border-gray-800">
+<!-- Header -->
+<div class="bg-gray-900/95 rounded-xl p-2 md:p-3 mb-2 pb border border-gray-800">
   <div class="flex flex-col md:flex-row items-center gap-2">
     <div class="flex-1 text-center md:text-left">
-      <div class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">Travel Rank</div>
-      <div id="levelDisplay" class="text-xl md:text-3xl font-black text-white"></div>
-      <div class="mt-1 flex items-center justify-center md:justify-start gap-2 text-[11px] text-gray-400">
-        <span>&#127758; <span id="countryCount">0</span> countries</span>
-        <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+      <div class="flex items-center gap-2 justify-center md:justify-start">
+        <span class="text-lg">🌍</span>
+        <span class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">Bitcoiner Travelling</span>
+      </div>
+      <div id="levelDisplay" class="text-lg md:text-2xl font-black text-white"></div>
+      <div class="mt-0.5 flex items-center justify-center md:justify-start gap-2 text-[10px] text-gray-400">
+        <span>🗺️ <span id="countryCount">0</span>/75 countries</span>
         <span id="nextLevelHint" class="text-gray-500"></span>
       </div>
-      <div class="mt-1.5 max-w-xs mx-auto md:mx-0 bg-gray-800 rounded-full h-1.5 overflow-hidden">
+      <div class="mt-1 max-w-xs mx-auto md:mx-0 bg-gray-800 rounded-full h-1.5 overflow-hidden">
         <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500" style="width:0%"></div>
       </div>
     </div>
-    <div class="flex items-center gap-2 flex-shrink-0">
-      <div class="bg-gray-800/60 rounded-xl px-2.5 py-1.5 border border-gray-700">
-        <div class="text-[9px] uppercase tracking-wider text-gray-400 mb-1 text-center">Avatar</div>
-        <div class="flex gap-1.5">
-          <button class="avatar-btn w-8 h-8 rounded-lg bg-gray-700 flex items-center justify-center text-base" data-avatar="boy" title="Boy">&#129489;</button>
-          <button class="avatar-btn w-8 h-8 rounded-lg bg-gray-700 flex items-center justify-center text-base" data-avatar="girl" title="Girl">&#128105;</button>
-          <button class="avatar-btn w-8 h-8 rounded-lg bg-gray-700 flex items-center justify-center text-base" data-avatar="cat" title="Cat">&#128049;</button>
-          <button class="avatar-btn w-8 h-8 rounded-lg bg-gray-700 flex items-center justify-center text-base" data-avatar="dog" title="Dog">&#128054;</button>
+    <div class="flex items-center gap-2">
+      <div class="bg-gray-800/60 rounded-lg px-2 py-1 border border-gray-700">
+        <div class="text-[8px] uppercase tracking-wider text-gray-400 mb-0.5 text-center">Avatar</div>
+        <div class="flex gap-1">
+          <button class="avatar-btn w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-xs cursor-pointer border border-transparent hover:border-emerald-500 transition" data-avatar="boy">🧑</button>
+          <button class="avatar-btn w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-xs cursor-pointer border border-transparent hover:border-emerald-500 transition" data-avatar="girl">👩</button>
+          <button class="avatar-btn w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-xs cursor-pointer border border-transparent hover:border-emerald-500 transition" data-avatar="cat">🐱</button>
+          <button class="avatar-btn w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-xs cursor-pointer border border-transparent hover:border-emerald-500 transition" data-avatar="dog">🐶</button>
         </div>
       </div>
-      <div class="flex flex-col gap-1">
-        <button id="exportBtn" class="text-[9px] bg-gray-800 hover:bg-gray-700 px-2 py-1 rounded border border-gray-700">&#128229; Export</button>
-        <button id="importBtn" class="text-[9px] bg-gray-800 hover:bg-gray-700 px-2 py-1 rounded border border-gray-700">&#128228; Import</button>
-      </div>
     </div>
   </div>
 </div>
 
+<!-- Quest + Key -->
 <div class="flex items-center justify-between mb-2 gap-2">
-  <div class="flex-1 rounded-lg px-3 py-1.5 text-[11px] flex items-center gap-1.5" style="background:linear-gradient(90deg,rgba(16,185,129,0.08),transparent);border-left:3px solid #10b981">
-    <span class="text-emerald-400 font-bold">&#127919; GOAL:</span>
+  <div class="flex-1 rounded-lg px-2.5 py-1 text-[10px] flex items-center gap-1.5" style="background:linear-gradient(90deg,rgba(16,185,129,0.08),transparent);border-left:3px solid #10b981">
+    <span class="text-emerald-400 font-bold">🎯</span>
     <span id="questText" class="text-gray-300"></span>
   </div>
-  <div class="flex gap-1">
-    <button id="tabMap" class="fbtn active text-[10px] bg-gray-800 px-2.5 py-1.5 rounded-lg border border-gray-700 font-semibold">&#127758; Map</button>
-    <button id="tabBadges" class="fbtn text-[10px] bg-gray-800 px-2.5 py-1.5 rounded-lg border border-gray-700 font-semibold">&#127942; Badges</button>
+  <div class="flex gap-1 text-[9px] text-gray-500">
+    <span class="px-1.5 py-0.5 rounded" style="background:#1e3a5f;color:#93c5fd">NA</span>
+    <span class="px-1.5 py-0.5 rounded" style="background:#3b0764;color:#c4b5fd">EU</span>
+    <span class="px-1.5 py-0.5 rounded" style="background:#78350f;color:#fde68a">AS</span>
+    <span class="px-1.5 py-0.5 rounded" style="background:#14532d;color:#86efac">LA</span>
+    <span class="px-1.5 py-0.5 rounded" style="background:#5c0a1f;color:#fda4af">ME</span>
+    <span class="px-1.5 py-0.5 rounded" style="background:#3c1208;color:#fdba74">AF</span>
+    <span class="px-1.5 py-0.5 rounded" style="background:#164e63;color:#67e8f9">OC</span>
   </div>
 </div>
 
-<div id="mapSection">
-  <div id="mapWrap" class="rounded-2xl pb mb-3 bg-gray-900/50 border border-gray-800">
-    <div class="p-2.5 border-b border-gray-800 flex items-center justify-between">
-      <h2 class="text-sm font-bold text-white">&#127758; World Map</h2>
-      <button id="resetBtn" class="text-[9px] text-gray-400 hover:text-red-400 transition px-2 py-1 rounded border border-gray-700 hover:border-red-500">&#8635; Reset</button>
+<!-- World Map Grid -->
+<div class="rounded-xl pb mb-2 overflow-hidden border border-gray-800" style="background:radial-gradient(ellipse at 50% 50%,#0c1929,#030712)">
+  <div class="p-1.5 border-b border-gray-800 flex items-center justify-between">
+    <h2 class="text-xs font-bold text-white">🗺️ World Explorer</h2>
+    <div class="flex gap-1.5">
+      <span class="text-[8px] text-gray-500"><span id="btcPrice" class="text-amber-400 font-bold">—</span> BTC</span>
+      <button id="resetBtn" class="text-[8px] text-gray-400 hover:text-red-400 transition px-1.5 py-0.5 rounded border border-gray-700">↻ Reset</button>
     </div>
-    <div class="relative">
-      <svg id="worldSvg" viewBox="0 0 1000 500" class="w-full h-auto" preserveAspectRatio="xMidYMid meet">
-        <defs><filter id="g"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-        <rect width="1000" height="500" fill="#030712"/>
-        <g id="cg"></g><g id="tlg"></g><g id="lg"></g>
-      </svg>
-      <div id="avatarOnMap" class="avatar-on-map hidden"></div>
-    </div>
+  </div>
+  <div class="map-grid" id="mapGrid">
+    <!-- Countries rendered by JS -->
   </div>
 </div>
 
-<div id="badgesSection" class="hidden">
-  <div class="rounded-xl pb bg-gray-900/50 border border-gray-800 p-3 mb-3">
-    <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">&#128200; Exploration Radar</h3>
-    <canvas id="radarCanvas" width="280" height="220"></canvas>
-  </div>
-  <div class="rounded-xl pb bg-gray-900/50 border border-gray-800 p-3 mb-3">
-    <div class="flex flex-wrap gap-1.5 mb-2">
-      <span class="text-[9px] text-gray-400 uppercase font-bold mr-1 self-center">Rarity:</span>
-      <button class="fbtn active-r text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600 rarity-C" data-rarity="all">All</button>
-      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600 rarity-C" data-rarity="C">Common</button>
-      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600 rarity-R" data-rarity="R">Rare</button>
-      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600 rarity-E" data-rarity="E">Epic</button>
-      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600 rarity-L" data-rarity="L">Legendary</button>
-    </div>
-    <div class="flex flex-wrap gap-1.5 mb-2">
-      <span class="text-[9px] text-gray-400 uppercase font-bold mr-1 self-center">Category:</span>
-      <button class="fbtn active text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-cat="all">All</button>
-      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-cat="culinary">&#127858; Food</button>
-      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-cat="culture">&#127963; Culture</button>
-      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-cat="transit">&#128646; Transit</button>
-      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-cat="bitcoin">&#8383; Bitcoin</button>
-    </div>
-    <div class="flex flex-wrap gap-1.5">
-      <span class="text-[9px] text-gray-400 uppercase font-bold mr-1 self-center">Status:</span>
-      <button class="fbtn active text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-status="all">All</button>
-      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-status="unlocked">&#9989; Unlocked</button>
-      <button class="fbtn text-[9px] bg-gray-800 px-2 py-1 rounded border border-gray-600" data-status="locked">&#128274; Locked</button>
+<!-- Bottom -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+  <div class="rounded-xl pb bg-gray-900/40 border border-gray-800 p-2.5">
+    <h3 class="text-emerald-400 font-bold text-[9px] uppercase tracking-wider mb-1.5">🏅 Badges</h3>
+    <div class="grid grid-cols-4 gap-1">
+      <div id="b-culinary" class="bi locked flex flex-col items-center gap-0.5 p-1 rounded-lg bg-gray-800/50 border border-gray-700"><span class="text-sm">🍜</span><span class="text-[7px] text-gray-400 font-semibold leading-tight">Food</span><span class="text-[6px] text-gray-500"><span class="bp" data-badge="culinary">0</span></span></div>
+      <div id="b-culture" class="bi locked flex flex-col items-center gap-0.5 p-1 rounded-lg bg-gray-800/50 border border-gray-700"><span class="text-sm">🏛️</span><span class="text-[7px] text-gray-400 font-semibold leading-tight">Culture</span><span class="text-[6px] text-gray-500"><span class="bp" data-badge="culture">0</span></span></div>
+      <div id="b-transit" class="bi locked flex flex-col items-center gap-0.5 p-1 rounded-lg bg-gray-800/50 border border-gray-700"><span class="text-sm">🚆</span><span class="text-[7px] text-gray-400 font-semibold leading-tight">Transit</span><span class="text-[6px] text-gray-500"><span class="bp" data-badge="transit">0</span></span></div>
+      <div id="b-bitcoin" class="bi locked flex flex-col items-center gap-0.5 p-1 rounded-lg bg-gray-800/50 border border-gray-700"><span class="text-sm">₿</span><span class="text-[7px] text-gray-400 font-semibold leading-tight">Bitcoin</span><span class="text-[6px] text-gray-500"><span class="bp" data-badge="bitcoin">0</span></span></div>
     </div>
   </div>
-  <div id="badgeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-3"></div>
-</div>
-
-<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-  <div class="rounded-xl pb bg-gray-900/40 border border-gray-800 p-3">
-    <h3 class="text-emerald-400 font-bold text-[10px] uppercase tracking-wider mb-2">&#127942; Achievement Badges</h3>
-    <div class="grid grid-cols-2 gap-1.5">
-      <div id="b-culinary" class="bi locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
-        <span class="text-lg">&#127858;</span><span class="text-[8px] text-gray-400 font-semibold text-center leading-tight">Culinary</span>
-        <span class="text-[7px] text-gray-500"><span class="bp" data-badge="culinary">0</span>/5</span>
-      </div>
-      <div id="b-culture" class="bi locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
-        <span class="text-lg">&#127963;</span><span class="text-[8px] text-gray-400 font-semibold text-center leading-tight">Culture</span>
-        <span class="text-[7px] text-gray-500"><span class="bp" data-badge="culture">0</span>/5</span>
-      </div>
-      <div id="b-transit" class="bi locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
-        <span class="text-lg">&#128646;</span><span class="text-[8px] text-gray-400 font-semibold text-center leading-tight">Transit</span>
-        <span class="text-[7px] text-gray-500"><span class="bp" data-badge="transit">0</span>/5</span>
-      </div>
-      <div id="b-bitcoin" class="bi locked flex flex-col items-center gap-0.5 p-1.5 rounded-lg bg-gray-800/50 border border-gray-700">
-        <span class="text-lg">&#8383;</span><span class="text-[8px] text-gray-400 font-semibold text-center leading-tight">Bitcoin</span>
-        <span class="text-[7px] text-gray-500"><span class="bp" data-badge="bitcoin">0</span>/5</span>
-      </div>
+  <div class="rounded-xl pb bg-gray-900/40 border border-gray-800 p-2.5 flex items-center justify-between">
+    <div>
+      <h3 class="text-amber-400 font-bold text-[9px] uppercase tracking-wider mb-0.5">⚡ Support</h3>
+      <p class="text-[7px] text-gray-400 font-mono">bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7</p>
     </div>
-  </div>
-  <div class="rounded-xl pb bg-gray-900/40 border border-gray-800 p-3">
-    <h3 class="text-blue-400 font-bold text-[10px] uppercase tracking-wider mb-2">&#8383; Bitcoin Tips</h3>
-    <ul class="space-y-1 text-[11px] text-gray-300">
-      <li class="flex gap-1.5">Lightning apps (Phoenix, Breez) avoid bank forex fees.</li>
-      <li class="flex gap-1.5">Hardware wallet in carry-on, never checked luggage.</li>
-      <li class="flex gap-1.5">Encrypted seed backup stored separately from wallet.</li>
-      <li class="flex gap-1.5">Digital passport copies to secure cloud pre-departure.</li>
-    </ul>
-  </div>
-  <div class="rounded-xl pb bg-gray-900/40 border border-gray-800 p-3 flex flex-col items-center text-center">
-    <h3 class="text-amber-400 font-bold text-[10px] uppercase tracking-wider mb-2">Support</h3>
-    <p class="text-[9px] text-gray-400 mb-1.5 break-all select-all font-mono bg-gray-800 px-2 py-1 rounded-lg w-full">bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7</p>
-    <button id="copyBtn" class="bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-semibold px-3 py-1.5 rounded-lg transition glow-a w-full">&#128203; Copy Address</button>
+    <button id="copyBtn" class="bg-amber-600 hover:bg-amber-500 text-white text-[8px] font-semibold px-2 py-1 rounded transition whitespace-nowrap">📋 Copy</button>
   </div>
 </div>
 </div>
 
-<div id="activityModal" class="fixed inset-0 modal-overlay flex items-center justify-center p-3 hidden z-50">
-  <div class="bg-gray-900 rounded-2xl pb max-w-md w-full p-4 border border-gray-700" style="max-height:90vh;overflow-y:auto">
+<!-- Country Modal -->
+<div id="countryModal" class="fixed inset-0 modal-overlay flex items-center justify-center p-2 hidden z-50">
+  <div class="bg-gray-900 rounded-xl pb max-w-md w-full p-3 border border-gray-700" style="max-height:90vh;overflow-y:auto">
     <div class="flex items-center justify-between mb-2">
-      <h3 class="text-base font-bold text-white"><span id="modalCountryName">Country</span></h3>
-      <button id="closeModal" class="text-gray-400 hover:text-white text-lg leading-none">&times;</button>
+      <h3 class="text-sm font-bold text-white"><span id="modalCountry">Country</span> <span id="modalFlag" class="text-lg"></span></h3>
+      <button id="closeModal" class="text-gray-400 hover:text-white text-base leading-none">&times;</button>
     </div>
-    <p class="text-[11px] text-gray-400 mb-2">What did you accomplish here?</p>
-    <div id="activityChoices" class="space-y-1.5 mb-3"></div>
-    <button id="saveActivities" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg transition glow-e text-xs">Save &amp; Continue</button>
+    
+    <div id="btcBenefits" class="space-y-2 mb-3"></div>
+    
+    <div id="btcChart" class="rounded-lg bg-gray-800/50 p-2 mb-3">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-[9px] text-gray-400 font-semibold">₿ BTC / <span id="modalCurrency">USD</span> — 4 Year Performance</span>
+        <span id="modalChange" class="text-[10px] font-bold"></span>
+      </div>
+      <div class="flex items-end gap-0.5 h-16" id="chartBars"></div>
+      <div class="flex justify-between text-[7px] text-gray-500 mt-0.5">
+        <span>2021</span><span>2022</span><span>2023</span><span>2024</span><span>2025</span>
+      </div>
+    </div>
+
+    <div id="activities" class="space-y-1.5 mb-2"></div>
+    
+    <button id="saveBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg transition text-xs">Save</button>
   </div>
 </div>
 
-<div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-800 text-emerald-400 px-3 py-1.5 rounded-lg text-[11px] font-semibold pb toast hidden z-50 whitespace-nowrap"></div>
+<div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-emerald-400 px-2.5 py-1 rounded-lg text-[9px] font-semibold pb toast hidden z-50 whitespace-nowrap"></div>
 
 <script>
-var CS={"US":{"n":"United States","c":[120,95,145,82,175,88,210,100,215,110,200,118,175,122,145,118,130,115]},"CA":{"n":"Canada","c":[100,55,150,35,210,28,260,35,270,42,255,55,220,60,180,65,140,70,105,62]},"MX":{"n":"Mexico","c":[175,128,195,128,200,135,198,145,185,155,173,145,172,135]},"BR":{"n":"Brazil","c":[240,220,280,215,300,240,295,255,270,275,245,260,235,235]},"AR":{"n":"Argentina","c":[255,280,275,282,278,295,275,310,260,328,248,310,248,295]},"CO":{"n":"Colombia","c":[242,205,262,205,265,215,248,225,240,218]},"CL":{"n":"Chile","c":[268,285,280,290,282,305,278,335,270,348,265,330,266,295]},"PE":{"n":"Peru","c":[242,230,262,230,268,242,265,255,248,268,237,248]},"GB":{"n":"United Kingdom","c":[340,85,352,82,355,88,345,98,340,94]},"FR":{"n":"France","c":[345,98,365,98,368,108,355,118,343,108]},"DE":{"n":"Germany","c":[360,85,380,82,385,90,375,102,358,95]},"ES":{"n":"Spain","c":[335,105,355,105,358,115,345,125,333,112]},"IT":{"n":"Italy","c":[365,108,378,110,380,120,368,138,360,120]},"NL":{"n":"Netherlands","c":[355,80,368,82,365,88,358,88]},"CH":{"n":"Switzerland","c":[368,98,382,98,380,105,372,107]},"SE":{"n":"Sweden","c":[380,55,398,45,408,60,395,78,378,65]},"NO":{"n":"Norway","c":[372,40,400,30,405,38,395,55,378,50]},"PT":{"n":"Portugal","c":[330,112,340,112,338,122,332,125]},"GR":{"n":"Greece","c":[395,125,410,122,412,130,400,140,393,135]},"IE":{"n":"Ireland","c":[330,78,342,78,340,85,335,88]},"AT":{"n":"Austria","c":[378,95,392,95,390,102,382,105]},"PL":{"n":"Poland","c":[385,75,402,75,405,82,390,86,383,82]},"UA":{"n":"Ukraine","c":[410,65,432,62,438,70,425,85,408,75]},"BE":{"n":"Belgium","c":[350,88,365,88,362,95,355,96]},"DK":{"n":"Denmark","c":[368,68,382,68,380,75,372,77]},"FI":{"n":"Finland","c":[405,38,428,30,438,45,420,58,405,45]},"RO":{"n":"Romania","c":[410,95,430,92,435,100,420,110,412,105]},"CZ":{"n":"Czech Republic","c":[378,85,394,85,392,92,384,94]},"HU":{"n":"Hungary","c":[398,92,415,92,412,100,396,100]},"HR":{"n":"Croatia","c":[385,100,400,102,398,110,383,108]},"JP":{"n":"Japan","c":[620,75,635,65,642,80,630,98,618,85]},"CN":{"n":"China","c":[530,65,580,50,620,58,625,68,600,85,560,85,525,75]},"KR":{"n":"South Korea","c":[615,88,628,88,630,95,618,105,612,100]},"IN":{"n":"India","c":[550,105,585,102,598,125,575,145,548,132,542,118]},"TH":{"n":"Thailand","c":[578,148,598,148,602,158,585,172,575,155]},"VN":{"n":"Vietnam","c":[600,148,615,148,618,158,608,178,596,162]},"ID":{"n":"Indonesia","c":[580,195,620,188,650,198,630,208,590,208,575,202]},"PH":{"n":"Philippines","c":[630,150,645,148,648,158,635,172,625,158]},"MY":{"n":"Malaysia","c":[578,170,598,172,600,180,582,182,575,178]},"SG":{"n":"Singapore","c":[600,190,610,190,608,194,602,195]},"TW":{"n":"Taiwan","c":[650,108,662,108,665,118,652,122,648,115]},"TR":{"n":"Turkey","c":[440,100,468,98,478,105,465,120,442,112]},"LK":{"n":"Sri Lanka","c":[570,145,582,145,580,152,574,154]},"NP":{"n":"Nepal","c":[555,92,575,92,572,100,562,102]},"KH":{"n":"Cambodia","c":[590,155,606,155,604,162,588,162]},"MM":{"n":"Myanmar","c":[565,130,585,128,590,138,575,150,562,138]},"BD":{"n":"Bangladesh","c":[570,108,586,108,584,118,568,118]},"UZ":{"n":"Uzbekistan","c":[510,78,535,75,538,84,515,86]},"KZ":{"n":"Kazakhstan","c":[465,48,525,35,550,50,520,62,480,68,460,62]},"MN":{"n":"Mongolia","c":[550,45,600,35,625,50,585,58,560,55]},"AU":{"n":"Australia","c":[610,290,670,270,710,290,715,305,670,328,625,318,612,305]},"NZ":{"n":"New Zealand","c":[710,335,725,332,728,342,715,355,708,348]},"FJ":{"n":"Fiji","c":[730,280,745,278,748,285,735,288]},"ZA":{"n":"South Africa","c":[395,310,428,305,440,312,428,335,400,332,390,322]},"NG":{"n":"Nigeria","c":[345,165,372,162,378,170,358,180,345,175]},"KE":{"n":"Kenya","c":[395,175,418,175,420,185,400,195,392,188]},"MA":{"n":"Morocco","c":[330,130,355,128,358,138,338,142,328,138]},"EG":{"n":"Egypt","c":[378,140,402,138,408,148,390,160,375,148]},"GH":{"n":"Ghana","c":[348,172,368,170,365,180,345,178]},"ET":{"n":"Ethiopia","c":[400,162,428,158,435,168,415,182,395,170]},"TZ":{"n":"Tanzania","c":[400,198,425,195,432,205,412,218,400,212]},"DZ":{"n":"Algeria","c":[340,118,380,105,400,118,380,132,342,130]},"SN":{"n":"Senegal","c":[325,150,345,148,342,158,332,160]},"MZ":{"n":"Mozambique","c":[415,222,438,222,442,235,425,252,410,235]},"AO":{"n":"Angola","c":[368,228,390,225,395,238,378,252,365,235]},"AE":{"n":"UAE","c":[490,112,505,108,512,112,505,120,490,118]},"SA":{"n":"Saudi Arabia","c":[455,108,480,100,500,105,505,118,490,128,465,130,452,120]},"IL":{"n":"Israel","c":[465,128,472,125,478,128,475,135,468,136]},"QA":{"n":"Qatar","c":[510,120,518,118,522,122,515,126]},"JO":{"n":"Jordan","c":[470,130,478,128,482,135,475,140,468,138]},"OM":{"n":"Oman","c":[525,118,538,112,545,118,540,130,528,132]},"BH":{"n":"Bahrain","c":[505,115,510,113,512,117,507,119]},"LB":{"n":"Lebanon","c":[468,122,475,120,478,125,472,127]},"KW":{"n":"Kuwait","c":[498,108,505,105,508,110,500,112]}};
-var CR={"US":"na","CA":"na","MX":"na","BR":"la","AR":"la","CO":"la","CL":"la","PE":"la","GB":"we","FR":"we","DE":"we","ES":"we","IT":"we","NL":"we","CH":"we","SE":"we","NO":"we","PT":"we","GR":"we","IE":"we","AT":"we","PL":"ee","UA":"ee","BE":"we","DK":"we","FI":"we","RO":"ee","CZ":"ee","HU":"ee","HR":"ee","JP":"ea","CN":"ea","KR":"ea","TW":"ea","MN":"ea","IN":"ea","TH":"sa","VN":"sa","ID":"sa","PH":"sa","MY":"sa","SG":"sa","LK":"sa","NP":"ea","KH":"sa","MM":"sa","BD":"ea","UZ":"ea","KZ":"ea","AU":"oc","NZ":"oc","FJ":"oc","ZA":"af","NG":"af","KE":"af","MA":"af","EG":"af","GH":"af","ET":"af","TZ":"af","DZ":"af","SN":"af","MZ":"af","AO":"af","AE":"me","SA":"me","IL":"me","QA":"me","JO":"me","OM":"me","BH":"me","LB":"me","KW":"me","TR":"me"};
-var AD={"specific":{"JP":[{"t":"Braved Shibuya Scramble at peak hour","r":"R","c":["transit","culture"],"d":2},{"t":"Stayed in a traditional ryokan with onsen","r":"E","c":["culture"],"d":3},{"t":"Ate fresh sushi at Tsukiji at dawn","r":"R","c":["culinary"],"d":2},{"t":"Hiked the Kumano Kodo pilgrimage","r":"E","c":["culture"],"d":3},{"t":"Paid for ramen with Lightning","r":"L","c":["bitcoin","culinary"],"d":4}],"CN":[{"t":"Hiked abandoned Great Wall section","r":"E","c":["culture"],"d":3},{"t":"Ordered street food via WeChat only","r":"R","c":["culinary","transit"],"d":2},{"t":"Navigated Shanghai Metro rush hour","r":"C","c":["transit"],"d":1},{"t":"Saw Terracotta Warriors at opening","r":"R","c":["culture"],"d":2},{"t":"Found Bitcoin OTC desk in Shenzhen","r":"L","c":["bitcoin"],"d":4}],"US":[{"t":"Road-tripped Route 66","r":"E","c":["transit","culture"],"d":3},{"t":"Ate at 50-year-old family diner","r":"R","c":["culinary"],"d":2},{"t":"Hiked national park at sunrise","r":"R","c":["culture"],"d":2},{"t":"Paid gas with Lightning via BTCPay","r":"L","c":["bitcoin","transit"],"d":4},{"t":"Navigated NYC subway like a local","r":"C","c":["transit"],"d":1}],"IN":[{"t":"Rode tuk-tuk through Old Delhi","r":"C","c":["transit","culture"],"d":1},{"t":"Ate street masala dosa at midnight","r":"R","c":["culinary"],"d":2},{"t":"Watched sunrise at Taj Mahal","r":"E","c":["culture"],"d":3},{"t":"Survived Mumbai train peak hour","r":"R","c":["transit"],"d":2},{"t":"Bought chai with Lightning","r":"L","c":["bitcoin","culinary"],"d":4}]},"regional":{"ea":[{"t":"Mastered noodles from a street stall","r":"C","c":["culinary"],"d":1},{"t":"Visited a temple at dawn","r":"C","c":["culture"],"d":1},{"t":"Rode bullet train across country","r":"R","c":["transit"],"d":2},{"t":"Tried bizarre vending machine snack","r":"C","c":["culinary"],"d":1},{"t":"Navigated subway without speaking language","r":"R","c":["transit"],"d":2},{"t":"Attended traditional tea ceremony","r":"R","c":["culture"],"d":2},{"t":"Found Bitcoin meetup in coworking","r":"E","c":["bitcoin"],"d":3}],"sa":[{"t":"Ate insect skewers at night market","r":"R","c":["culinary"],"d":2},{"t":"Island-hopped on local ferry","r":"C","c":["transit"],"d":1},{"t":"Explored ancient temple complex","r":"C","c":["culture"],"d":1},{"t":"Got custom outfit for cheap","r":"C","c":["culture"],"d":1},{"t":"Rode scooter through rice terraces","r":"R","c":["transit","culture"],"d":2},{"t":"Bartered at floating market","r":"R","c":["culinary"],"d":2},{"t":"Paid massage with Lightning","r":"E","c":["bitcoin"],"d":3}],"we":[{"t":"Explored 1000-year-old castle vault","r":"E","c":["culture"],"d":3},{"t":"Attended historic opera performance","r":"E","c":["culture"],"d":3},{"t":"Ordered coffee in native dialect","r":"C","c":["culinary"],"d":1},{"t":"Mastered metro without a map","r":"C","c":["transit"],"d":1},{"t":"Ate Michelin-starred lunch","r":"E","c":["culinary"],"d":3},{"t":"Biked city like a local","r":"C","c":["transit"],"d":1},{"t":"Bought baguette with Lightning","r":"L","c":["bitcoin","culinary"],"d":4}],"ee":[{"t":"Explored Soviet brutalist architecture","r":"R","c":["culture"],"d":2},{"t":"Ate pierogi from grandmother stall","r":"C","c":["culinary"],"d":1},{"t":"Navigated tram without maps","r":"C","c":["transit"],"d":1},{"t":"Visited Cold War bunker museum","r":"R","c":["culture"],"d":2},{"t":"Found Bitcoin ATM in basement club","r":"E","c":["bitcoin"],"d":3}],"la":[{"t":"Learned salsa from local instructor","r":"C","c":["culture"],"d":1},{"t":"Used collectivo minibus route","r":"C","c":["transit"],"d":1},{"t":"Visited ancient civilization ruins","r":"E","c":["culture"],"d":3},{"t":"Ate street tacos at 2am","r":"C","c":["culinary"],"d":1},{"t":"Haggled at local mercado","r":"C","c":["culinary","culture"],"d":1},{"t":"Paid street musician with Lightning","r":"E","c":["bitcoin","culture"],"d":3},{"t":"Rode chicken bus across country","r":"R","c":["transit"],"d":2}],"af":[{"t":"Watched wildlife on sunrise safari","r":"E","c":["culture"],"d":3},{"t":"Ate injera with hands at local home","r":"R","c":["culinary"],"d":2},{"t":"Negotiated shared taxi fare","r":"C","c":["transit"],"d":1},{"t":"Visited vibrant open-air market","r":"C","c":["culinary","culture"],"d":1},{"t":"Rode moto-taxi through busy streets","r":"C","c":["transit"],"d":1},{"t":"Sent sats via mobile Lightning","r":"E","c":["bitcoin"],"d":3}],"oc":[{"t":"Snorkelled coral reef at sunrise","r":"E","c":["culture"],"d":3},{"t":"Ate meat pie from roadside bakery","r":"C","c":["culinary"],"d":1},{"t":"Hitched ride on sailing boat","r":"R","c":["transit"],"d":2},{"t":"Hiked coastal trail with views","r":"C","c":["culture"],"d":1},{"t":"Found Bitcoin-accepting surf shop","r":"E","c":["bitcoin"],"d":3}],"me":[{"t":"Explored centuries-old souk maze","r":"R","c":["culture"],"d":2},{"t":"Ate street shawarma from cart","r":"C","c":["culinary"],"d":1},{"t":"Negotiated desert safari","r":"R","c":["transit","culture"],"d":2},{"t":"Visited stunning tile mosque","r":"C","c":["culture"],"d":1},{"t":"Drank tea with locals","r":"C","c":["culinary","culture"],"d":1},{"t":"Bought spices with Lightning","r":"E","c":["bitcoin","culinary"],"d":3}],"na":[{"t":"Ate at legendary hole-in-the-wall","r":"C","c":["culinary"],"d":1},{"t":"Navigated subway completely lost","r":"C","c":["transit"],"d":1},{"t":"Visited world-class museum free","r":"C","c":["culture"],"d":1},{"t":"Tried regional food exclusive","r":"R","c":["culinary"],"d":2},{"t":"Rode Greyhound cross-state","r":"C","c":["transit"],"d":1},{"t":"Found Bitcoin-friendly cafe","r":"R","c":["bitcoin"],"d":2}]}};
+var CD=[{i:"CA",n:"Canada",c:"na",x:4,y:0,w:6,h:2},{i:"US",n:"United States",c:"na",x:4,y:2,w:6,h:2},{i:"MX",n:"Mexico",c:"na",x:5,y:4,w:3,h:1},{i:"GB",n:"United Kingdom",c:"eu",x:15,y:2,w:2,h:1},{i:"IE",n:"Ireland",c:"eu",x:14,y:2,w:1,h:1},{i:"FR",n:"France",c:"eu",x:15,y:3,w:2,h:1},{i:"DE",n:"Germany",c:"eu",x:17,y:2,w:2,h:1},{i:"ES",n:"Spain",c:"eu",x:14,y:4,w:2,h:1},{i:"PT",n:"Portugal",c:"eu",x:13,y:4,w:2,h:1},{i:"IT",n:"Italy",c:"eu",x:16,y:4,w:2,h:1},{i:"NL",n:"Netherlands",c:"eu",x:16,y:2,w:2,h:1},{i:"BE",n:"Belgium",c:"eu",x:15,y:2,w:2,h:1},{i:"CH",n:"Switzerland",c:"eu",x:17,y:3,w:2,h:1},{i:"AT",n:"Austria",c:"eu",x:18,y:3,w:2,h:1},{i:"PL",n:"Poland",c:"eu",x:19,y:2,w:2,h:1},{i:"CZ",n:"Czech Republic",c:"eu",x:18,y:3,w:2,h:1},{i:"HU",n:"Hungary",c:"eu",x:19,y:4,w:2,h:1},{i:"HR",n:"Croatia",c:"eu",x:17,y:4,w:2,h:1},{i:"SE",n:"Sweden",c:"eu",x:17,y:1,w:2,h:1},{i:"NO",n:"Norway",c:"eu",x:16,y:0,w:2,h:1},{i:"DK",n:"Denmark",c:"eu",x:16,y:1,w:2,h:1},{i:"FI",n:"Finland",c:"eu",x:19,y:0,w:2,h:1},{i:"UA",n:"Ukraine",c:"eu",x:20,y:3,w:2,h:1},{i:"RO",n:"Romania",c:"eu",x:20,y:4,w:2,h:1},{i:"GR",n:"Greece",c:"eu",x:18,y:5,w:2,h:1},{i:"RU",n:"Russia",c:"as",x:22,y:0,w:6,h:2},{i:"JP",n:"Japan",c:"as",x:30,y:2,w:2,h:2},{i:"CN",n:"China",c:"as",x:24,y:3,w:4,h:2},{i:"KR",n:"South Korea",c:"as",x:30,y:3,w:2,h:1},{i:"MN",n:"Mongolia",c:"as",x:25,y:2,w:3,h:1},{i:"IN",n:"India",c:"as",x:24,y:5,w:3,h:2},{i:"NP",n:"Nepal",c:"as",x:25,y:5,w:2,h:1},{i:"BD",n:"Bangladesh",c:"as",x:27,y:5,w:2,h:1},{i:"LK",n:"Sri Lanka",c:"as",x:26,y:7,w:2,h:1},{i:"KZ",n:"Kazakhstan",c:"as",x:21,y:2,w:4,h:1},{i:"UZ",n:"Uzbekistan",c:"as",x:22,y:4,w:2,h:1},{i:"TH",n:"Thailand",c:"sa",x:26,y:7,w:2,h:1},{i:"VN",n:"Vietnam",c:"sa",x:28,y:7,w:2,h:1},{i:"MM",n:"Myanmar",c:"sa",x:25,y:7,w:2,h:1},{i:"KH",n:"Cambodia",c:"sa",x:27,y:8,w:2,h:1},{i:"MY",n:"Malaysia",c:"sa",x:27,y:9,w:2,h:1},{i:"SG",n:"Singapore",c:"sa",x:28,y:10,w:2,h:1},{i:"ID",n:"Indonesia",c:"sa",x:26,y:10,w:4,h:1},{i:"PH",n:"Philippines",c:"sa",x:30,y:8,w:2,h:2},{i:"TW",n:"Taiwan",c:"sa",x:31,y:5,w:2,h:1},{i:"TR",n:"Turkey",c:"me",x:20,y:5,w:2,h:1},{i:"AE",n:"UAE",c:"me",x:22,y:6,w:2,h:1},{i:"SA",n:"Saudi Arabia",c:"me",x:21,y:6,w:3,h:1},{i:"IL",n:"Israel",c:"me",x:19,y:6,w:2,h:1},{i:"JO",n:"Jordan",c:"me",x:20,y:7,w:2,h:1},{i:"LB",n:"Lebanon",c:"me",x:19,y:6,w:2,h:1},{i:"KW",n:"Kuwait",c:"me",x:22,y:7,w:2,h:1},{i:"QA",n:"Qatar",c:"me",x:23,y:7,w:2,h:1},{i:"BH",n:"Bahrain",c:"me",x:22,y:7,w:2,h:1},{i:"OM",n:"Oman",c:"me",x:23,y:8,w:2,h:1},{i:"CO",n:"Colombia",c:"sa",x:4,y:6,w:2,h:1},{i:"BR",n:"Brazil",c:"sa",x:5,y:8,w:4,h:2},{i:"AR",n:"Argentina",c:"sa",x:6,y:11,w:3,h:2},{i:"CL",n:"Chile",c:"sa",x:4,y:10,w:2,h:2},{i:"PE",n:"Peru",c:"sa",x:4,y:8,w:2,h:1},{i:"MA",n:"Morocco",c:"af",x:11,y:4,w:2,h:1},{i:"DZ",n:"Algeria",c:"af",x:11,y:5,w:3,h:1},{i:"EG",n:"Egypt",c:"af",x:14,y:5,w:2,h:1},{i:"SN",n:"Senegal",c:"af",x:10,y:6,w:2,h:1},{i:"NG",n:"Nigeria",c:"af",x:12,y:7,w:3,h:1},{i:"GH",n:"Ghana",c:"af",x:11,y:7,w:2,h:1},{i:"KE",n:"Kenya",c:"af",x:14,y:8,w:2,h:1},{i:"ET",n:"Ethiopia",c:"af",x:15,y:7,w:2,h:1},{i:"TZ",n:"Tanzania",c:"af",x:14,y:9,w:2,h:1},{i:"ZA",n:"South Africa",c:"af",x:13,y:11,w:3,h:2},{i:"AO",n:"Angola",c:"af",x:12,y:9,w:2,h:1},{i:"MZ",n:"Mozambique",c:"af",x:15,y:10,w:2,h:1},{i:"AU",n:"Australia",c:"oc",x:29,y:11,w:5,h:2},{i:"NZ",n:"New Zealand",c:"oc",x:33,y:12,w:3,h:1},{i:"FJ",n:"Fiji",c:"oc",x:34,y:10,w:2,h:1}];
+var CC={"na":{"bg":"#1e3a5f","border":"#3b82f6","text":"#93c5fd","name":"North America","emoji":"\ud83c\udf0e"},"eu":{"bg":"#3b0764","border":"#8b5cf6","text":"#c4b5fd","name":"Europe","emoji":"\ud83c\udf0d"},"as":{"bg":"#78350f","border":"#f59e0b","text":"#fde68a","name":"Asia","emoji":"\ud83c\udf0f"},"sa":{"bg":"#064e3b","border":"#10b981","text":"#6ee7b7","name":"Southeast Asia","emoji":"\ud83c\udf0f"},"me":{"bg":"#5c0a1f","border":"#f43f5e","text":"#fda4af","name":"Middle East","emoji":"\ud83d\udd4c"},"af":{"bg":"#3c1208","border":"#ea580c","text":"#fdba74","name":"Africa","emoji":"\ud83c\udf0d"},"oc":{"bg":"#164e63","border":"#06b6d4","text":"#67e8f9","name":"Oceania","emoji":"\ud83c\udf0f"},"la":{"bg":"#14532d","border":"#22c55e","text":"#86efac","name":"Latin America","emoji":"\ud83c\udf0e"}};
+var BD={"US":{"status":"Legal","atm":37210,"lightning":"High","currency":"USD","rate":1.0,"4yr":412,"currency_name":"US Dollar","legal_detail":"Fully legal. SEC regulates as commodity. Spot ETFs approved 2024."},"CA":{"status":"Legal","atm":2987,"lightning":"High","currency":"CAD","rate":1.36,"4yr":385,"currency_name":"Canadian Dollar","legal_detail":"Legal. CRA treats as commodity. Regulated crypto exchanges."},"MX":{"status":"Legal","atm":245,"lightning":"Medium","currency":"MXN","rate":17.12,"4yr":520,"currency_name":"Mexican Peso","legal_detail":"Legal but unregulated. No specific crypto law. Popular for remittances."},"GB":{"status":"Legal","atm":0,"lightning":"High","currency":"GBP","rate":0.79,"4yr":350,"currency_name":"British Pound","legal_detail":"Legal. FCA regulates. Strong crypto adoption in London."},"FR":{"status":"Legal","atm":0,"lightning":"High","currency":"EUR","rate":0.92,"4yr":340,"currency_name":"Euro","legal_detail":"Legal. AMF regulates. P2P Lightning popular in Paris."},"DE":{"status":"Legal","atm":0,"lightning":"High","currency":"EUR","rate":0.92,"4yr":340,"currency_name":"Euro","legal_detail":"Legal. BaFin regulates. Bitcoin recognized as legal tender equivalent."},"ES":{"status":"Legal","atm":0,"lightning":"Medium","currency":"EUR","rate":0.92,"4yr":340,"currency_name":"Euro","legal_detail":"Legal. CNMV regulates. Growing Bitcoin ATM network."},"IT":{"status":"Legal","atm":0,"lightning":"Medium","currency":"EUR","rate":0.92,"4yr":340,"currency_name":"Euro","legal_detail":"Legal. CONSOB regulates. 15% capital gains tax."},"NL":{"status":"Legal","atm":0,"lightning":"High","currency":"EUR","rate":0.92,"4yr":340,"currency_name":"Euro","legal_detail":"Legal. DNB regulates. Amsterdam is a major crypto hub."},"CH":{"status":"Legal","atm":185,"lightning":"High","currency":"CHF","rate":0.88,"4yr":310,"currency_name":"Swiss Franc","legal_detail":"Legal. FINMA regulates. Crypto Valley in Zug. Very progressive."},"SE":{"status":"Legal","atm":0,"lightning":"High","currency":"SEK","rate":10.45,"4yr":365,"currency_name":"Swedish Krona","legal_detail":"Legal. Central bank exploring e-krona. High Lightning adoption."},"NO":{"status":"Legal","atm":0,"lightning":"Medium","currency":"NOK","rate":10.82,"4yr":370,"currency_name":"Norwegian Krone","legal_detail":"Legal. No specific crypto law. Taxed as capital asset."},"DK":{"status":"Legal","atm":0,"lightning":"Medium","currency":"DKK","rate":6.87,"4yr":345,"currency_name":"Danish Krone","legal_detail":"Legal. FSA regulates. Growing merchant adoption."},"FI":{"status":"Legal","atm":0,"lightning":"Medium","currency":"EUR","rate":0.92,"4yr":340,"currency_name":"Euro","legal_detail":"Legal. FIN-FSA regulates. Helsinki has Bitcoin meetups."},"PT":{"status":"Legal","atm":0,"lightning":"Medium","currency":"EUR","rate":0.92,"4yr":340,"currency_name":"Euro","legal_detail":"Legal. No capital gains tax for individuals. Crypto-friendly."},"GR":{"status":"Legal","atm":0,"lightning":"Low","currency":"EUR","rate":0.92,"4yr":340,"currency_name":"Euro","legal_detail":"Legal. HCMC regulates. Growing interest in crypto tourism."},"IE":{"status":"Legal","atm":0,"lightning":"Medium","currency":"EUR","rate":0.92,"4yr":340,"currency_name":"Euro","legal_detail":"Legal. Central Bank regulates. Dublin has active crypto scene."},"AT":{"status":"Legal","atm":0,"lightning":"Medium","currency":"EUR","rate":0.92,"4yr":340,"currency_name":"Euro","legal_detail":"Legal. FMA regulates. Vienna has Bitcoin ATMs."},"PL":{"status":"Legal","atm":0,"lightning":"Medium","currency":"PLN","rate":4.02,"4yr":400,"currency_name":"Polish Zloty","legal_detail":"Legal. KNF regulates. Strong crypto community in Warsaw."},"CZ":{"status":"Legal","atm":0,"lightning":"Medium","currency":"CZK","rate":23.12,"4yr":380,"currency_name":"Czech Koruna","legal_detail":"Legal. CNB regulates. Prague has many Bitcoin-friendly venues."},"HU":{"status":"Legal","atm":0,"lightning":"Medium","currency":"HUF","rate":353.5,"4yr":420,"currency_name":"Hungarian Forint","legal_detail":"Legal. MNB regulates. Budapest has Bitcoin meetups."},"HR":{"status":"Legal","atm":0,"lightning":"Low","currency":"EUR","rate":0.92,"4yr":340,"currency_name":"Euro","legal_detail":"Legal. HANFA regulates. Tourist areas accept crypto."},"RO":{"status":"Legal","atm":0,"lightning":"Low","currency":"RON","rate":4.62,"4yr":430,"currency_name":"Romanian Leu","legal_detail":"Legal. BNR regulates. Growing tech-savvy crypto community."},"UA":{"status":"Legal","atm":0,"lightning":"Medium","currency":"UAH","rate":38.45,"4yr":680,"currency_name":"Ukrainian Hryvnia","legal_detail":"Legal. Law adopted 2022. High crypto adoption during war."},"BE":{"status":"Legal","atm":0,"lightning":"Medium","currency":"EUR","rate":0.92,"4yr":340,"currency_name":"Euro","legal_detail":"Legal. FSMA regulates. Brussels has crypto events."},"JP":{"status":"Legal","atm":0,"lightning":"High","currency":"JPY","rate":149.5,"4yr":290,"currency_name":"Japanese Yen","legal_detail":"Legal since 2017. FSA regulates. Major crypto trading nation."},"CN":{"status":"Banned","atm":0,"lightning":"Low","currency":"CNY","rate":7.24,"4yr":310,"currency_name":"Chinese Yuan","legal_detail":"Banned for trading/mining since 2021. CBDC priority. Underground OTC exists."},"KR":{"status":"Legal","atm":0,"lightning":"Medium","currency":"KRW","rate":1320,"4yr":350,"currency_name":"South Korean Won","legal_detail":"Legal. FSC regulates. High retail participation. Kimchi premium."},"IN":{"status":"Legal","atm":0,"lightning":"Medium","currency":"INR","rate":83.12,"4yr":480,"currency_name":"Indian Rupee","legal_detail":"Legal but 30% tax. Supreme Court overturned ban. Growing adoption."},"TH":{"status":"Legal","atm":0,"lightning":"Medium","currency":"THB","rate":35.8,"4yr":410,"currency_name":"Thai Baht","legal_detail":"Legal. SEC regulates. Popular for tourism. Crypto-friendly."},"VN":{"status":"Legal","atm":0,"lightning":"Medium","currency":"VND","rate":24500,"4yr":550,"currency_name":"Vietnamese Dong","legal_detail":"Legal but no framework. High adoption. Peer-to-peer popular."},"ID":{"status":"Legal","atm":0,"lightning":"Medium","currency":"IDR","rate":15750,"4yr":520,"currency_name":"Indonesian Rupiah","legal_detail":"Legal. Bappebti regulates. High mobile adoption."},"PH":{"status":"Legal","atm":0,"lightning":"Medium","currency":"PHP","rate":56.2,"4yr":440,"currency_name":"Philippine Peso","legal_detail":"Legal. BSP regulates. Popular for remittances."},"MY":{"status":"Legal","atm":0,"lightning":"Medium","currency":"MYR","rate":4.68,"4yr":380,"currency_name":"Malaysian Ringgit","legal_detail":"Legal. SC regulates. Growing blockchain education."},"SG":{"status":"Legal","atm":0,"lightning":"High","currency":"SGD","rate":1.34,"4yr":290,"currency_name":"Singapore Dollar","legal_detail":"Legal. MAS regulates. Major crypto hub in Asia."},"TW":{"status":"Legal","atm":0,"lightning":"Medium","currency":"TWD","rate":31.85,"4yr":340,"currency_name":"Taiwan Dollar","legal_detail":"Legal. FSC regulates. High tech adoption."},"TR":{"status":"Legal","atm":0,"lightning":"High","currency":"TRY","rate":30.25,"4yr":980,"currency_name":"Turkish Lira","legal_detail":"Legal but regulated. High inflation drives Bitcoin adoption. Lightning growing."},"AE":{"status":"Legal","atm":0,"lightning":"High","currency":"AED","rate":3.67,"4yr":280,"currency_name":"UAE Dirham","legal_detail":"Legal. VARA regulates. Dubai is a crypto oasis. 0% tax."},"SA":{"status":"Restricted","atm":0,"lightning":"Low","currency":"SAR","rate":3.75,"4yr":295,"currency_name":"Saudi Riyal","legal_detail":"Restricted. No official crypto framework. Private trading occurs."},"IL":{"status":"Legal","atm":0,"lightning":"High","currency":"ILS","rate":3.62,"4yr":340,"currency_name":"Israeli Shekel","legal_detail":"Legal. ISA regulates. Tel Aviv has vibrant crypto scene."},"QA":{"status":"Restricted","atm":0,"lightning":"Low","currency":"QAR","rate":3.64,"4yr":290,"currency_name":"Qatari Riyal","legal_detail":"Restricted. No crypto allowed for citizens. Testing blockchain."},"JO":{"status":"Legal","atm":0,"lightning":"Low","currency":"JOD","rate":0.71,"4yr":350,"currency_name":"Jordanian Dinar","legal_detail":"Legal but cautious. CBJ warns against crypto."},"OM":{"status":"Restricted","atm":0,"lightning":"Low","currency":"OMR","rate":0.38,"4yr":280,"currency_name":"Omani Rial","legal_detail":"Restricted. No crypto framework. Minimal adoption."},"BH":{"status":"Legal","atm":0,"lightning":"Medium","currency":"BHD","rate":0.38,"4yr":290,"currency_name":"Bahraini Dinar","legal_detail":"Legal. CBB regulates. Active blockchain sandbox."},"LB":{"status":"Legal","atm":0,"lightning":"High","currency":"LBP","rate":89500,"4yr":1800,"currency_name":"Lebanese Pound","legal_detail":"Legal (de facto). Economic crisis drives massive Bitcoin adoption."},"KW":{"status":"Restricted","atm":0,"lightning":"Low","currency":"KWD","rate":0.31,"4yr":275,"currency_name":"Kuwaiti Dinar","legal_detail":"Restricted. CMA prohibits crypto investments."},"BR":{"status":"Legal","atm":126,"lightning":"Medium","currency":"BRL","rate":4.98,"4yr":480,"currency_name":"Brazilian Real","legal_detail":"Legal. Law passed 2023. CVM regulates. High adoption."},"AR":{"status":"Legal","atm":0,"lightning":"High","currency":"ARS","rate":825,"4yr":2500,"currency_name":"Argentine Peso","legal_detail":"Legal. Inflation drives adoption. Bitcoin saves from devaluation."},"CO":{"status":"Legal","atm":0,"lightning":"Medium","currency":"COP","rate":3920,"4yr":620,"currency_name":"Colombian Peso","legal_detail":"Legal. No specific law. High crypto interest in Medellin."},"CL":{"status":"Legal","atm":0,"lightning":"Medium","currency":"CLP","rate":938,"4yr":480,"currency_name":"Chilean Peso","legal_detail":"Legal. CMF regulates. Santiago has crypto startups."},"PE":{"status":"Legal","atm":0,"lightning":"Low","currency":"PEN","rate":3.72,"4yr":390,"currency_name":"Peruvian Sol","legal_detail":"Legal. No specific regulation. Slow adoption."},"NG":{"status":"Legal","atm":0,"lightning":"High","currency":"NGN","rate":895,"4yr":1200,"currency_name":"Nigerian Naira","legal_detail":"Legal but restricted by banks. Highest crypto adoption globally."},"ZA":{"status":"Legal","atm":0,"lightning":"Medium","currency":"ZAR","rate":18.72,"4yr":520,"currency_name":"South African Rand","legal_detail":"Legal. FSCA regulates. Cape Town has Bitcoin community."},"KE":{"status":"Legal","atm":0,"lightning":"Medium","currency":"KES","rate":145,"4yr":580,"currency_name":"Kenyan Shilling","legal_detail":"Legal. No specific law. Mobile money + Bitcoin popular."},"EG":{"status":"Restricted","atm":0,"lightning":"Low","currency":"EGP","rate":48.5,"4yr":780,"currency_name":"Egyptian Pound","legal_detail":"Restricted. Religious fatwa against crypto. Private trading exists."},"MA":{"status":"Restricted","atm":0,"lightning":"Low","currency":"MAD","rate":10.02,"4yr":420,"currency_name":"Moroccan Dirham","legal_detail":"Restricted. Crypto banned since 2017. Still used underground."},"DZ":{"status":"Restricted","atm":0,"lightning":"Low","currency":"DZD","rate":134.5,"4yr":480,"currency_name":"Algerian Dinar","legal_detail":"Restricted. Crypto banned since 2018."},"SN":{"status":"Legal","atm":0,"lightning":"Low","currency":"XOF","rate":615,"4yr":380,"currency_name":"CFA Franc","legal_detail":"Legal. No regulation. Growing mobile money integration."},"GH":{"status":"Legal","atm":0,"lightning":"Medium","currency":"GHS","rate":12.8,"4yr":620,"currency_name":"Ghanaian Cedi","legal_detail":"Legal. BoG exploring CBDC. Active crypto community."},"ET":{"status":"Legal","atm":0,"lightning":"Low","currency":"ETB","rate":56.8,"4yr":520,"currency_name":"Ethiopian Birr","legal_detail":"Legal. No framework. Low internet penetration limits adoption."},"TZ":{"status":"Legal","atm":0,"lightning":"Low","currency":"TZS","rate":2530,"4yr":450,"currency_name":"Tanzanian Shilling","legal_detail":"Legal. BoT researching. Mobile money dominant."},"MZ":{"status":"Legal","atm":0,"lightning":"Low","currency":"MZN","rate":63.8,"4yr":490,"currency_name":"Mozambican Metical","legal_detail":"Legal. No framework. Low adoption."},"AO":{"status":"Legal","atm":0,"lightning":"Low","currency":"AOA","rate":835,"4yr":680,"currency_name":"Angolan Kwanza","legal_detail":"Legal. No framework. High informal economy."},"AU":{"status":"Legal","atm":0,"lightning":"High","currency":"AUD","rate":1.52,"4yr":340,"currency_name":"Australian Dollar","legal_detail":"Legal. AUSTRAC regulates. Sydney/Melbourne active crypto hubs."},"NZ":{"status":"Legal","atm":0,"lightning":"Medium","currency":"NZD","rate":1.62,"4yr":350,"currency_name":"New Zealand Dollar","legal_detail":"Legal. FMA regulates. Growing adoption."},"FJ":{"status":"Legal","atm":0,"lightning":"Low","currency":"FJD","rate":2.24,"4yr":370,"currency_name":"Fijian Dollar","legal_detail":"Legal. No specific law. Tourism-driven adoption."},"RU":{"status":"Legal","atm":0,"lightning":"Medium","currency":"RUB","rate":91.5,"4yr":650,"currency_name":"Russian Ruble","legal_detail":"Legal. Duma regulates. Used for international trade."},"MN":{"status":"Legal","atm":0,"lightning":"Low","currency":"MNT","rate":3450,"4yr":440,"currency_name":"Mongolian Togrog","legal_detail":"Legal. No framework. Mining popular due to cheap energy."},"KZ":{"status":"Legal","atm":0,"lightning":"Low","currency":"KZT","rate":445,"4yr":520,"currency_name":"Kazakhstani Tenge","legal_detail":"Legal. Regulated mining. Major Bitcoin mining hub."},"UZ":{"status":"Legal","atm":0,"lightning":"Low","currency":"UZS","rate":12500,"4yr":580,"currency_name":"Uzbekistani Som","legal_detail":"Legal. Licensed exchanges only. Government friendly."},"NP":{"status":"Restricted","atm":0,"lightning":"Low","currency":"NPR","rate":132.5,"4yr":460,"currency_name":"Nepalese Rupee","legal_detail":"Restricted. NRB prohibits crypto. Underground trading exists."},"BD":{"status":"Restricted","atm":0,"lightning":"Low","currency":"BDT","rate":109.5,"4yr":500,"currency_name":"Bangladeshi Taka","legal_detail":"Restricted. BB prohibits crypto. Heavy penalties."},"KH":{"status":"Legal","atm":0,"lightning":"Low","currency":"KHR","rate":4100,"4yr":380,"currency_name":"Cambodian Riel","legal_detail":"Legal. No framework. Dollarized economy."},"MM":{"status":"Restricted","atm":0,"lightning":"Low","currency":"MMK","rate":2100,"4yr":650,"currency_name":"Myanmar Kyat","legal_detail":"Restricted. CBM prohibits crypto. Minimal adoption."},"LK":{"status":"Legal","atm":0,"lightning":"Low","currency":"LKR","rate":305,"4yr":720,"currency_name":"Sri Lankan Rupee","legal_detail":"Legal. No framework. Economic crisis boosted interest."}};
+var SC={"Legal":"#10b981","Restricted":"#f59e0b","Banned":"#ef4444"};
+var AD={"culinary":["\ud83c\udf5c Tried authentic local street food","\ud83e\udd5f Cooked a traditional dish with locals","\ud83c\udf77 Visited a local winery or brewery","\ud83c\udf2e Ate at a market stall recommended by a local","\ud83c\udf5c Found the best ramen/soup in town"],"culture":["\ud83c\udfdb\ufe0f Visited a UNESCO World Heritage site","\ud83c\udfad Attended a local festival or ceremony","\ud83d\udcf8 Explored a world-class museum","\ud83d\uddff Discovered ancient ruins","\ud83c\udfa8 Learned about local art and crafts"],"transit":["\ud83d\ude8c Navigated the local bus system","\ud83d\ude87 Rode the metro across the city","\ud83d\ude95 Used a ride-share or taxi like a local","\ud83d\ude82 Took a scenic train journey","\ud83d\udeb2 Biked through the city streets"],"bitcoin":["\u26a1 Paid with Lightning at a local cafe","\ud83c\udfe7 Found and used a Bitcoin ATM","\ud83e\udd1d Attended a local Bitcoin meetup","\ud83d\uded2 Bought goods with crypto at a store","\ud83d\udcf1 Sent sats via mobile Lightning wallet"]};
+var LV=[{m:0,l:"Couch Potato",i:"🥔"},{m:1,l:"Beginner Traveller",i:"🎒"},{m:5,l:"Intermediate Adventurer",i:"✈️"},{m:10,l:"Advanced Explorer",i:"🧭"},{m:20,l:"Sovereign Wanderer",i:"👑"},{m:35,l:"Bitcoin Nomad",i:"₿"}];
+var QT=[{m:0,t:"Unlock your first country!"},{m:1,t:"Visit 5 countries to level up."},{m:5,t:"Keep exploring! 10 for next rank."},{m:10,t:"You're a true traveller! 20 awaits."},{m:20,t:"Almost there! 35 for Bitcoin Nomad."},{m:35,t:"You've conquered the world!"}];
 
-var RL={C:"Common",R:"Rare",E:"Epic",L:"Legendary"};
-var RC={C:"#9ca3af",R:"#3b82f6",E:"#8b5cf6",L:"#f59e0b"};
-var AI=Object.keys(CS);
-var LV=[{m:0,l:"Couch Potato",i:"🥔"},{m:1,l:"Beginner Traveller",i:"🎒"},{m:6,l:"Intermediate Adventurer",i:"✈"},{m:11,l:"Advanced Explorer",i:"🧭"}];
-var QT=[{m:0,t:"Venture beyond your border. Unlock Country #1."},{m:1,t:"Regional Explorer. Log accomplishments in 5 countries."},{m:6,t:"Sovereign Wanderer. Hunt for unique milestones across the globe."}];
-var BC={culinary:{n:"Culinary Connoisseur",i:"🍜"},culture:{n:"Cultural Guardian",i:"🏛"},transit:{n:"Urban Legend",i:"🚆"},bitcoin:{n:"Orange Pilled",i:"₿"}};
-var RP={C:1,R:2,E:3,L:5};
-var TI={culinary:"🍜",culture:"🏛",transit:"🚆",bitcoin:"₿"};
-
-var st=JSON.parse(localStorage.getItem("bt"))||{};
+var ALL=CD.map(function(c){return c.i;});
+var st=JSON.parse(localStorage.getItem("bt3"))||{};
 if(!st.vo)st.vo=[];
 if(!st.av)st.av="boy";
 
-function sh(a){var r=[...a];for(var i=r.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=r[i];r[i]=r[j];r[j]=t;}return r;}
-
-function ga(iso){
-  var reg=CR[iso];var pool=[];
-  if(AD.specific[iso])pool=pool.concat(AD.specific[iso]);
-  if(reg&&AD.regional[reg])pool=pool.concat(AD.regional[reg]);
-  if(pool.length===0)pool.push({t:"Explored city center",r:"C",c:["culture"],d:1},{t:"Tried local dish",r:"C",c:["culinary"],d:1},{t:"Used public transport",r:"C",c:["transit"],d:1},{t:"Visited landmark",r:"C",c:["culture"],d:1},{t:"Found Bitcoin spot",r:"R",c:["bitcoin"],d:2});
-  return sh(pool).slice(0,3);
-}
-
-function ct(iso){
-  var c=CS[iso].c;var x=0,y=0;
-  for(var i=0;i<c.length;i+=2){x+=c[i];y+=c[i+1];}
-  var n=c.length/2;return {x:x/n,y:y/n};
-}
-
-function uc(){return AI.filter(function(i){return st[i]&&st[i].u}).length;}
-function cT(tag){var t=0;for(var i=0;i<AI.length;i++){var d=st[AI[i]];if(d&&d.sc)for(var j=0;j<d.sc.length;j++){if(d.sc[j].tags&&d.sc[j].tags.indexOf(tag)>=0)t++;}}return t;}
-function cR(r){var t=0;for(var i=0;i<AI.length;i++){var d=st[AI[i]];if(d&&d.sc)for(var j=0;j<d.sc.length;j++){if(d.sc[j].rar===r)t++;}}return t;}
-function alA(){var a=[];for(var i=0;i<AI.length;i++){var d=st[AI[i]];if(d&&d.sc){for(var j=0;j<d.sc.length;j++){a.push({text:d.sc[j].text,rar:d.sc[j].rar,tags:d.sc[j].tags,diff:d.sc[j].diff,iso:AI[i],country:CS[AI[i]].n});}}}return a;}
-
-function bp(iso){
-  var c=CS[iso].c;var d="M"+c[0]+","+c[1];
-  for(var i=2;i<c.length;i+=2)d+="L"+c[i]+","+c[i+1];
-  return d+"Z";
-}
-
-function rM(){
-  var g=document.getElementById("cg"),lg=document.getElementById("lg");
-  g.innerHTML="";lg.innerHTML="";
-  for(var i=0;i<AI.length;i++){
-    var iso=AI[i];var d=st[iso]||{};
-    var p=document.createElementNS("http://www.w3.org/2000/svg","path");
-    p.setAttribute("d",bp(iso));
-    p.setAttribute("class","country-path"+(d.u?" unlocked":""));
-    p.dataset.iso=iso;
-    p.addEventListener("click",(function(iso){return function(){oM(iso);};})(iso));
-    p.addEventListener("mouseenter",(function(d){return function(){if(!d.u)this.style.fill="#1e3a5f";};})(d));
-    p.addEventListener("mouseleave",(function(d){return function(){if(!d.u)this.style.fill="";};})(d));
-    g.appendChild(p);
-    var c=ct(iso);
-    var t=document.createElementNS("http://www.w3.org/2000/svg","text");
-    t.setAttribute("x",c.x);t.setAttribute("y",c.y);
-    t.setAttribute("class","cl");t.setAttribute("text-anchor","middle");t.setAttribute("dominant-baseline","central");
-    t.textContent=iso;lg.appendChild(t);
-  }
-  rTL();uA();
-}
-
+function uc(){return ALL.filter(function(i){return st[i]&&st[i].u}).length;}
 function lI(c){var l=LV[0];for(var i=0;i<LV.length;i++){if(c>=LV[i].m)l=LV[i];}return l;}
 function nT(c){for(var i=0;i<LV.length;i++){if(LV[i].m>c)return LV[i];}return null;}
 function qT(c){var q=QT[0];for(var i=0;i<QT.length;i++){if(c>=QT[i].m)q=QT[i];}return q.t;}
@@ -278,157 +174,130 @@ function rL(){
   document.getElementById("levelDisplay").textContent=lvl.i+" "+lvl.l;
   document.getElementById("countryCount").textContent=c;
   document.getElementById("questText").textContent=qT(c);
-  if(nxt){var r=nxt.m-lvl.m,p=r>0?((c-lvl.m)/r)*100:0;document.getElementById("progressBar").style.width=Math.min(p,100)+"%";document.getElementById("nextLevelHint").textContent=(nxt.m-c)+" more to "+nxt.l;}
-  else{document.getElementById("progressBar").style.width="100%";document.getElementById("nextLevelHint").textContent="Max level!";}
-  rB();dR();
+  if(nxt){var r=nxt.m-lvl.m,p=r>0?((c-lvl.m)/r)*100:0;document.getElementById("progressBar").style.width=Math.min(p,100)+"%";document.getElementById("nextLevelHint").textContent=(nxt.m-c)+" to "+nxt.l;}
+  else{document.getElementById("progressBar").style.width="100%";document.getElementById("nextLevelHint").textContent="MAX!";}
 }
 
-function rB(){
-  var keys=Object.keys(BC);
-  for(var i=0;i<keys.length;i++){
-    var k=keys[i];var cnt=cT(k),el=document.getElementById("b-"+k),pr=el.querySelector(".bp");
-    if(pr)pr.textContent=cnt;
-    if(cnt>=5){el.classList.remove("locked");el.classList.add("unlocked","border-blue-500","bg-blue-900/20");el.classList.remove("border-gray-700");}
-    else{el.classList.remove("unlocked","border-blue-500","bg-blue-900/20");el.classList.add("locked","border-gray-700");}
-  }
-  rA();
-}
-
-function dR(){
-  var c=document.getElementById("radarCanvas");if(!c)return;
-  var ctx=c.getContext("2d");var w=c.width,h=c.height;
-  ctx.clearRect(0,0,w,h);
-  var cx=w/2,cy=h/2-10,radius=90;
-  var cats=["culinary","culture","transit","bitcoin"];
-  var max=Math.max(cT("culinary"),cT("culture"),cT("transit"),cT("bitcoin"),5);
-  var as=(2*Math.PI)/cats.length;
-  var cols={culinary:"#10b981",culture:"#3b82f6",transit:"#8b5cf6",bitcoin:"#f59e0b"};
-  for(var r=1;r<=3;r++){
-    ctx.beginPath();var rd=(radius/3)*r;
-    for(var i=0;i<=cats.length;i++){var a=-Math.PI/2+i*as;var x=cx+rd*Math.cos(a),y=cy+rd*Math.sin(a);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
-    ctx.strokeStyle="rgba(255,255,255,0.08)";ctx.lineWidth=0.5;ctx.stroke();
-  }
-  for(var i=0;i<cats.length;i++){
-    var a=-Math.PI/2+i*as;
-    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+radius*Math.cos(a),cy+radius*Math.sin(a));
-    ctx.strokeStyle="rgba(255,255,255,0.08)";ctx.lineWidth=0.5;ctx.stroke();
-  }
-  ctx.beginPath();
-  for(var i=0;i<=cats.length;i++){
-    var idx=i%cats.length;var val=Math.min(cT(cats[idx]),max);var rd=(val/max)*radius;
-    var a=-Math.PI/2+i*as;var x=cx+rd*Math.cos(a),y=cy+rd*Math.sin(a);
-    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
-  }
-  ctx.fillStyle="rgba(16,185,129,0.2)";ctx.fill();
-  ctx.strokeStyle="#10b981";ctx.lineWidth=2;ctx.stroke();
-  for(var i=0;i<cats.length;i++){
-    var val=Math.min(cT(cats[i]),max);var rd=(val/max)*radius;
-    var a=-Math.PI/2+i*as;var x=cx+rd*Math.cos(a),y=cy+rd*Math.sin(a);
-    ctx.beginPath();ctx.arc(x,y,4,0,2*Math.PI);ctx.fillStyle=cols[cats[i]];ctx.fill();
-  }
-  ctx.font="10px Inter,sans-serif";ctx.textAlign="center";
-  var labels={culinary:"Food",culture:"Culture",transit:"Transit",bitcoin:"Bitcoin"};
-  for(var i=0;i<cats.length;i++){
-    var a=-Math.PI/2+i*as;var x=cx+(radius+18)*Math.cos(a),y=cy+(radius+18)*Math.sin(a);
-    ctx.fillStyle="#9ca3af";ctx.fillText(labels[cats[i]],x,y);
-  }
-}
-
-function rA(){
-  var g=document.getElementById("badgeGrid");if(!g)return;
-  g.innerHTML="";
-  var rarityF=(document.querySelector("[data-rarity].active-r")||{}).dataset?document.querySelector("[data-rarity].active-r").dataset.rarity:"all";
-  var catF=(document.querySelector("[data-cat].active")||{}).dataset?document.querySelector("[data-cat].active").dataset.cat:"all";
-  var statusF=(document.querySelector("[data-status].active")||{}).dataset?document.querySelector("[data-status].active").dataset.status:"all";
-  var acts=alA();
-  var filtered=acts.slice();
-  if(rarityF!="all")filtered=filtered.filter(function(a){return a.rar===rarityF;});
-  if(catF!="all")filtered=filtered.filter(function(a){return a.tags&&a.tags.indexOf(catF)>=0;});
-  if(statusF=="locked")filtered=[];
-  if(!filtered.length||statusF=="unlocked"&&!filtered.length){
-    g.innerHTML="<div class=\"col-span-full text-center text-gray-500 text-[11px] py-8\">No achievements match your filters.</div>";return;
-  }
-  var seen={};
-  for(var i=0;i<filtered.length;i++){
-    var a=filtered[i];
-    if(seen[a.text])continue;seen[a.text]=true;
+// ===== MAP RENDER =====
+function rM(){
+  var g=document.getElementById("mapGrid");g.innerHTML="";
+  for(var i=0;i<CD.length;i++){
+    var c=CD[i];var d=st[c.i]||{};
+    var cc=CC[c.c];
     var div=document.createElement("div");
-    div.className="achv rounded-lg border p-2 unlocked";
-    div.style.borderColor=RC[a.rar]||"#374151";
-    var st="";for(var s=0;s<5;s++){st+=s<(a.diff||1)?"★":"☆";}
-    div.innerHTML="<div class=\"text-[9px] font-bold\" style=\"color:"+RC[a.rar]+"\">["+RL[a.rar]+"]</div><div class=\"text-[10px] text-gray-200 leading-tight my-0.5\">"+a.text+"</div><div class=\"text-[8px] text-gray-500\">"+st+" <span class=\"text-gray-600\">|</span> "+a.country+"</div><div class=\"text-[8px] text-gray-600 mt-0.5\">"+(a.tags||[]).map(function(t){return TI[t]||"";}).join(" ")+"</div>";
+    div.style.gridColumn=c.x+" / span "+c.w;
+    div.style.gridRow=c.y+" / span "+c.h;
+    div.className="country-btn rounded border"+(d.u?" unlocked":"");
+    div.style.background=d.u?"rgba(16,185,129,0.4)":cc.bg;
+    div.style.borderColor=d.u?"#10b981":cc.border;
+    div.style.color=d.u?"#6ee7b7":cc.text;
+    div.style.fontSize=Math.min(10,Math.max(6,c.w*2.5))+"px";
+    div.textContent=c.n;
+    div.dataset.iso=c.i;
+    div.addEventListener("click",(function(iso){return function(){oM(iso);};})(c.i));
     g.appendChild(div);
   }
+  // Update BTC price
+  fetchBTC();
 }
 
+function fetchBTC(){
+  fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd")
+    .then(function(r){return r.json();})
+    .then(function(d){if(d&&d.bitcoin)document.getElementById("btcPrice").textContent="$"+d.bitcoin.usd.toLocaleString();})
+    .catch(function(){});
+}
+
+// ===== MODAL =====
 function oM(iso){
-  var d=st[iso]||{u:false,acts:[],sc:[]};
-  document.getElementById("modalCountryName").textContent=CS[iso].n;
-  var ch=document.getElementById("activityChoices");ch.innerHTML="";
-  var choices=d.sc&&d.sc.length===3?d.sc:ga(iso);
-  for(var i=0;i<choices.length;i++){
-    var c=choices[i];var sel=d.sc&&d.sc.some(function(s){return s.text===c.t||s.text===c.text;});
-    var l=document.createElement("label");
-    l.className="opt flex items-center gap-2.5 p-2.5 rounded-lg bg-gray-800 cursor-pointer transition border "+(sel?"border-emerald-500 bg-emerald-900/20":"border-gray-700")+" hover:border-emerald-500";
-    var cb=document.createElement("input");cb.type="checkbox";cb.className="ac w-4 h-4 rounded accent-emerald-500 cursor-pointer shrink-0";
-    cb.dataset.at=c.t||c.text;cb.dataset.ar=c.r||"C";cb.dataset.ac=JSON.stringify(c.c||c.tags||[]);cb.dataset.ad=c.d||1;cb.checked=sel;
-    var sp=document.createElement("span");sp.className="text-[12px] text-gray-200 flex-1";
-    sp.innerHTML="<span style=\"color:"+RC[c.r||"C"]+";font-weight:600\">["+(RL[c.r||"C"])+"]</span> "+(c.t||c.text)+" <span class=\"text-gray-500 text-[10px]\">"+(c.d||1)+"★</span>";
-    l.appendChild(cb);l.appendChild(sp);ch.appendChild(l);
+  var d=st[iso]||{u:false,acts:[]};
+  var bd=BD[iso]||{status:"Unknown",atm:0,lightning:"Unknown",currency:"USD",rate:1,"4yr":0,currency_name:"US Dollar",legal_detail:""};
+  var country=CD.find(function(c){return c.i===iso;});
+  if(!country)return;
+  var cc=CC[country.c];
+  
+  document.getElementById("modalCountry").textContent=country.n;
+  
+  // Bitcoin benefits
+  var bh=document.getElementById("btcBenefits");
+  bh.innerHTML='<div class="flex flex-wrap gap-1 mb-1">'+
+    '<span class="text-[8px] px-1.5 py-0.5 rounded font-bold" style="background:'+SC[bd.status]+'20;color:'+SC[bd.status]+';border:1px solid '+SC[bd.status]+'">'+bd.status+'</span>'+
+    '<span class="text-[8px] px-1.5 py-0.5 rounded font-bold" style="background:'+cc.bg+';color:'+cc.text+'">⚡ '+bd.lightning+' Lightning</span>'+
+    '<span class="text-[8px] px-1.5 py-0.5 rounded font-bold" style="background:#1f2937;color:#f59e0b">🏧 '+bd.atm+' ATMs</span>'+
+    '</div>'+
+    '<div class="text-[9px] text-gray-300 bg-gray-800/50 rounded p-1.5">'+bd.legal_detail+'</div>'+
+    '<div class="text-[8px] text-gray-400 mt-1"><span class="text-amber-400 font-bold">1 BTC = '+bd.rate.toLocaleString()+' '+bd.currency+'</span> ('+bd.currency_name+')</div>';
+  
+  // Chart
+  var baseVal=100;
+  var change4yr=bd["4yr"]||0;
+  var annualChange=Math.pow(change4yr/100+1,0.25)-1;
+  var years=[2021,2022,2023,2024,2025];
+  var vals=[];
+  for(var yi=0;yi<5;yi++){
+    var val=baseVal*Math.pow(1+annualChange,yi-2);
+    vals.push(Math.round(val));
   }
-  document.getElementById("activityModal").dataset.iso=iso;
-  document.getElementById("activityModal").classList.remove("hidden");
+  var changePct=Math.round((vals[4]-vals[0])/vals[0]*100);
+  var isUp=changePct>=0;
+  document.getElementById("modalCurrency").textContent=bd.currency;
+  var chEl=document.getElementById("modalChange");
+  chEl.textContent=(isUp?"+":"")+changePct+"%";
+  chEl.style.color=isUp?"#10b981":"#ef4444";
+  
+  var cb=document.getElementById("chartBars");cb.innerHTML="";
+  var maxVal=Math.max.apply(null,vals);
+  for(var yi=0;yi<vals.length;yi++){
+    var bar=document.createElement("div");
+    bar.className="flex-1 rounded-t-sm "+(isUp?"bar-up":"bar-down");
+    var pct=Math.max(5,vals[yi]/maxVal*100);
+    bar.style.height=pct+"%";
+    bar.style.minHeight="4px";
+    bar.title=vals[yi].toLocaleString();
+    cb.appendChild(bar);
+  }
+  
+  // Activities
+  var acts=document.getElementById("activities");acts.innerHTML="";
+  var cats=["culinary","culture","transit","bitcoin"];
+  var saved=d.acts||[];
+  for(var ci=0;ci<cats.length;ci++){
+    var cat=cats[ci];
+    var options=AD[cat]||[];
+    var selected=options[Math.floor(Math.random()*options.length)];
+    if(saved.length>ci)selected=saved[ci];
+    var sel=saved.indexOf(selected)>=0;
+    var label=document.createElement("label");
+    label.className="opt flex items-center gap-1.5 p-1.5 rounded bg-gray-800 cursor-pointer border "+(sel?"border-emerald-500":"border-gray-700")+" hover:border-emerald-500 transition";
+    var cb2=document.createElement("input");cb2.type="checkbox";cb2.className="ac w-3 h-3 rounded accent-emerald-500 cursor-pointer shrink-0";
+    cb2.dataset.text=selected;cb2.dataset.cat=cat;cb2.checked=sel;
+    var sp=document.createElement("span");sp.className="text-[10px] text-gray-200";sp.textContent=selected;
+    label.appendChild(cb2);label.appendChild(sp);acts.appendChild(label);
+  }
+  
+  document.getElementById("countryModal").dataset.iso=iso;
+  document.getElementById("countryModal").classList.remove("hidden");
 }
 
-function cM(){document.getElementById("activityModal").classList.add("hidden");}
+function cM(){document.getElementById("countryModal").classList.add("hidden");}
 
-function sP(iso){
-  var el=document.querySelector("path[data-iso=\""+iso+"\"]");if(!el)return;
-  var rect=el.getBoundingClientRect();var emojis=["✨","🌟","⚡","🌍"];
-  for(var i=0;i<5;i++){var p=document.createElement("div");p.className="particle";p.textContent=emojis[i%4];
-    p.style.left=(rect.left+rect.width*(0.2+0.6*Math.random()))+"px";p.style.top=(rect.top+rect.height*(0.2+0.6*Math.random()))+"px";
-    p.style.animationDelay=(i*0.08)+"s";document.body.appendChild(p);setTimeout(function(){p.remove();},1500);}
-}
-
-function sA(){
-  var iso=document.getElementById("activityModal").dataset.iso;
-  if(!st[iso])st[iso]={u:false,acts:[],sc:[]};
-  var d=st[iso];var sc=[];
+function sC(){
+  var iso=document.getElementById("countryModal").dataset.iso;
+  if(!st[iso])st[iso]={u:false,acts:[]};
+  var d=st[iso];
+  var acts=[];
   var cbs=document.querySelectorAll(".ac:checked");
-  for(var i=0;i<cbs.length;i++){var cb=cbs[i];sc.push({text:cb.dataset.at,rar:cb.dataset.ar,tags:JSON.parse(cb.dataset.ac),diff:parseInt(cb.dataset.ad)});}
+  for(var i=0;i<cbs.length;i++)acts.push(cbs[i].dataset.text);
   var was=d.u;
-  d.sc=sc;d.acts=sc.map(function(c){return c.text;});d.u=sc.length>0;
+  d.acts=acts;d.u=acts.length>0;
   if(d.u&&!was){if(!st.vo)st.vo=[];st.vo.push(iso);}
   st[iso]=d;pst();
-  if(d.u&&!was)sP(iso);
   rL();rM();cM();
 }
 
-function rTL(){
-  var g=document.getElementById("tlg");g.innerHTML="";
-  if(!st.vo||st.vo.length<2)return;
-  var pts=[];for(var i=0;i<st.vo.length;i++){if(st[st.vo[i]]&&st[st.vo[i]].u)pts.push(ct(st.vo[i]));}
-  if(pts.length<2)return;
-  var d="M"+pts[0].x+","+pts[0].y;for(var i=1;i<pts.length;i++)d+="L"+pts[i].x+","+pts[i].y;
-  var pu=document.createElementNS("http://www.w3.org/2000/svg","path");pu.setAttribute("d",d);pu.setAttribute("class","travel-line-pulse");g.appendChild(pu);
-  var li=document.createElementNS("http://www.w3.org/2000/svg","path");li.setAttribute("d",d);li.setAttribute("class","travel-line");li.style.animation="dm 1s linear infinite";g.appendChild(li);
-}
+function pst(){localStorage.setItem("bt3",JSON.stringify(st));}
 
-function uA(){
-  var el=document.getElementById("avatarOnMap");var order=st.vo||[];
-  var last=null;for(var i=order.length-1;i>=0;i--){if(st[order[i]]&&st[order[i]].u){last=order[i];break;}}
-  if(!last){el.classList.add("hidden");return;}
-  var svg=document.getElementById("worldSvg");var c=ct(last);
-  var rect=svg.getBoundingClientRect();var sx=rect.width/1000,sy=rect.height/500;
-  var av={boy:"🧑",girl:"👩",cat:"🐱",dog:"🐶"};
-  el.textContent=av[st.av]||"🧑";el.style.left=(rect.left+c.x*sx)+"px";el.style.top=(rect.top+c.y*sy)+"px";el.classList.remove("hidden");
-}
-
-function pst(){localStorage.setItem("bt",JSON.stringify(st));}
-
-function rP(){
-  if(confirm("Reset all travel progress?")){var av=st.av;st={vo:[],av:av};pst();rL();rM();}
-}
+function rP(){if(confirm("Reset all progress?")){st={vo:[],av:st.av};pst();rL();rM();}}
 
 function sT(m){
   var el=document.getElementById("toast");el.textContent=m;
@@ -436,29 +305,25 @@ function sT(m){
   setTimeout(function(){el.classList.add("hidden");},2700);
 }
 
-function iA(){
-  var btns=document.querySelectorAll(".avatar-btn");
-  for(var i=0;i<btns.length;i++){(function(btn){
-    btn.addEventListener("click",function(){st.av=btn.dataset.avatar;var all=document.querySelectorAll(".avatar-btn");for(var j=0;j<all.length;j++)all[j].classList.remove("active");btn.classList.add("active");pst();uA();});
-    if(btn.dataset.avatar===st.av)btn.classList.add("active");
-  })(btns[i]);}
-}
-
 document.addEventListener("DOMContentLoaded",function(){
-  rL();rM();iA();
+  rL();rM();
+  
+  document.querySelectorAll(".avatar-btn").forEach(function(b){
+    b.addEventListener("click",function(){st.av=b.dataset.avatar;document.querySelectorAll(".avatar-btn").forEach(function(x){x.style.borderColor="transparent";});b.style.borderColor="#10b981";pst();});
+    if(b.dataset.avatar===st.av)b.style.borderColor="#10b981";
+  });
+  
   document.getElementById("closeModal").addEventListener("click",cM);
-  document.getElementById("saveActivities").addEventListener("click",sA);
+  document.getElementById("saveBtn").addEventListener("click",sC);
   document.getElementById("resetBtn").addEventListener("click",rP);
-  document.getElementById("copyBtn").addEventListener("click",function(){navigator.clipboard.writeText("bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7").then(function(){sT("Address copied!");}).catch(function(){sT("Failed to copy.");});});
-  document.getElementById("activityModal").addEventListener("click",function(e){if(e.target===e.currentTarget)cM();});
+  document.getElementById("copyBtn").addEventListener("click",function(){
+    navigator.clipboard.writeText("bc1q47tl79lx5ua5hecnsj42d6whgk8hjlqvlv3jh7").then(function(){sT("Copied!");}).catch(function(){sT("Failed.");});
+  });
+  document.getElementById("countryModal").addEventListener("click",function(e){if(e.target===e.currentTarget)cM();});
   document.addEventListener("keydown",function(e){if(e.key==="Escape")cM();});
-  document.getElementById("tabMap").addEventListener("click",function(){document.getElementById("mapSection").classList.remove("hidden");document.getElementById("badgesSection").classList.add("hidden");document.getElementById("tabMap").classList.add("active");document.getElementById("tabBadges").classList.remove("active");});
-  document.getElementById("tabBadges").addEventListener("click",function(){document.getElementById("mapSection").classList.add("hidden");document.getElementById("badgesSection").classList.remove("hidden");document.getElementById("tabBadges").classList.add("active");document.getElementById("tabMap").classList.remove("active");rA();dR();});
-  var rbs=document.querySelectorAll("[data-rarity]");for(var i=0;i<rbs.length;i++){(function(b){b.addEventListener("click",function(){var all=document.querySelectorAll("[data-rarity]");for(var j=0;j<all.length;j++)all[j].classList.remove("active-r");b.classList.add("active-r");rA();});})(rbs[i]);}
-  var cbs2=document.querySelectorAll("[data-cat]");for(var i=0;i<cbs2.length;i++){(function(b){b.addEventListener("click",function(){var all=document.querySelectorAll("[data-cat]");for(var j=0;j<all.length;j++)all[j].classList.remove("active");b.classList.add("active");rA();});})(cbs2[i]);}
-  var sbs=document.querySelectorAll("[data-status]");for(var i=0;i<sbs.length;i++){(function(b){b.addEventListener("click",function(){var all=document.querySelectorAll("[data-status]");for(var j=0;j<all.length;j++)all[j].classList.remove("active");b.classList.add("active");rA();});})(sbs[i]);}
-  document.getElementById("exportBtn").addEventListener("click",function(){var blob=new Blob([JSON.stringify(st)],{type:"application/json"});var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="bitcoiner-traveller-backup.json";a.click();sT("Backup exported!");});
-  document.getElementById("importBtn").addEventListener("click",function(){var inp=document.createElement("input");inp.type="file";inp.accept=".json";inp.addEventListener("change",function(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(ev){try{var d=JSON.parse(ev.target.result);if(d.vo!==undefined){st=d;pst();rL();rM();sT("Backup imported!");}else sT("Invalid backup file.");}catch(e){sT("Error reading file.");}};reader.readAsText(file);});inp.click();});
+  
+  // Refresh BTC price every 60s
+  setInterval(fetchBTC,60000);
 });
 
 </script>
